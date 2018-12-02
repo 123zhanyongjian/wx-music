@@ -1,0 +1,50 @@
+.main{
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+    bottom: 0;
+    background: #f1f1f1;
+}
+.serach{
+  position: relative;
+
+}
+.serachimg{
+  position: absolute;
+  width: 40rpx;
+  height: 40rpx;
+  left: 30rpx;
+  top: 12rpx;
+}
+.input{
+  background: white;
+  margin: 25rpx;
+  font-size: 26rpx;
+  border-radius: 14rpx;
+  padding: 10rpx 50rpx;
+  
+
+}
+.ul{
+  width: 100%;
+}
+.li{
+  
+  position: relative;
+  background: white;
+  height:80rpx;
+  border-bottom: 2rpx solid #f9f9f9;
+}
+.li>image{
+  width: 40rpx;
+  height: 40rpx;
+  position: absolute; 
+  left:33rpx;
+  top: 18rpx;
+}
+.li>text{
+  margin-left: 100rpx;
+  font-size: 28rpx;
+  line-height: 80rpx;
+}

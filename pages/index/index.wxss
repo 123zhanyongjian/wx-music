@@ -1,0 +1,71 @@
+
+.bt{
+  position: absolute;
+  left:32rpx;
+  width: 100%;
+  border-left: 6rpx solid red;
+  font-size: 32rpx;
+  font-weight: 700;
+  padding-left: 8rpx;
+  color: red;
+  height:42rpx;
+ 
+  }
+  .img{
+    display: flex;
+    background: white;
+    margin:10rpx 0; 
+    
+  }
+  .imhs{
+    flex: 1
+  }
+  .img image{
+    padding-top:10rpx;
+   
+    width: 230rpx;
+    height:298rpx;
+  }
+  .right{
+    flex: 3
+  }
+  .type{
+    background-color: #f1f1f1;
+  }
+  .content{
+   text-align: center;
+   height: 60rpx;
+   line-height: 60rpx;
+    width: 100%;
+    font-size: 32rpx;
+    color: #999;
+    border-bottom: 2rpx solid #f1f1f1;
+    
+  }
+  .ul{
+  width: 100%;
+}
+.li{
+  
+  position: relative;
+  background: white;
+  height:60rpx;
+  border-bottom: 2rpx solid #f9f9f9;
+}
+.li>image{
+  width: 20rpx;
+  height: 20rpx;
+  position: absolute; 
+  left:33rpx;
+  top: 12rpx;
+}
+.li>.text{
+  
+ height: 100%;
+ overflow: hidden;
+  color: #999;
+ 
+  margin-left:60rpx;
+  font-size: 28rpx;
+  line-height: 60rpx;
+}

@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/play/play",
+    "pages/index/index",
+   
+    "pages/details/details",
+    "pages/logs/logs"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black",
+    "requiredBackgroundModes": [
+      "backgroundAudioManager"
+    ]
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/play/play",
+        "text": "播放器",
+        "iconPath": "./image/tj.png",
+        "selectedIconPath": "./image/tj1.png"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "排行榜",
+        "iconPath": "./image/music.png",
+        "selectedIconPath": "./image/music1).png"
+      },
+      {
+        "pagePath": "pages/logs/logs",
+        "text": "搜索",
+        "iconPath": "./image/ss.png",
+        "selectedIconPath": "./image/ss1.png"
+      }
+      
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+<view class='mains'>
+  <view class='type'>
+    
+    <view class='img' wx:for="{{data}}" wx:key="{{index}}">
+      <view class='imhs' bindtap='change' data-data="{{item}}">
+        <image src='{{item.pic_s192}}'></image>
+      </view>
+      <view class='right'>
+        <view class='content'>{{item.name}}</view>
+        <view class='ul'>
+          <view class='li' wx:for="{{data[index].content}}" wx:for-index="idx" wx:for-item="ite" data-item="{{ite}}" wx:key="{{idx}}" bindtap='pay'>
+            <image src='../../image/mm.png'></image>
+            <view class='text'>{{ite.title}}--{{ite.author}}</view>
+
+          </view>
+        </view>
+      </view>
+
+    </view>
+    <view>
+      <view></view>
+    </view>
+  </view>
+</view>

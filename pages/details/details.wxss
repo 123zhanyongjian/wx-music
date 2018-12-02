@@ -1,0 +1,56 @@
+.h3{
+  position: absolute;
+  top: 0;
+  text-align: center;
+  left: 0;right: 0;
+}
+.mains{
+  
+}
+.h3>image{
+  width: 100%;
+  height: 300rpx;
+}
+.ul{
+  width: 100%;
+  position: absolute;
+  top: 300rpx;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* background: red; */
+}
+.li{
+  
+  position: relative;
+  background: white;
+  height:100rpx;
+  padding:0 50rpx; 
+  border-bottom: 2rpx solid #f9f9f9;
+}
+.li>image{
+  width: 30rpx;
+  height: 30rpx;
+  position: absolute; 
+  left:33rpx;
+  top: 34rpx;
+}
+.li:nth-of-type(2n-1){
+  background:rgb(250,250,250);
+}
+.li>.text{
+  font-size:32rpx;
+ height: 100%;
+ overflow: hidden;
+  margin-left:20rpx;
+  color: #999;
+  line-height: 100rpx;
+
+  
+}
+.text>text{
+  margin-left: 10rpx;
+}
+.active{
+  color: red;
+}

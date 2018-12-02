@@ -1,0 +1,15 @@
+<view class='main'>
+  <view class='serach'>
+  <image class='serachimg' src="../../image/ss2.png"></image>
+    <input type='text' class='input' placeholder='搜索歌手、歌曲、歌手' value="{{serach}}" bindinput ="serachs"></input>
+  </view>
+  <view>
+      <view class='ul'>
+          <view class='li' wx:for="{{song}}" data-item="{{item}}" wx:key="{{index}}" bindtap='pay'>
+            <image  src='../../image/mm.png'></image>
+            <text>{{item.title}}--{{item.author}}</text>
+            
+          </view>
+      </view>
+  </view>
+</view>

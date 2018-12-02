@@ -1,0 +1,72 @@
+<!-- pages/play/play.wxml -->
+<view class="mains">
+ <!-- 显示标题 -->
+      <image class="bgimg" src="{{img}}"></image>
+      <view class="title">
+        <view class="titles">{{title}}</view>
+        <view class="author">-{{author}}-</view>
+      </view>
+        <view>
+        <view class='Conduct'>{{conduct}}</view>
+        <view class='Duration'>{{Duration}}</view>
+        <slider class='slider' min="0" max="{{max}}" step="1" value="{{value}}" backgroundColor="#e9e9e9" block-size="14" block-color="#ffffff" bindchanging="" bindchange="changeslider">
+
+        </slider>
+      </view>
+         <view class="control">
+        <image class="last1" src="../../image/last.png" bindtap='last'></image>
+        <image class="last" src="{{pay}}" bindtap="pays"></image>
+        <image class="last1" src="../../image/next.png" bindtap="next"></image>
+      </view>
+        <!-- 音乐播放列表 -->
+      <view wx:if="{{showtime}}" id='songlist' class="{{close?'closes':'opens'}}">
+        <view>
+          <view class='close' bindtap='closese'>关闭</view>
+          <view class='clear' bindtap='clearse'>清空</view>
+          <view class='titlelist'>歌单列表({{songList.length}})</view>
+          <scroll-view class='scroll-viewlist' scroll-y="true">
+            <view class="song {{index===ins?'active':''}}" wx:for="{{songList}}" wx:key="{{index}}" data-index="{{index}}" data-item="{{item}}" bindtap='pay' bindlongpress="del">
+              <image src='../../image/mm.png'></image>
+              <view class='text'>{{item.title}}--{{item.author}}</view>
+            </view>
+
+
+          </scroll-view>
+        </view>
+      </view>
+      <!-- 列表打开 -->
+        <view class='order' bindtap='open' wx:if="{{!showtime}}">
+        <image src='../../image/order.png'></image>
+      </view>
+  <swiper style="height:40%;" indicator-dots="true" indicator-active-color="#fff">
+    <swiper-item>
+     
+      <view class="imgs">
+        <image id="img" class="{{state?'auto imgstates':'auto imgspay'}}" src="{{img}}" animation="{{animationData}}"></image>
+      </view>
+    
+        <view  wx:for="{{lrc}}" wx:key="{{index}}" wx:if="{{lrc[index+1].time>t||lrc[index].time<t}}" class=" abc {{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
+   
+
+    
+    
+    </swiper-item>
+    <swiper-item>
+        
+          <view class='lrc'>
+          <scroll-view class='scroll-view'  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum}}">
+               <view id="line{{index}}" class="lrcs {{item.time==t?active:''}}"  wx:for="{{lrc}}" wx:key="{{index}}">
+                
+                 <view class="{{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
+               </view>
+          </scroll-view>
+          </view>
+          
+    </swiper-item>
+  </swiper>
+
+
+
+
+
+</view>

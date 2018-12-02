@@ -1,0 +1,23 @@
+<view class="mains">
+  <view class='h3'>
+    <!-- 音乐图片 -->
+    <image src='{{src}}'></image>
+
+
+
+  </view>
+  <scroll-view class='ul' scroll-y>
+  
+   
+    <view class='li' wx:for="{{list}}" wx:key="{{index}}" bindtap='pay' data-item='{{item}}'>
+      <image src='../../image/mm.png'></image>
+
+      <view class='text'>
+        <text class="{{index<3?'active':''}}">{{index+1}}</text>
+        <text>{{item.title}}--{{item.author}}</text>
+      </view>
+
+    </view>
+    
+  </scroll-view>
+</view>
