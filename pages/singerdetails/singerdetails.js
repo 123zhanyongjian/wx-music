@@ -48,16 +48,7 @@ Page({
     var song = e.currentTarget.dataset.item;
     var songmidid = e.currentTarget.dataset.item.mid
     const _this = this;
-    //获取歌词
-    wx.request({
-      url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`,
-      success: function (res) {
-
-        song.lrc = res.data.showapi_res_body.lyric;
-       
-        
-      }
-    })
+ 
     wx.request({
       url: `https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=5381&inCharset=utf-8&outCharset=utf-8&notice=0&format=jsonp&hostUin=0&loginUin=0&platform=yqq&needNewCode=0&cid=205361747&uin=0&filename=C400${songmidid}.m4a&guid=3913883408&songmid=${songmidid}&callback=callback`,
       data: {
@@ -86,19 +77,31 @@ Page({
         song['author']=song.singer;
         song['pic']=song.image;
         app.data.song = song;
-       setTimeout(()=>{
-         time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-         wx.switchTab({
-           url: "../../pages/play/play",
-           success: function () {
-             console.log(app.data);
+        //获取歌词
+        wx.request({
+          url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`,
+          success: function (res) {
+
+            song.lrc = res.data.showapi_res_body.lyric;
+            setTimeout(() => {
+              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+              app.data.paythis.setData({
+                value: 0
+              })
+              wx.switchTab({
+                url: "../../pages/play/play",
+                success: function () {
+                  console.log(app.data);
 
 
 
-           }
-         })
+                }
+              })
 
-       },200)
+            }, 200)
+
+          }
+        })
       
       }
     })
