@@ -66,7 +66,7 @@ function pay(that, app, datas) {
       conduct: MinuteConversion(app.currentTime)
     });
     app.onEnded(function () {
-      //音乐播完
+      //音乐播完自动下一曲
       Nextsong(that, app)
     });
     // console.log(that.data.t)

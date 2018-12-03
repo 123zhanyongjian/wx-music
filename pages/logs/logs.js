@@ -21,12 +21,15 @@ Page({
 
     var that = this;
     var serach = e.detail.value;
-    console.log(serach,pays)
+    console.log(serach,pays);
+    
     if (serach != '') {
       if (e.timeStamp - this.data.interval < 1000) {
         return
       } else {
-
+        wx.showLoading({
+          title: '加载中',
+        })
         this.setData({
           interval: e.timeStamp,
           song: []
@@ -34,6 +37,7 @@ Page({
         wx.request({
           url: api.default.host + 'searchMusic?name=?' + serach,
           success: function(res) {
+            wx.hideLoading();
             that.setData({
               song: res.data.result
             })
