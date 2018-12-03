@@ -230,8 +230,9 @@ function addsong(data) {
     data.songlist=[]
   }
   if (data.song != '') {
+   
     if (data.songlist.length == 0) {
-
+     
       data.songlist.push(data.song);
      
       console.log(data)
@@ -244,18 +245,22 @@ function addsong(data) {
       })
       console.log(data.songlist)
     } else if (data.songlist.length < 99) {
+   
       for (let i of data.songlist) {
-        if (data.song.songid == undefined) {
+        console.log('进来了')
+        if (data.song.songid == undefined && data.song.songId!=undefined) {
           if (data.song.songId == i.songid || data.song.songId == i.songId) {
             flag = true;
-            return
+            
+           
             console.log('重复了')
+            return
           } else {
             flag = false;
 
             console.log('添加')
           }
-        } else {
+        } else if (data.song.songid != undefined && data.song.songId == undefined) {
           if (data.song.songid == i.songid || data.song.songid == i.songId) {
             flag = true;
             return
@@ -264,6 +269,17 @@ function addsong(data) {
             flag = false;
             console.log('添加')
           }
+        }
+        //歌手部分音乐是否添加
+        if (i.musicId == data.song.musicId){
+          flag = true;
+         
+           console.log('重复了')
+          return
+        }else{
+          flag = false;
+
+          console.log('添加')
         }
       }
      
