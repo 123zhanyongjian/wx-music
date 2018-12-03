@@ -36,44 +36,32 @@ Page({
 
         console.log(that.data.song);
         app.data.song = that.data.song;
+        //将http转换为https
+        song.lrcLink = song.lrcLink.replace('http', 'https')
 
         var flag
         wx.request({
           url: song.lrcLink,
+          //http转https
+
           success: function (ret) {
             app.data.song.lrc = ret.data;
-            wx.request({
-              url: api.default.localhost + 'song',
-              success: function (res) {
-                for (let i of res.data) {
-                  if (that.data.song.songId == i.songid || that.data.song.songId == i.songId) {
-                    flag = true;
-                    console.log('重复了', that.data.song.songid, i.songid, i.songId)
-                  } else {
-                    flag = false;
-                    console.log('添加')
-                  }
-                }
-                console.log(flag);
-                tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song,app);
-                app.data.paythis.setData({
-                  value: 0
-                })
-                setTimeout(() => {
-                  if (!flag) {
-                    wx.request({
-                      url: api.default.localhost + 'song',
-                      method: 'post',
-                      data: that.data.song,
-                      success: function (res) {
-                        console.log(res)
-                      }
-                    })
+            tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song, app)
+            //清空播放时长
+            app.data.paythis.setData({
+              value: 0
+            })
+            wx.switchTab({
+              url: "../../pages/play/play",
+              success: function () {
+                console.log(app.data);
 
-                  }
-                })
+
+
+
               }
             })
+          
           }
         })
 
