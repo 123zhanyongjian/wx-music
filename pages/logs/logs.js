@@ -81,6 +81,6 @@ Page({
 
   },
   onLoad: function() {
-    console.log(patt)
+    console.log(app)
   }
 })

@@ -36,7 +36,12 @@ function pay(that, app, datas) {
   clearInterval(that.data.setInterval);
   app.play();
 
-  app.src = datas.url;
+  if(datas.url==undefined){
+    app.src = datas.src;
+  }else{
+    app.src = datas.url;
+  }
+
   app.title = datas.title;
   app.coverImgUrl = datas.pic;
   app.autoplay = false;
@@ -95,10 +100,81 @@ function suspend(that, app) {
     pay: "../../image/bf.png"
   });
 }
+//小程序关闭后下次进入还是上一次关闭时所保留的状态
+function Closestate(that,datas){
+console.log(datas)
+  var obj={
+    max: that.data.max,
+    state:that.data.state,
+    value: that.data.value,
+    pay: that.data.pay,
+    t: that.data.t,
+    lrc:datas.lrc,
+    conduct: that.data.conduct,
+    src:datas.url,
+    title: datas.title,
+    coverImgUrl: datas.pic,
+    autoplay:false,
+    author: datas.author,
+    pic:datas.pic,
+    url:datas.url
+
+
+  };
+  wx.setStorage({
+    key: 'lastsong',
+    data: obj,
+    success: function (res) {
+      console.log('缓存成功')
+    }
+  })
+  
+}
+//读取小程序关闭后下次进入还是上一次关闭时所保留的信息
+function Readinfo(that, app, GAPP){
+  
+  wx.getStorage({
+    key: 'lastsong',
+    success: function (res) {
+      console.log(res)
+      var datas=res.data;
+     
+      GAPP.data.song=datas;
+      app.src = datas.src;
+      app.title = datas.title;
+      app.coverImgUrl = datas.coverImgUrl;
+      
+      app.autoplay = false;
+    setTimeout(()=>{
+     if(!datas.state){
+       pay(that, app, datas);
+       console.log("sdsds")
+     }else{
+       suspend(that, app)
+     }
+      app.seek(datas.value)
+      that.setData({
+        max: datas.max,
+        conduct: datas.conduct,
+        Duration: MinuteConversion(datas.max),
+        src: datas.src,
+        t: datas.t,
+        state:datas.state,
+        lrc:datas.lrc,
+        value: datas.value,
+        pay: datas.pay,
+        img: datas.coverImgUrl
+
+      })
+    },200)
+    },
+  })
+}
 //下一曲
-function Nextsong(that, app) {
+function Nextsong(that, app,GAPP) {
+  console.log(GAPP)
   var datas = that.data.songList[that.data.ins + 1];
-  appInst.data.song = datas;
+  GAPP.data.song = datas;
   that.setData({
     ins: that.data.ins + 1,
     value: 0
@@ -107,9 +183,9 @@ function Nextsong(that, app) {
 
 }
 //上一曲
-function Lastsong(that, app) {
+function Lastsong(that, app, GAPP) {
   var datas = that.data.songList[that.data.ins - 1];
-  appInst.data.song = datas;
+  GAPP.data.song = datas;
   that.setData({
     ins: that.data.ins - 1,
     value: 0
@@ -127,6 +203,7 @@ function Lrcget(that, datas) {
 
     lrc.push(obj)
   }
+  console.log(lrc)
   that.setData({
     lrc: lrc
   })
@@ -203,4 +280,4 @@ function addsong(data) {
 
 }
 
-export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong };
+export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong, Closestate, Readinfo};

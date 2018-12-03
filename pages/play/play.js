@@ -132,6 +132,7 @@ Page({
 
   },
   onShow() {
+
    setTimeout(()=>{
      var song = wx.getStorageSync('songlist');
      app.data.songlist=song
@@ -139,30 +140,33 @@ Page({
      this.setData({
        songList: song
      })
+     if(this.data.state){
+       tiem.Readinfo(this, app.innerAudioContext, app)
+     }
    },500)
 
 
-    console.log(app.innerAudioContext, song);
+  //   console.log(app.innerAudioContext, song);
 
 
 
-    if (app.data.song != '') {
+  //   // if (app.data.song != '') {
 
-      var song = app.data.song;
-
-      this.setData({
-        author: song.author,
-        img: song.pic,
-        title: song.title,
-        src: song.url,
-
-
-
-      })
+  //   //   var song = app.data.song;
+  //   //     console.log(song)
+  //   //   this.setData({
+  //   //     author: song.author,
+  //   //     img: song.pic,
+  //   //     title: song.title,
+  //   //     src: song.url,
 
 
-      console.log("？？？3333")
-    }
+
+  //   //   })
+
+
+  //   //   console.log("？？？3333")
+  //   // }
 
 
   },
@@ -185,9 +189,9 @@ Page({
   },
   //上一曲
   last() {
-    console.log(this.data.ins)
+    console.log(this.data.ins,app)
     if (this.data.ins > 0) {
-      tiem.Lastsong(this, app.innerAudioContext)
+      tiem.Lastsong(this, app.innerAudioContext,app)
     } else {
       wx.showToast({
         title: '已经是第一曲了',
@@ -198,9 +202,9 @@ Page({
   },
   //下一曲
   next() {
-    console.log(this.data.ins)
+    console.log(this.data.ins,app)
     if (this.data.songList.length - 1 > this.data.ins) {
-      tiem.Nextsong(this, app.innerAudioContext)
+      tiem.Nextsong(this, app.innerAudioContext,app)
     } else {
       wx.showToast({
         title: '已经是最后一曲了',
@@ -230,6 +234,6 @@ Page({
     // console.log(innerAudioContext, 123)
   },
   onLoad: function() {
-    app.data.paythis = this
+    app.data.paythis = this;
   }
 })

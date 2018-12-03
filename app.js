@@ -1,4 +1,5 @@
 //app.js
+const tiem=require('./utils/time.js')
 App({
   onLaunch: function () {
     this.innerAudioContext = wx.getBackgroundAudioManager();
@@ -40,7 +41,11 @@ App({
    
   },
   onHide(){
-    console.log("55555")
+    console.log(tiem)
+    if(this.data.paythis!=undefined&&this.data.song!=''){
+      tiem.Closestate(this.data.paythis,this.data.song);
+    }
+    
   },
   data: {
     userInfo: null,
