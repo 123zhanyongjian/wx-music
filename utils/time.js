@@ -36,7 +36,12 @@ function pay(that, app, datas) {
   clearInterval(that.data.setInterval);
   app.play();
 
-  app.src = datas.url;
+  if(datas.url==undefined){
+    app.src = datas.src;
+  }else{
+    app.src = datas.url;
+  }
+
   app.title = datas.title;
   app.coverImgUrl = datas.pic;
   app.autoplay = false;
@@ -55,9 +60,10 @@ function pay(that, app, datas) {
     showtime: false,
     pay: "../../image/zt.png"
   });
-  Lrcget(that, datas)
+ 
   //走进度条
   that.data.setInterval = setInterval(() => {
+   
     that.setData({
       Duration: MinuteConversion(app.duration),
       max: app.duration,
@@ -66,7 +72,7 @@ function pay(that, app, datas) {
       conduct: MinuteConversion(app.currentTime)
     });
     app.onEnded(function () {
-      //音乐播完
+      //音乐播完自动下一曲
       Nextsong(that, app)
     });
     // console.log(that.data.t)
@@ -85,6 +91,7 @@ function pay(that, app, datas) {
 
 
   }, 800);
+  Lrcget(that, datas)
 }
 //暂停音乐
 function suspend(that, app) {
@@ -95,10 +102,81 @@ function suspend(that, app) {
     pay: "../../image/bf.png"
   });
 }
+//小程序关闭后下次进入还是上一次关闭时所保留的状态
+function Closestate(that,datas){
+console.log(datas)
+  var obj={
+    max: that.data.max,
+    state:that.data.state,
+    value: that.data.value,
+    pay: that.data.pay,
+    t: that.data.t,
+    lrc:datas.lrc,
+    conduct: that.data.conduct,
+    src:datas.url,
+    title: datas.title,
+    coverImgUrl: datas.pic,
+    autoplay:false,
+    author: datas.author,
+    pic:datas.pic,
+    url:datas.url
+
+
+  };
+  wx.setStorage({
+    key: 'lastsong',
+    data: obj,
+    success: function (res) {
+      console.log('缓存成功')
+    }
+  })
+  
+}
+//读取小程序关闭后下次进入还是上一次关闭时所保留的信息
+function Readinfo(that, app, GAPP){
+  
+  wx.getStorage({
+    key: 'lastsong',
+    success: function (res) {
+      console.log(res)
+      var datas=res.data;
+     
+      GAPP.data.song=datas;
+      app.src = datas.src;
+      app.title = datas.title;
+      app.coverImgUrl = datas.coverImgUrl;
+      
+      app.autoplay = false;
+    setTimeout(()=>{
+     if(!datas.state){
+       pay(that, app, datas);
+       console.log("sdsds")
+     }else{
+       suspend(that, app)
+     }
+      app.seek(datas.value)
+      that.setData({
+        max: datas.max,
+        conduct: datas.conduct,
+        Duration: MinuteConversion(datas.max),
+        src: datas.src,
+        t: datas.t,
+        state:datas.state,
+        lrc:datas.lrc,
+        value: datas.value,
+        pay: datas.pay,
+        img: datas.coverImgUrl
+
+      })
+    },200)
+    },
+  })
+}
 //下一曲
-function Nextsong(that, app) {
+function Nextsong(that, app,GAPP) {
+  console.log(GAPP)
   var datas = that.data.songList[that.data.ins + 1];
-  appInst.data.song = datas;
+  GAPP.data.song = datas;
   that.setData({
     ins: that.data.ins + 1,
     value: 0
@@ -107,9 +185,9 @@ function Nextsong(that, app) {
 
 }
 //上一曲
-function Lastsong(that, app) {
+function Lastsong(that, app, GAPP) {
   var datas = that.data.songList[that.data.ins - 1];
-  appInst.data.song = datas;
+  GAPP.data.song = datas;
   that.setData({
     ins: that.data.ins - 1,
     value: 0
@@ -119,7 +197,8 @@ function Lastsong(that, app) {
 }
 //获取歌词
 function Lrcget(that, datas) {
-  var lrc = []
+  var lrc = [];
+ 
   for (let i of datas.lrc.split('\n')) {
     var obj = { lrc: '', time: '' }
     obj.lrc = i.substring(10);
@@ -127,6 +206,7 @@ function Lrcget(that, datas) {
 
     lrc.push(obj)
   }
+  console.log(lrc)
   that.setData({
     lrc: lrc
   })
@@ -150,8 +230,9 @@ function addsong(data) {
     data.songlist=[]
   }
   if (data.song != '') {
+   
     if (data.songlist.length == 0) {
-
+     
       data.songlist.push(data.song);
      
       console.log(data)
@@ -164,18 +245,22 @@ function addsong(data) {
       })
       console.log(data.songlist)
     } else if (data.songlist.length < 99) {
+   
       for (let i of data.songlist) {
-        if (data.song.songid == undefined) {
+        console.log('进来了')
+        if (data.song.songid == undefined && data.song.songId!=undefined) {
           if (data.song.songId == i.songid || data.song.songId == i.songId) {
             flag = true;
-            return
+            
+           
             console.log('重复了')
+            return
           } else {
             flag = false;
 
             console.log('添加')
           }
-        } else {
+        } else if (data.song.songid != undefined && data.song.songId == undefined) {
           if (data.song.songid == i.songid || data.song.songid == i.songId) {
             flag = true;
             return
@@ -184,6 +269,17 @@ function addsong(data) {
             flag = false;
             console.log('添加')
           }
+        }
+        //歌手部分音乐是否添加
+        if (i.musicId == data.song.musicId){
+          flag = true;
+         
+           console.log('重复了')
+          return
+        }else{
+          flag = false;
+
+          console.log('添加')
         }
       }
      
@@ -203,4 +299,4 @@ function addsong(data) {
 
 }
 
-export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong };
+export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong, Closestate, Readinfo};

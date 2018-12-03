@@ -1,0 +1,78 @@
+.imgs{
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  background-size:100% 100%;
+  height: 525rpx;
+  
+}
+scroll-view{
+   position: absolute;
+  z-index: 0;
+  width: 100%;
+  background-size:100% 100%;
+  top: 525rpx;
+}
+.btn{
+  position: absolute;
+  z-index: 2;
+  top: 300rpx;
+  left: 50%;
+  padding:10rpx;
+  font-size: 32rpx;
+  border-radius:10px; 
+  border:1px solid rgb(227, 187, 56);
+  transform: translate(-50%,-50%);
+  color: rgb(227, 187, 56)
+}
+.ng{
+  position: absolute;
+ z-index: 1;
+   height: 525rpx;
+  width: 100%;
+  background:rgba(0, 0, 0, .5);
+}
+.title{
+  color: #fff;
+
+}
+.ul{
+  width: 100%;
+ 
+
+  /* background: red; */
+}
+.li{
+  
+  position: relative;
+  background: white;
+  height:100rpx;
+  padding:0 50rpx; 
+  border-bottom: 2rpx solid #f9f9f9;
+}
+.li>image{
+  width: 30rpx;
+  height: 30rpx;
+  position: absolute; 
+  left:33rpx;
+  top: 34rpx;
+}
+.li:nth-of-type(2n-1){
+  background:rgb(250,250,250);
+}
+.li>.text{
+  font-size:32rpx;
+ height: 100%;
+ overflow: hidden;
+  margin-left:20rpx;
+  color: #999;
+  line-height: 100rpx;
+
+  
+}
+.text>text{
+  margin-left: 10rpx;
+}
+.active{
+  color: red;
+}

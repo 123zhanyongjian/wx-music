@@ -1,0 +1,44 @@
+.sort {
+  height: 100rpx;
+  line-height: 100rpx;
+  font-size: 32rpx;
+  background: #eee;
+  padding: 0 20rpx;
+}
+.mains{
+  background: #fff;
+}
+.singerlist {
+  position: relative;
+}
+
+scroll-view {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.haderimg{
+  width: 80rpx;
+  position: absolute;
+  top: -10rpx;
+  left: 20rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+.singer{
+ position: relative;
+ border-bottom: 2rpx solid #f1f1f1;
+  height: 80rpx;
+  background: #fff;
+  margin-top: 30rpx;
+  
+}
+.singername{
+  font-size: 28rpx;
+  position: absolute;
+  top:10rpx;
+  left: 120rpx;
+ 
+}

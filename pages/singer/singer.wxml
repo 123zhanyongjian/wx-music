@@ -1,0 +1,11 @@
+<view class="mains">
+  <scroll-view scroll-y>
+    <view wx:for="{{singer}}" wx:key="{{index}}" wx:for-index="index" class='singerlist'>
+      <view class='sort'>{{item.title}}</view>
+      <view class='singer' wx:key="{{idx}}" wx:for="{{singer[index].items}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>
+        <image src="{{ite.avatar}}" class="haderimg"></image>
+        <view class='singername'>{{ite.name}}</view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
