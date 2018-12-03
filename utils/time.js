@@ -60,9 +60,10 @@ function pay(that, app, datas) {
     showtime: false,
     pay: "../../image/zt.png"
   });
-  Lrcget(that, datas)
+ 
   //走进度条
   that.data.setInterval = setInterval(() => {
+   
     that.setData({
       Duration: MinuteConversion(app.duration),
       max: app.duration,
@@ -90,6 +91,7 @@ function pay(that, app, datas) {
 
 
   }, 800);
+  Lrcget(that, datas)
 }
 //暂停音乐
 function suspend(that, app) {
@@ -195,7 +197,8 @@ function Lastsong(that, app, GAPP) {
 }
 //获取歌词
 function Lrcget(that, datas) {
-  var lrc = []
+  var lrc = [];
+ 
   for (let i of datas.lrc.split('\n')) {
     var obj = { lrc: '', time: '' }
     obj.lrc = i.substring(10);
