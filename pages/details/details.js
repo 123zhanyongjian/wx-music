@@ -55,7 +55,7 @@ Page({
                   }
                 }
                 console.log(flag);
-                tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+                tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song,app);
                 app.data.paythis.setData({
                   value: 0
                 })

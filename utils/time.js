@@ -30,7 +30,7 @@ function Continuemusic() {
 }
 
 //重头播放音乐
-function pay(that, app, datas) {
+function pay(that, app, datas,Gatapp) {
 
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
@@ -73,7 +73,7 @@ function pay(that, app, datas) {
     });
     app.onEnded(function () {
       //音乐播完自动下一曲
-      Nextsong(that, app)
+      Nextsong(that, app,Gatapp)
     });
     // console.log(that.data.t)
     //滚动歌词

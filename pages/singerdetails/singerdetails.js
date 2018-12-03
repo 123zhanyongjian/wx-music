@@ -84,7 +84,7 @@ Page({
 
             song.lrc = res.data.showapi_res_body.lyric;
             setTimeout(() => {
-              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+              time.pay(app.data.paythis, app.innerAudioContext, app.data.song, app);
               app.data.paythis.setData({
                 value: 0
               })

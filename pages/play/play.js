@@ -179,7 +179,7 @@ Page({
 
 
     app.data.song = e.currentTarget.dataset.item;
-    tiem.pay(this, app.innerAudioContext, app.data.song);
+    tiem.pay(this, app.innerAudioContext, app.data.song,app);
     console.log(tiem)
     tiem.Lrcget(this, app.data.song)
     this.setData({
