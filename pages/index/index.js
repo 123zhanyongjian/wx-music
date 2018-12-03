@@ -90,9 +90,13 @@ Page({
   },
   onLoad: function () {
     var that=this;
+    wx.showLoading({
+      title: '加载中...',
+    })
     wx.request({
       url: api.default.host +'musicRankings',
       success:function(res){
+        wx.hideLoading();
         console.log(res);
         that.setData({
          data:res.data.result

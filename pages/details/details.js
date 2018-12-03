@@ -16,9 +16,13 @@ Page({
     var item = e.currentTarget.dataset.item;
 
     var song;
+    wx.showLoading({
+      title: '加载中...',
+    })
     wx.request({
       url: api.default.host + 'musicDetails?id=' + e.currentTarget.dataset.item.song_id,
       success: function (res) {
+        wx.hideLoading();
         console.log(res.data, 55)
         song = res.data.result.songList[0];
         song['url'] = song.showLink;

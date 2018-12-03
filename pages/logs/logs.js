@@ -31,9 +31,13 @@ Page({
           interval: e.timeStamp,
           song: []
         })
+        wx.showLoading({
+          title: '加载中...',
+        })
         wx.request({
           url: api.default.host + 'searchMusic?name=?' + serach,
           success: function(res) {
+            wx.hideLoading();
             that.setData({
               song: res.data.result
             })
