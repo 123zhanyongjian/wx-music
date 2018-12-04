@@ -30,8 +30,8 @@ function Continuemusic() {
 }
 
 //重头播放音乐
-function pay(that, app, datas,Gatapp) {
-
+function pay(that, app, datas) {
+  
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   app.play();
@@ -73,7 +73,8 @@ function pay(that, app, datas,Gatapp) {
     });
     app.onEnded(function () {
       //音乐播完自动下一曲
-      Nextsong(that, app,Gatapp)
+      
+      Nextsong(that, app, appInst)
     });
     // console.log(that.data.t)
     //滚动歌词
@@ -133,7 +134,7 @@ console.log(datas)
   
 }
 //读取小程序关闭后下次进入还是上一次关闭时所保留的信息
-function Readinfo(that, app, GAPP){
+function Readinfo(that, app, appInst){
   
   wx.getStorage({
     key: 'lastsong',
@@ -141,7 +142,7 @@ function Readinfo(that, app, GAPP){
       console.log(res)
       var datas=res.data;
      
-      GAPP.data.song=datas;
+      appInst.data.song=datas;
       app.src = datas.src;
       app.title = datas.title;
       app.coverImgUrl = datas.coverImgUrl;
@@ -173,10 +174,10 @@ function Readinfo(that, app, GAPP){
   })
 }
 //下一曲
-function Nextsong(that, app,GAPP) {
-  console.log(GAPP)
+function Nextsong(that, app, appInst) {
+  console.log(appInst)
   var datas = that.data.songList[that.data.ins + 1];
-  GAPP.data.song = datas;
+  appInst.data.song = datas;
   that.setData({
     ins: that.data.ins + 1,
     value: 0
@@ -185,9 +186,9 @@ function Nextsong(that, app,GAPP) {
 
 }
 //上一曲
-function Lastsong(that, app, GAPP) {
+function Lastsong(that, app, appInst) {
   var datas = that.data.songList[that.data.ins - 1];
-  GAPP.data.song = datas;
+  appInst.data.song = datas;
   that.setData({
     ins: that.data.ins - 1,
     value: 0

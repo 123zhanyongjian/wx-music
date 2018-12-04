@@ -1,5 +1,5 @@
 //app.js
-const tiem=require('./utils/time.js')
+// const tiem=require('./utils/time.js')
 App({
   onLaunch: function () {
     this.innerAudioContext = wx.getBackgroundAudioManager();
@@ -40,10 +40,40 @@ App({
   createdpay() {
    
   },
+  //小程序关闭后下次进入还是上一次关闭时所保留的状态
+   Closestate(that, datas){
+    console.log(datas)
+  var obj = {
+      max: that.data.max,
+      state: that.data.state,
+      value: that.data.value,
+      pay: that.data.pay,
+      t: that.data.t,
+      lrc: datas.lrc,
+      conduct: that.data.conduct,
+      src: datas.url,
+      title: datas.title,
+      coverImgUrl: datas.pic,
+      autoplay: false,
+      author: datas.author,
+      pic: datas.pic,
+      url: datas.url
+
+
+    };
+    wx.setStorage({
+      key: 'lastsong',
+      data: obj,
+      success: function (res) {
+        console.log('缓存成功')
+      }
+    })
+
+  },
   onHide(){
-    console.log(tiem)
+   
     if(this.data.paythis!=undefined&&this.data.song!=''){
-      tiem.Closestate(this.data.paythis,this.data.song);
+      this.Closestate(this.data.paythis,this.data.song);
     }
     
   },

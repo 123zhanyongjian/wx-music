@@ -42,7 +42,7 @@ Page({
           url: song.lrcLink,
           success:function(ret){
             app.data.song.lrc=ret.data;
-            tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song,app)
+            tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
             //清空播放时长
             app.data.paythis.setData({
               value: 0
