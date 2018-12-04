@@ -120,7 +120,8 @@ console.log(datas)
     autoplay:false,
     author: datas.author,
     pic:datas.pic,
-    url:datas.url
+    url:datas.url,
+    ins: that.data.ins
 
 
   };
@@ -159,9 +160,12 @@ function Readinfo(that, app, appInst){
       that.setData({
         max: datas.max,
         conduct: datas.conduct,
+        title:datas.title,
+        author:datas.author,
         Duration: MinuteConversion(datas.max),
         src: datas.src,
         t: datas.t,
+        ins:datas.ins,
         state:datas.state,
         lrc:datas.lrc,
         value: datas.value,

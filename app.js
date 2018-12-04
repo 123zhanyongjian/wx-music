@@ -48,6 +48,7 @@ App({
       state: that.data.state,
       value: that.data.value,
       pay: that.data.pay,
+      ins:that.data.ins,
       t: that.data.t,
       lrc: datas.lrc,
       conduct: that.data.conduct,
