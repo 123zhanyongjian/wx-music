@@ -226,6 +226,8 @@ function Lrcget(that, datas) {
 //添加歌曲到播放列表
 function addsong(data) {
   console.log(data)
+  //创建临时歌曲数据
+  var songdata
   var flag=true
   if(data.songlist==''){
     data.songlist=[]
@@ -234,8 +236,11 @@ function addsong(data) {
    
     if (data.songlist.length == 0) {
      
-      data.songlist.push(data.song);
-     
+      data.songlist.unshift(data.song);
+      data.paythis.setData({
+        ins: 0
+      })
+
       console.log(data)
       wx.setStorage({
         key: 'songlist',
@@ -252,8 +257,17 @@ function addsong(data) {
         if (data.song.songid == undefined && data.song.songId!=undefined) {
           if (data.song.songId == i.songid || data.song.songId == i.songId) {
             flag = true;
-            
-           
+            //记录下存在的歌
+            songdata = data.song;
+            //获取存在歌所在的位置index的值
+            for (let i = 0; i < data.songlist.length; i++) {
+              if (songdata.title == data.songlist[i].title) {
+                data.paythis.setData({
+                  ins: i
+                })
+                console.log(i)
+              }
+            }
             console.log('重复了')
             return
           } else {
@@ -264,6 +278,16 @@ function addsong(data) {
         } else if (data.song.songid != undefined && data.song.songId == undefined) {
           if (data.song.songid == i.songid || data.song.songid == i.songId) {
             flag = true;
+            songdata = data.song;
+            //获取存在歌所在的位置index的值
+            for (let i = 0; i < data.songlist.length; i++) {
+              if (songdata.title == data.songlist[i].title) {
+                data.paythis.setData({
+                  ins: i
+                })
+                console.log(i)
+              }
+            }
             return
             console.log('重复了')
           } else {
@@ -274,7 +298,16 @@ function addsong(data) {
         //歌手部分音乐是否添加
         if (i.musicId == data.song.musicId){
           flag = true;
-         
+          songdata = data.song;
+          //获取存在歌所在的位置index的值
+          for (let i = 0; i < data.songlist.length; i++) {
+            if (songdata.title == data.songlist[i].title) {
+              data.paythis.setData({
+                ins: i
+              })
+              console.log(i)
+            }
+          }
            console.log('重复了')
           return
         }else{
@@ -286,7 +319,10 @@ function addsong(data) {
      
     }
     if (!flag) {
-      data.songlist.push(data.song);
+      data.songlist.unshift(data.song)
+      data.paythis.setData({
+        ins:0
+      })
       console.log(data)
       wx.setStorage({
         key: 'songlist',
