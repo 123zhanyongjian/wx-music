@@ -17,7 +17,10 @@
         <image class="last1" src="../../image/last.png" bindtap='last'></image>
         <image class="last" src="{{pay}}" bindtap="pays"></image>
         <image class="last1" src="../../image/next.png" bindtap="next"></image>
+       
       </view>
+      <!-- 循环随机切换按钮 -->
+       <image class='loop' src="{{loop}}" bindtap="changloop"></image>
         <!-- 音乐播放列表 -->
       <view wx:if="{{showtime}}" id='songlist' class="{{close?'closes':'opens'}}">
         <view>

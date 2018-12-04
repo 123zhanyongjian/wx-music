@@ -41,18 +41,25 @@
 }
 .control{
   position: absolute;
-   
     bottom:200rpx;
      left: 48%;
      transform: translate(-50%,-50%)
    
    
 }
+.loop{
+   position: absolute;
+    width: 80rpx;
+    left:100rpx;
+   height: 80rpx;
+    bottom:260rpx;
+}
 .last{
   width: 90rpx;
   height: 90rpx;
   margin-left:40rpx; 
 }
+
 .last1{
   width: 80rpx;
   height: 80rpx;

@@ -11,6 +11,8 @@ Page({
     songList: [],
     ins: '', //列表选中
     showtime: false,
+    loopstate:false,//false代表随机，true代表循环
+    loop:'../../image/sj.png',
     lrc: [{
       lrc: '暂无歌词'
     }],
