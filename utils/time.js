@@ -31,7 +31,7 @@ function Continuemusic() {
 
 //重头播放音乐
 function pay(that, app, datas) {
-  
+console.log(datas)
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   app.play();
@@ -62,8 +62,8 @@ function pay(that, app, datas) {
   });
  
   //走进度条
-  // that.data.setInterval = setInterval(() => {
-  app.onTimeUpdate(function(){
+  that.data.setInterval = setInterval(() => {
+  // app.onTimeUpdate(function(){
 
   
     that.setData({
@@ -107,7 +107,7 @@ function pay(that, app, datas) {
     }
 
 
-  });
+  },500);
   Lrcget(that, datas)
 }
 //暂停音乐
