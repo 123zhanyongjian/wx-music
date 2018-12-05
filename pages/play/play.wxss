@@ -209,6 +209,7 @@ animation: rotation 10s linear infinite;
   left: 0;
   opacity: 0;
   right: 0;
+  display: none;
   bottom: 50rpx;
   text-align: center;
   z-index: -1;
@@ -267,5 +268,6 @@ swiper{
   color: rgb(49, 194, 124);
   font-size: 30rpx;
   z-index: 100 !important;
+  display: block !important;
   opacity: 1 !important;
 }

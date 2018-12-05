@@ -62,8 +62,10 @@ function pay(that, app, datas) {
   });
  
   //走进度条
-  that.data.setInterval = setInterval(() => {
-   
+  // that.data.setInterval = setInterval(() => {
+  app.onTimeUpdate(function(){
+
+  
     that.setData({
       Duration: MinuteConversion(app.duration),
       max: app.duration,
@@ -74,8 +76,10 @@ function pay(that, app, datas) {
     app.onEnded(function () {
       //音乐播完自动下一曲
       if (that.data.loopstate==0){
+        //顺序播放
         Nextsong(that, app, appInst)
       } else if (that.data.loopstate == 1){
+
         app.seek(0)
         pay(that, app, datas)
           that.setData({
@@ -90,9 +94,9 @@ function pay(that, app, datas) {
     });
     // console.log(that.data.t)
     //滚动歌词
-    var a = 0
+    
     for (let i = 0; i < that.data.lrc.length; i++) {
-      a++
+    
       if (i < that.data.lrc.length - 1) {
         if (that.data.lrc[i + 1].time > that.data.t && that.data.lrc[i].time < that.data.t) {
           that.setData({
@@ -103,7 +107,7 @@ function pay(that, app, datas) {
     }
 
 
-  }, 800);
+  });
   Lrcget(that, datas)
 }
 //暂停音乐

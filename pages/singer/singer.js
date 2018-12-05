@@ -33,6 +33,7 @@ Page({
         jsonpCallback: "callback"
       },
       success: function (res) {
+        console.log(res);
         if (res.statusCode === 200) {
 
           var res1 = res.data.replace("callback(", "");
