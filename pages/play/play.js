@@ -171,7 +171,9 @@ Page({
 
   },
   onShow() {
-
+    if (this.data.state) {
+      tiem.Readinfo(this, app.innerAudioContext, app)
+    }
    setTimeout(()=>{
      var song = wx.getStorageSync('songlist');
      app.data.songlist=song
@@ -179,9 +181,7 @@ Page({
      this.setData({
        songList: song
      })
-     if(this.data.state){
-       tiem.Readinfo(this, app.innerAudioContext, app)
-     }
+    
    },500)
 
 

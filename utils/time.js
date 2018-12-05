@@ -316,33 +316,36 @@ function addsong(data) {
                 console.log(i)
               }
             }
-            return
             console.log('重复了')
+            return
+           
           } else {
             flag = false;
             console.log('添加')
           }
-        }
-        //歌手部分音乐是否添加
-        if (i.musicId == data.song.musicId){
-          flag = true;
-          songdata = data.song;
-          //获取存在歌所在的位置index的值
-          for (let i = 0; i < data.songlist.length; i++) {
-            if (songdata.title == data.songlist[i].title) {
-              data.paythis.setData({
-                ins: i
-              })
-              console.log(i)
-            }
-          }
-           console.log('重复了')
-          return
         }else{
-          flag = false;
+          //歌手部分音乐是否添加
+          if (i.musicId == data.song.musicId) {
+            flag = true;
+            songdata = data.song;
+            //获取存在歌所在的位置index的值
+            for (let i = 0; i < data.songlist.length; i++) {
+              if (songdata.title == data.songlist[i].title) {
+                data.paythis.setData({
+                  ins: i
+                })
+                console.log(i)
+              }
+            }
+            console.log('重复了')
+            return
+          } else {
+            flag = false;
 
-          console.log('添加')
+            console.log('添加')
+          }
         }
+       
       }
      
     }
