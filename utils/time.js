@@ -214,8 +214,8 @@ function Lastsong(that, app, appInst) {
 }
 //随机播放
 function Randomplay(that, app, appInst){
-  var length = that.data.songList.length-1
-  var inst = Math.floor(Math.random() * length + 1)
+  var length = that.data.songList.length
+  var inst = Math.floor(Math.random() * length )
   var datas = that.data.songList[inst];
   appInst.data.song = datas;
   that.setData({
