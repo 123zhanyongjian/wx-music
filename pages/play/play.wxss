@@ -49,10 +49,10 @@
 }
 .loop{
    position: absolute;
-    width: 80rpx;
-    left:100rpx;
-   height: 80rpx;
-    bottom:260rpx;
+    width: 60rpx;
+    left:120rpx;
+   height: 60rpx;
+    bottom:270rpx;
 }
 .last{
   width: 90rpx;

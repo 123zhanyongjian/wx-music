@@ -73,8 +73,20 @@ function pay(that, app, datas) {
     });
     app.onEnded(function () {
       //音乐播完自动下一曲
+      if (that.data.loopstate==0){
+        Nextsong(that, app, appInst)
+      } else if (that.data.loopstate == 1){
+        app.seek(0)
+        pay(that, app, datas)
+          that.setData({
+            value:0
+          })
+        console.log("循环播放")
+      }else{
+        Randomplay(that, app, appInst)
+      }
       
-      Nextsong(that, app, appInst)
+      
     });
     // console.log(that.data.t)
     //滚动歌词
@@ -199,6 +211,18 @@ function Lastsong(that, app, appInst) {
   });
   pay(that, app, datas);
 
+}
+//随机播放
+function Randomplay(that, app, appInst){
+  var length = that.data.songList.length-1
+  var inst = Math.floor(Math.random() * length + 1)
+  var datas = that.data.songList[inst];
+  appInst.data.song = datas;
+  that.setData({
+    ins: inst,
+    value: 0
+  });
+  pay(that, app, datas);
 }
 //获取歌词
 function Lrcget(that, datas) {

@@ -11,8 +11,8 @@ Page({
     songList: [],
     ins: '', //列表选中
     showtime: false,
-    loopstate:false,//false代表随机，true代表循环
-    loop:'../../image/sj.png',
+    loopstate:0,//f0代表顺序，1代表循环，2代表随机
+    loop:'../../image/sx.png',
     lrc: [{
       lrc: '暂无歌词'
     }],
@@ -59,6 +59,43 @@ Page({
       console.log("111")
     }, 300)
 
+  },
+  //切换播放模式
+  changloop(){
+      if(this.data.loopstate==0){
+        this.setData({
+          loopstate:1,
+          loop: '../../image/xh.png'
+
+        })
+        wx.showToast({
+          title: '循环播放',
+          icon: 'none',
+          duration: 1000
+        })
+      } else if (this.data.loopstate == 1){
+        this.setData({
+          loopstate:2,
+          loop: '../../image/sj.png'
+
+        })
+        wx.showToast({
+          title: '随机播放',
+          icon: 'none',
+          duration: 1000
+        })
+      }else{
+        this.setData({
+          loopstate: 0,
+          loop: '../../image/sx.png'
+
+        })
+        wx.showToast({
+          title: '顺序播放',
+          icon: 'none',
+          duration: 1000
+        })
+      }
   },
   //切换进度条
   changeslider(e) {
