@@ -123,7 +123,7 @@ animation: rotation 10s linear infinite;
   top: 50%;
   color: white;
   z-index: 1000;
-  background: rgba(0, 0, 0, .5)
+  background: rgba(0, 0, 0, .8)
 
 
 }
@@ -270,4 +270,12 @@ swiper{
   z-index: 100 !important;
   display: block !important;
   opacity: 1 !important;
+}
+.menb{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  bottom: 0;
+  right: 0
 }

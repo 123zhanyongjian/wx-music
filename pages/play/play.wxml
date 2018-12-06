@@ -22,6 +22,8 @@
       <!-- 循环随机切换按钮 -->
        <image class='loop' src="{{loop}}" bindtap="changloop"></image>
         <!-- 音乐播放列表 -->
+        <!-- 关闭蒙版 -->
+        <view class='menb' wx:if="{{showtime}}" bindtap='closese'></view>
       <view wx:if="{{showtime}}" id='songlist' class="{{close?'closes':'opens'}}">
         <view>
           <view class='close' bindtap='closese'>关闭</view>
