@@ -370,5 +370,22 @@ function addsong(data) {
   }
 
 }
+//自定义promise函数
+function Promisify(fn) {
+  return function (obj = {}) {
+    return new Promise((resolve, reject) => {
+      obj.success = function (res) {
+        resolve(res)
+      }
 
-export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong, Closestate, Readinfo};
+      obj.fail = function (res) {
+        reject(res)
+      }
+
+      fn(obj)//执行函数，obj为传入函数的参数
+    })
+  }
+}
+
+
+export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong, Closestate, Readinfo, Promisify};

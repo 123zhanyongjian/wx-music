@@ -30,7 +30,7 @@
           <scroll-view class='scroll-viewlist' scroll-y="true">
             <view class="song {{index===ins?'active':''}}" wx:for="{{songList}}" wx:key="{{index}}" data-index="{{index}}" data-item="{{item}}" bindtap='pay' bindlongpress="del">
               <image src='../../image/mm.png'></image>
-              <view class='text'>{{item.title}}--{{item.author}}</view>
+              <view class='text'>{{item.title==undefined?item.name:item.title}}--{{item.author==undefined?item.singer:item.author}}</view>
             </view>
 
 
