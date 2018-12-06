@@ -219,53 +219,7 @@ Page({
     console.log(e.currentTarget.dataset.item)
     app.data.song = e.currentTarget.dataset.item;
   if(app.data.song.pic==undefined){
-    var request = tiem.Promisify(wx.request)
-   
-   var  songmidid = app.data.song.mid
-    request({
-      url: `https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=5381&inCharset=utf-8&outCharset=utf-8&notice=0&format=jsonp&hostUin=0&loginUin=0&platform=yqq&needNewCode=0&cid=205361747&uin=0&filename=C400${songmidid}.m4a&guid=3913883408&songmid=${songmidid}&callback=callback`,
-      data: {
-        g_tk: 5381,
-        inCharset: 'utf-8',
-        outCharset: 'utf-8',
-        notice: 0,
-        format: 'jsonp',
-        hostUin: 0,
-        loginUin: 0,
-        platform: 'yqq',
-        needNewCode: 0,
-        cid: 205361747,
-        uin: 0,
-        filename: `C400${songmidid}.m4a`,
-        guid: 3913883408,
-        songmid: songmidid,
-        callback: 'callback',
-      }
-
-    })
-      .then(res => {
-
-        var res1 = res.data.replace("callback(", "")
-        var res2 = JSON.parse(res1.substring(0, res1.length - 1))
-        const playUrl = `http://dl.stream.qqmusic.qq.com/${res2.data.items[0].filename}?vkey=${res2.data.items[0].vkey}&guid=3913883408&uin=0&fromtag=66`
-        app.data.song.url = playUrl;
-        app.data.song['title'] = app.data.song.name;
-        app.data.song['author'] = app.data.song.singer;
-        app.data.song['pic'] = app.data.song.image;
-
-        
-        //获取歌词
-        request({
-          url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`
-        })
-          .then(res => {
-            app.data.song.lrc = res.data.showapi_res_body.lyric;
-            tiem.Lrcget(this, app.data.song)
-            tiem.pay(this, app.innerAudioContext, app.data.song);
-
-            console.log(this.data.list)
-          })
-      })
+    tiem.wholelist(app)
   }else{
     tiem.Lrcget(this, app.data.song)
     tiem.pay(this, app.innerAudioContext, app.data.song);

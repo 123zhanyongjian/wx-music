@@ -52,21 +52,21 @@ App({
       t: that.data.t,
       lrc: datas.lrc,
       conduct: that.data.conduct,
-      src: datas.url,
+      src: datas.src,
       title: datas.title,
       coverImgUrl: datas.pic,
       autoplay: false,
       author: datas.author,
       pic: datas.pic,
-      url: datas.url
-
+      url: datas.url,
+      datas:datas
 
     };
     wx.setStorage({
       key: 'lastsong',
       data: obj,
       success: function (res) {
-        console.log('缓存成功')
+        console.log('缓存成功', res)
       }
     })
 
