@@ -248,11 +248,20 @@ function Randomplay(that, app, appInst) {
   var inst = Math.floor(Math.random() * length)
   var datas = that.data.songList[inst];
   appInst.data.song = datas;
-  that.setData({
-    ins: inst,
-    value: 0
-  });
-  pay(that, app, datas);
+ if(appInst.data.song.pic==undefined){
+   wholelist(appInst);
+   that.setData({
+     ins: inst,
+     value: 0
+   });
+ }else{
+   
+   that.setData({
+     ins: inst,
+     value: 0
+   });
+   pay(that, app, datas);
+ }
 }
 //获取歌词
 function Lrcget(that, datas) {
