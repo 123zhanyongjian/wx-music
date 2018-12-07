@@ -10,6 +10,7 @@
 }
 .singerlist {
   position: relative;
+  
 }
 
 scroll-view {
@@ -42,3 +43,23 @@ scroll-view {
   left: 120rpx;
  
 }
+.dw{
+  
+ 
+  width: 100rpx;
+  float: right;
+  text-align: right;
+  
+}
+.dw>.dw1{
+  position: relative;
+  z-index: 9999;
+  right: 20rpx;
+  height: 30rpx;
+  color: #aaa;
+  top: 100rpx;
+  font-size: 26rpx;
+  margin-top: 10rpx;
+}
+.dw>.dw1>view{}
+

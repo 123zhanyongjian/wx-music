@@ -279,5 +279,14 @@ Page({
   },
   onLoad: function() {
     app.data.paythis = this;
+   
+
+    app.innerAudioContext.onPlay(() => {
+      if (this.data.state) {
+        console.log("停我音乐？", this.data.state)
+        app.innerAudioContext.pause();
+      }
+      })
+    
   }
 })

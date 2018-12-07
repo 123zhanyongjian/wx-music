@@ -1,11 +1,20 @@
 <view class="mains">
-  <scroll-view scroll-y>
+  <scroll-view scroll-y scroll-with-animation scroll-into-view="line{{title}}">
+  
     <view wx:for="{{singer}}" wx:key="{{index}}" wx:for-index="index" class='singerlist'>
-      <view class='sort'>{{item.title}}</view>
+      
+      <view class='sort' id="line{{item.title}}">{{item.title}}</view>
       <view class='singer' wx:key="{{idx}}" wx:for="{{singer[index].items}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>
         <image src="{{ite.avatar}}" class="haderimg"></image>
         <view class='singername'>{{ite.name}}</view>
       </view>
     </view>
   </scroll-view>
+<!-- 右侧快速定位 -->
+      <view class='dw' >
+       <view class='dw1'  wx:for="{{singer}}" wx:key="{{index}}" wx:for-index="index">
+            <view data-id="{{item.title}}" bindtap='Location'>{{item.title}}</view>
+       </view>
+      
+      </view>
 </view>

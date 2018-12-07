@@ -168,15 +168,11 @@ function Readinfo(that, app, appInst) {
       }
       app.title = datas.title;
       app.coverImgUrl = datas.coverImgUrl;
-
+    
       app.autoplay = false;
+    
       setTimeout(() => {
-        if (!datas.state) {
-          pay(that, app, datas);
-          console.log("sdsds")
-        } else {
-          suspend(that, app)
-        }
+        suspend(that, app)
         app.seek(datas.value)
         that.setData({
           max: datas.max,
@@ -194,7 +190,7 @@ function Readinfo(that, app, appInst) {
           img: datas.coverImgUrl
 
         })
-      }, 200)
+      }, 100)
     },
   })
 }

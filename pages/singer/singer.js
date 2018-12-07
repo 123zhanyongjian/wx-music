@@ -10,7 +10,8 @@ Page({
 
   
   data: {
-    singer:[]
+    singer:[],
+    title:'热门'
   },
   getSingerList: function () {
     const _that = this
@@ -45,6 +46,13 @@ Page({
           })
         }
       }
+    })
+  },
+  //锚点定位
+  Location(e){
+      var title=e.currentTarget.dataset.id;
+    this.setData({
+      title:title
     })
   },
   /*组装成需要的歌手列表数据*/
