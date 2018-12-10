@@ -11,7 +11,7 @@ Page({
   
   data: {
     singer:[],
-    title:'热门'
+    title:''
   },
   getSingerList: function () {
     const _that = this

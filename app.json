@@ -1,8 +1,8 @@
 {
   "pages": [
-    "pages/singer/singer",
-    "pages/play/play",
    
+    "pages/play/play",
+    "pages/singer/singer",
     "pages/singerdetails/singerdetails",
     "pages/index/index",
     "pages/details/details",

@@ -215,7 +215,10 @@ Page({
 
   //选择音乐
   pay(e) {
-
+    this.setData({
+      ins: e.currentTarget.dataset.index,
+      value: 0
+    })
     console.log(e.currentTarget.dataset.item)
     app.data.song = e.currentTarget.dataset.item;
   if(app.data.song.pic==undefined){
@@ -226,10 +229,7 @@ Page({
   }
     console.log(tiem)
   
-    this.setData({
-      ins: e.currentTarget.dataset.index,
-      value: 0
-    })
+   
   },
   //上一曲
   last() {
@@ -270,6 +270,10 @@ Page({
       if (this.data.state) {
         //播放音乐
         tiem.pay(this, app.innerAudioContext, app.data.song);
+       
+         
+          console.log(this.data.value)
+      
       } else {
         //暂停音乐
         tiem.suspend(this, app.innerAudioContext)

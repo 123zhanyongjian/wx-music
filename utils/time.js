@@ -36,12 +36,14 @@ function pay(that, app, datas) {
   clearInterval(that.data.setInterval);
   app.play();
   console.log(datas)
-  if (datas.url == undefined) {
-    app.src = datas.src;
-    console.log('进来了啊')
-  } else {
-    app.src = datas.url;
-  }
+ if(that.data.value==0){
+   if (datas.url == undefined) {
+     app.src = datas.src;
+     console.log('进来了啊')
+   } else {
+     app.src = datas.url;
+   }
+ }
 
   app.title = datas.title;
   app.coverImgUrl = datas.pic;
@@ -64,7 +66,7 @@ function pay(that, app, datas) {
 
   //走进度条
   that.data.setInterval = setInterval(() => {
-    // app.onTimeUpdate(function(){
+    app.onTimeUpdate(function(){
 
 
     that.setData({
@@ -107,7 +109,7 @@ function pay(that, app, datas) {
       }
     }
 
-
+    })
   }, 500);
   Lrcget(that, datas)
 }
