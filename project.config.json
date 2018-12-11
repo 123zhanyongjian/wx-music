@@ -12,9 +12,9 @@
 		"autoAudits": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.4.0",
-	"appid": "wx5e8e1fa288373817",
-	"projectname": "QQMusic",
+	"libVersion": "2.4.1",
+	"appid": "wx9512f6138b9a9965",
+	"projectname": "qqmusic",
 	"debugOptions": {
 		"hidedInDevtools": []
 	},

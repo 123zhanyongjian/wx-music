@@ -244,6 +244,8 @@ Page({
       })
     }
   },
+  
+  
   //下一曲
   next() {
     console.log(this.data.ins,app)

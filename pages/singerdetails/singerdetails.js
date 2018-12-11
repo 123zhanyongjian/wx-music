@@ -97,11 +97,12 @@ Page({
             wx.switchTab({
               url: "../../pages/play/play",
               success: function () {
-                time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
                 app.data.paythis.setData({
                   value: 0,
                   ins: 0
                 })
+                time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+               
 
 
               }

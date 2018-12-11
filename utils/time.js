@@ -44,7 +44,32 @@ function pay(that, app, datas) {
      app.src = datas.url;
    }
  }
-
+  //苹果手机系统下一首
+  app.onNext(() => {
+   
+    if (that.data.songList.length - 1 > that.data.ins) {
+      Nextsong(that, app, appInst)
+    } else {
+      wx.showToast({
+        title: '已经是最后一曲了',
+        icon: 'none',
+        duration: 1000
+      })
+    }
+  })
+  //苹果手机系统上一首
+  app.onPrev(() => {
+   
+    if (that.data.ins > 0) {
+      Lastsong(that, app, appInst)
+    } else {
+      wx.showToast({
+        title: '已经是第一曲了',
+        icon: 'none',
+        duration: 1000
+      })
+    }
+  })
   app.title = datas.title;
   app.coverImgUrl = datas.pic;
   app.autoplay = false;
@@ -84,10 +109,11 @@ function pay(that, app, datas) {
       } else if (that.data.loopstate == 1) {
 
         app.seek(0)
-        pay(that, app, datas)
         that.setData({
           value: 0
         })
+        pay(that, app, datas)
+       
         console.log("循环播放")
       } else {
         Randomplay(that, app, appInst)
@@ -96,6 +122,9 @@ function pay(that, app, datas) {
 
     });
     // console.log(that.data.t)
+    
+
+    })
     //滚动歌词
 
     for (let i = 0; i < that.data.lrc.length; i++) {
@@ -108,8 +137,6 @@ function pay(that, app, datas) {
         }
       }
     }
-
-    })
   }, 500);
   Lrcget(that, datas)
 }
@@ -199,20 +226,19 @@ function Readinfo(that, app, appInst) {
 //下一曲
 function Nextsong(that, app, appInst) {
   var datas = that.data.songList[that.data.ins + 1];
+  that.setData({
+    ins: that.data.ins + 1,
+    value: 0
+  });
   appInst.data.song = datas;
   if(appInst.data.song.pic==undefined){
+    
     wholelist(appInst)
-    that.setData({
-      ins: that.data.ins + 1,
-      value: 0
-    });
+   
   }else{
     console.log(appInst)
 
-    that.setData({
-      ins: that.data.ins + 1,
-      value: 0
-    });
+  
 
 
     pay(that, app, datas);
@@ -222,20 +248,19 @@ function Nextsong(that, app, appInst) {
 }
 //上一曲
 function Lastsong(that, app, appInst) {
+  
   var datas = that.data.songList[that.data.ins - 1];
+  that.setData({
+    ins: that.data.ins - 1,
+    value: 0
+  });
   appInst.data.song = datas;
   if (appInst.data.song.pic == undefined) {
-    that.setData({
-      ins: that.data.ins - 1,
-      value: 0
-    });
+   
     wholelist(appInst)
   } else {
    
-    that.setData({
-      ins: that.data.ins - 1,
-      value: 0
-    });
+   
     pay(that, app, datas);
   }
 
@@ -243,21 +268,21 @@ function Lastsong(that, app, appInst) {
 //随机播放
 function Randomplay(that, app, appInst) {
   var length = that.data.songList.length
-  var inst = Math.floor(Math.random() * length)
+  
+  var inst = Math.floor(Math.random() * length);
+  that.setData({
+    ins: inst,
+    value: 0
+  });
   var datas = that.data.songList[inst];
   appInst.data.song = datas;
  if(appInst.data.song.pic==undefined){
+  
    wholelist(appInst);
-   that.setData({
-     ins: inst,
-     value: 0
-   });
+   
  }else{
    
-   that.setData({
-     ins: inst,
-     value: 0
-   });
+   
    pay(that, app, datas);
  }
 }
@@ -464,11 +489,12 @@ function wholelist(app) {
         .then(res => {
           app.data.song.lrc = res.data.showapi_res_body.lyric;
           Lrcget(app.data.paythis, app.data.song)
-          pay(app.data.paythis, app.innerAudioContext, app.data.song);
           app.data.paythis.setData({
 
             value: 0
           })
+          pay(app.data.paythis, app.innerAudioContext, app.data.song);
+         
           console.log(app.data.song)
         })
     })
