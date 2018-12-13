@@ -73,12 +73,7 @@ function pay(that, app, datas) {
   app.title = datas.title;
   app.coverImgUrl = datas.pic;
   app.autoplay = false;
-  setTimeout(() => {
-    if (that.data.value != 0) {
-      app.seek(that.data.value);
-      console.log("?????", that.data.value)
-    }
-  }, 500)
+  
   that.setData({
     title: datas.title,
     author: datas.author,
@@ -90,7 +85,7 @@ function pay(that, app, datas) {
   });
 
   //走进度条
-  that.data.setInterval = setInterval(() => {
+  
     app.onTimeUpdate(function(){
 
 
@@ -121,23 +116,26 @@ function pay(that, app, datas) {
 
 
     });
-    // console.log(that.data.t)
+    console.log(that.data.t)
     
+      //滚动歌词
 
-    })
-    //滚动歌词
+      for (let i = 0; i < that.data.lrc.length; i++) {
 
-    for (let i = 0; i < that.data.lrc.length; i++) {
-
-      if (i < that.data.lrc.length - 1) {
-        if (that.data.lrc[i + 1].time > that.data.t && that.data.lrc[i].time < that.data.t) {
-          that.setData({
-            toLineNum: i
-          })
+        if (i < that.data.lrc.length - 1) {
+          if (that.data.lrc[i + 1].time > that.data.t && that.data.lrc[i].time < that.data.t) {
+            console.log(i)
+            if(i!=that.data.toLineNum){
+              that.setData({
+                toLineNum: i
+              })
+            }
+          }
         }
       }
-    }
-  }, 500);
+
+     
+    })
   Lrcget(that, datas)
 }
 //暂停音乐

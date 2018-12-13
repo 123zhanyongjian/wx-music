@@ -11,6 +11,7 @@
   "requiredBackgroundModes":["audio"],
   "window": {
     "backgroundTextStyle": "light",
+    "onReachBottomDistance":50,
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeChat",
     "navigationBarTextStyle": "black",

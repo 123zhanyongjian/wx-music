@@ -188,7 +188,7 @@ Page({
     })
   
   },
-  
+
    /*上拉加载更多歌曲*/
   onReachBottom(){
     this.getSingerDetail(app.data.singer.id, this.data.songs.length)

@@ -102,6 +102,9 @@ Page({
       })
     }
   })
- }
+ },
+  onReachBottom() {
+    console.log("3232")
+  }
   
 })

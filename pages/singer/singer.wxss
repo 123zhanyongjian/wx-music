@@ -16,7 +16,7 @@
 scroll-view {
   position: absolute;
   top: 0;
-  bottom: 0;
+  bottom: 0rpx;
   left: 0;
   right: 0;
 }
@@ -45,7 +45,8 @@ scroll-view {
 }
 .dw{
   
- 
+ position: fixed;
+ right:0;
   width: 100rpx;
   float: right;
   text-align: right;
