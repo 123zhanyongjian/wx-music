@@ -23,7 +23,15 @@ Page({
       url: api.default.host + 'musicDetails?id=' + e.currentTarget.dataset.item.song_id,
       success: function (res) {
         wx.hideLoading();
-        console.log(res.data, 55)
+        console.log(res.data, 55);
+        if (res.data.result.songList == '') {
+          wx.showToast({
+            title: '链接已失效',
+            icon: 'none',
+            duration: 1500
+          })
+          return
+        }
         song = res.data.result.songList[0];
         song['url'] = song.showLink;
         song['title'] = song.songName;

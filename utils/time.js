@@ -50,11 +50,10 @@ function pay(that, app, datas) {
     if (that.data.songList.length - 1 > that.data.ins) {
       Nextsong(that, app, appInst)
     } else {
-      wx.showToast({
-        title: '已经是最后一曲了',
-        icon: 'none',
-        duration: 1000
+      that.setData({
+        ins: -1
       })
+      Nextsong(that, app, appInst)
     }
   })
   //苹果手机系统上一首
@@ -63,11 +62,10 @@ function pay(that, app, datas) {
     if (that.data.ins > 0) {
       Lastsong(that, app, appInst)
     } else {
-      wx.showToast({
-        title: '已经是第一曲了',
-        icon: 'none',
-        duration: 1000
-      })
+     that.setData({
+       ins: appInst.data.songlist.length
+     })
+      Lastsong(that, app, appInst)
     }
   })
   app.title = datas.title;

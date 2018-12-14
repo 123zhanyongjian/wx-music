@@ -237,11 +237,10 @@ Page({
     if (this.data.ins > 0) {
       tiem.Lastsong(this, app.innerAudioContext,app)
     } else {
-      wx.showToast({
-        title: '已经是第一曲了',
-        icon: 'none',
-        duration: 1000
-      })
+    this.setData({
+      ins: app.data.songlist.length
+    })
+      tiem.Lastsong(this, app.innerAudioContext, app)
     }
   },
   
@@ -252,12 +251,12 @@ Page({
     if (this.data.songList.length - 1 > this.data.ins) {
       tiem.Nextsong(this, app.innerAudioContext,app)
     } else {
-      wx.showToast({
-        title: '已经是最后一曲了',
-        icon: 'none',
-        duration: 1000
+      this.setData({
+        ins:1
       })
+      tiem.Lastsong(this, app.innerAudioContext, app)
     }
+    
   },
   //播放暂停
   pays() {
