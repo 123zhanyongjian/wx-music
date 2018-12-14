@@ -105,7 +105,7 @@ Page({
   },
   details(e) {
     app.data.singer = e.currentTarget.dataset.singer;
-
+    
     wx.navigateTo({
       url: "../../pages/singerdetails/singerdetails"
     })

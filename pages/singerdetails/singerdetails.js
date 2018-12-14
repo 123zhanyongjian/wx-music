@@ -13,10 +13,18 @@ Page({
     wx.setNavigationBarTitle({
       title: app.data.singer.name
     })
-    this.setData({
-      title: app.data.singer.name,
-      image: app.data.singer.avatar
-    })
+    
+    if (app.data.singer.avatar==undefined){
+      this.setData({
+        title: app.data.singer.name,
+        image: app.data.singer.pic
+      })
+    }else{
+      this.setData({
+        title: app.data.singer.name,
+        image: app.data.singer.avatar
+      })
+    }
     console.log(app.data.singer)
     this.getSingerDetail(app.data.singer.id)
     app.data.fromSinger = false

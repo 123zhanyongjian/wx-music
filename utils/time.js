@@ -476,7 +476,7 @@ function wholelist(app) {
       app.data.song['title'] = app.data.song.name;
       app.data.song['author'] = app.data.song.singer;
       app.data.song['pic'] = app.data.song.image;
-
+      console.log(res2,res1)
 
       //获取歌词
       request({

@@ -1,12 +1,14 @@
 {
   "pages": [
-   
     "pages/play/play",
+   "pages/logs/logs",
+    
     "pages/singer/singer",
     "pages/singerdetails/singerdetails",
     "pages/index/index",
-    "pages/details/details",
-    "pages/logs/logs"
+    
+    "pages/details/details"
+    
   ],
   "requiredBackgroundModes":["audio"],
   "window": {

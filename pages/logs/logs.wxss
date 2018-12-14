@@ -10,7 +10,7 @@
   position: relative;
 
 }
-.serachimg{
+.serachimg,image{
   position: absolute;
   width: 40rpx;
   height: 40rpx;
@@ -22,7 +22,7 @@
   margin: 25rpx;
   font-size: 26rpx;
   border-radius: 14rpx;
-  padding: 10rpx 50rpx;
+  padding: 10rpx 80rpx;
   
 
 }
@@ -36,12 +36,42 @@
   height:80rpx;
   border-bottom: 2rpx solid #f9f9f9;
 }
-.li>image{
+.li>.serachimg{
   width: 40rpx;
   height: 40rpx;
   position: absolute; 
   left:33rpx;
   top: 18rpx;
+}
+.haderimg{
+  width: 80rpx;
+  position: absolute;
+  top: 14rpx;
+  left: 20rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+.singer{
+ position: relative;
+ border-bottom: 2rpx solid #f1f1f1;
+  height: 110rpx;
+  background: #fff;
+  /* margin-top: 30rpx; */
+  
+}
+.serachimgs{
+   width: 30rpx;
+  height: 30rpx;
+  position: absolute; 
+  left:71rpx;
+  top: 21rpx;
+}
+.singername{
+  font-size: 28rpx;
+  position: absolute;
+  top:31rpx;
+  left: 120rpx;
+ 
 }
 .li>text{
   margin-left: 100rpx;
