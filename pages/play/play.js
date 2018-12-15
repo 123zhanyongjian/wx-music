@@ -42,7 +42,7 @@ Page({
       this.setData({
         showtime: false
       })
-      console.log("111")
+     
     }, 300)
 
   },
@@ -56,7 +56,7 @@ Page({
       this.setData({
         showtime: true
       })
-      console.log("111")
+      
     }, 300)
 
   },
@@ -100,7 +100,7 @@ Page({
   //切换进度条
   changeslider(e) {
 
-    console.log(e.detail.value);
+   
     if (this.data.max != 0) {
       app.innerAudioContext.seek(e.detail.value);
       this.setData({
@@ -185,32 +185,11 @@ Page({
    },500)
 
 
-  //   console.log(app.innerAudioContext, song);
-
-
-
-  //   // if (app.data.song != '') {
-
-  //   //   var song = app.data.song;
-  //   //     console.log(song)
-  //   //   this.setData({
-  //   //     author: song.author,
-  //   //     img: song.pic,
-  //   //     title: song.title,
-  //   //     src: song.url,
-
-
-
-  //   //   })
-
-
-  //   //   console.log("？？？3333")
-  //   // }
-
+  
 
   },
   onHide() {
-    // clearInterval(this.data.setInterval)
+   
   },
 
   //选择音乐
@@ -219,7 +198,7 @@ Page({
       ins: e.currentTarget.dataset.index,
       value: 0
     })
-    console.log(e.currentTarget.dataset.item)
+   
     app.data.song = e.currentTarget.dataset.item;
   if(app.data.song.pic==undefined){
     tiem.wholelist(app)
@@ -227,13 +206,12 @@ Page({
     tiem.Lrcget(this, app.data.song)
     tiem.pay(this, app.innerAudioContext, app.data.song);
   }
-    console.log(tiem)
+
   
    
   },
   //上一曲
   last() {
-    console.log(this.data.ins,app)
     if (this.data.ins > 0) {
       tiem.Lastsong(this, app.innerAudioContext,app)
     } else {
@@ -247,7 +225,7 @@ Page({
   
   //下一曲
   next() {
-    console.log(this.data.ins,app)
+
     if (this.data.songList.length - 1 > this.data.ins) {
       tiem.Nextsong(this, app.innerAudioContext,app)
     } else {
@@ -273,7 +251,7 @@ Page({
         tiem.pay(this, app.innerAudioContext, app.data.song);
        
          
-          console.log(this.data.value)
+        
       
       } else {
         //暂停音乐
@@ -288,7 +266,7 @@ Page({
 
     app.innerAudioContext.onPlay(() => {
       if (this.data.state) {
-        console.log("停我音乐？", this.data.state)
+       
         app.innerAudioContext.pause();
       }
       })

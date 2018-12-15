@@ -68,6 +68,8 @@ function pay(that, app, datas) {
       Lastsong(that, app, appInst)
     }
   })
+ 
+  
   app.title = datas.title;
   app.coverImgUrl = datas.pic;
   app.autoplay = false;
@@ -107,14 +109,14 @@ function pay(that, app, datas) {
         })
         pay(that, app, datas)
        
-        console.log("循环播放")
+      
       } else {
         Randomplay(that, app, appInst)
       }
 
 
     });
-    console.log(that.data.t)
+  
     
       //滚动歌词
 
@@ -122,7 +124,7 @@ function pay(that, app, datas) {
 
         if (i < that.data.lrc.length - 1) {
           if (that.data.lrc[i + 1].time > that.data.t && that.data.lrc[i].time < that.data.t) {
-            console.log(i)
+        
             if(i!=that.data.toLineNum){
               that.setData({
                 toLineNum: i
@@ -147,7 +149,7 @@ function suspend(that, app) {
 }
 //小程序关闭后下次进入还是上一次关闭时所保留的状态
 function Closestate(that, datas) {
-  console.log(datas)
+
   var obj = {
     max: that.data.max,
     state: that.data.state,
@@ -182,7 +184,7 @@ function Readinfo(that, app, appInst) {
   wx.getStorage({
     key: 'lastsong',
     success: function (res) {
-      console.log(res)
+   
       var datas = res.data;
 
       appInst.data.song = datas;
@@ -232,7 +234,7 @@ function Nextsong(that, app, appInst) {
     wholelist(appInst)
    
   }else{
-    console.log(appInst)
+   
 
   
 
@@ -293,7 +295,7 @@ function Lrcget(that, datas) {
 
     lrc.push(obj)
   }
-  console.log(lrc)
+ 
   that.setData({
     lrc: lrc
   })
@@ -311,7 +313,7 @@ function Lrcget(that, datas) {
 }
 //添加歌曲到播放列表
 function addsong(data) {
-  console.log(data)
+  
   //创建临时歌曲数据
   var songdata
   var flag = true
@@ -327,7 +329,7 @@ function addsong(data) {
         ins: 0
       })
 
-      console.log(data)
+     
       wx.setStorage({
         key: 'songlist',
         data: data.songlist,
@@ -335,11 +337,11 @@ function addsong(data) {
           console.log('异步保存成功')
         }
       })
-      console.log(data.songlist)
+     
     } else if (data.songlist.length < 99) {
 
       for (let i of data.songlist) {
-        console.log('进来了')
+      
         if (data.song.songid == undefined && data.song.songId != undefined) {
           if (data.song.songId == i.songid || data.song.songId == i.songId) {
             flag = true;
@@ -351,7 +353,7 @@ function addsong(data) {
                 data.paythis.setData({
                   ins: i
                 })
-                console.log(i)
+              
               }
             }
             console.log('重复了')
@@ -371,7 +373,7 @@ function addsong(data) {
                 data.paythis.setData({
                   ins: i
                 })
-                console.log(i)
+              
               }
             }
             console.log('重复了')
@@ -392,7 +394,7 @@ function addsong(data) {
                 data.paythis.setData({
                   ins: i
                 })
-                console.log(i)
+             
               }
             }
             console.log('重复了')
@@ -412,7 +414,7 @@ function addsong(data) {
       data.paythis.setData({
         ins: 0
       })
-      console.log(data)
+     
       wx.setStorage({
         key: 'songlist',
         data: data.songlist,
@@ -476,7 +478,20 @@ function wholelist(app) {
       app.data.song['title'] = app.data.song.name;
       app.data.song['author'] = app.data.song.singer;
       app.data.song['pic'] = app.data.song.image;
-      console.log(res2,res1)
+      if (app.data.song.pic == undefined) {
+        var request = Promisify(wx.request), mid = app.data.song.mid
+        request({
+          url: 'https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?songmid=' + mid + '&tpl=yqq_song_detail&format=jsonp&callback=getOneSongInfoCallback&g_tk=5381&jsonpCallback=getOneSongInfoCallback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
+        })
+          .then(res => {
+            res = res.data.replace('getOneSongInfoCallback(', '');
+            res = JSON.parse(res.substring(0, res.length - 1))
+            app.data.song.pic = `https://y.gtimg.cn/music/photo_new/T002R300x300M000${res.data[0].album.mid}.jpg?max_age=2592000`
+
+          
+          })
+      }
+  
 
       //获取歌词
       request({
@@ -491,7 +506,7 @@ function wholelist(app) {
           })
           pay(app.data.paythis, app.innerAudioContext, app.data.song);
          
-          console.log(app.data.song)
+        
         })
     })
 }
