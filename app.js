@@ -36,6 +36,20 @@ App({
         }
       }
     })
+    //监听暂停事件
+    this.innerAudioContext.onPause(()=>{
+      this.data.paythis.setData({
+        pay: '../../image/bf.png',
+        state: true
+      })
+    })
+    //监听播放事件
+    this.innerAudioContext.onPlay(() => {
+      this.data.paythis.setData({
+        pay: '../../image/zt.png',
+        state: false
+      })
+    })
   },
   //创建歌曲实例
   createdpay() {
