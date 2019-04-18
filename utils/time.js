@@ -479,7 +479,7 @@ function wholelist(app) {
       app.data.song['author'] = app.data.song.singer;
       app.data.song['pic'] = app.data.song.image;
       if (app.data.song.pic == undefined) {
-        var request = Promisify(wx.request), mid = app.data.song.mid
+        var mid = app.data.song.mid
         request({
           url: 'https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?songmid=' + mid + '&tpl=yqq_song_detail&format=jsonp&callback=getOneSongInfoCallback&g_tk=5381&jsonpCallback=getOneSongInfoCallback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
         })

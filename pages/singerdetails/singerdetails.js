@@ -93,7 +93,20 @@ Page({
         app.data.song['author'] = app.data.song.singer;
         app.data.song['pic'] = app.data.song.image;
 
+        wx.switchTab({
+          url: "../../pages/play/play",
+          success: function () {
+            app.data.paythis.setData({
+              value: 0,
+              ins: 0
+            })
+            time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
 
+
+
+          }
+
+        })
         //获取歌词
         request({
           url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`
@@ -102,24 +115,12 @@ Page({
             app.data.song.lrc = res.data.showapi_res_body.lyric;
             time.Lrcget(this, app.data.song)
             
-            wx.switchTab({
-              url: "../../pages/play/play",
-              success: function () {
-                app.data.paythis.setData({
-                  value: 0,
-                  ins: 0
-                })
-                time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-               
-
-
-              }
-
-            })
+          
             console.log(this.data.list)
           })
       })
     app.data.songlist=this.data.songs;
+    
     wx.setStorage({
       key: 'songlist',
       data: app.data.songlist,
@@ -165,6 +166,16 @@ Page({
         song['author']=song.singer;
         song['pic']=song.image;
         app.data.song = song;
+        wx.switchTab({
+          url: "../../pages/play/play",
+          success: function () {
+            console.log(app.data);
+
+
+
+          }
+        })
+
         //获取歌词
         wx.request({
           url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`,
@@ -177,16 +188,7 @@ Page({
               })
               time.pay(app.data.paythis, app.innerAudioContext, app.data.song, app);
               
-              wx.switchTab({
-                url: "../../pages/play/play",
-                success: function () {
-                  console.log(app.data);
-
-
-
-                }
-              })
-
+            
             }, 200)
 
           }

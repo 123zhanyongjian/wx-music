@@ -261,15 +261,13 @@ Page({
     // console.log(innerAudioContext, 123)
   },
   onLoad: function() {
+    
+    
+   
     app.data.paythis = this;
    
 
-    app.innerAudioContext.onPlay(() => {
-      if (this.data.state) {
-       
-        app.innerAudioContext.pause();
-      }
-      })
+
     
   }
 })
