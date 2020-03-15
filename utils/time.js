@@ -500,21 +500,21 @@ function wholelist(app) {
   
 
       //获取歌词
-      request({
-        url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`
-      })
-        .then(res => {
-          app.data.song.lrc = res.data.showapi_res_body.lyric;
-          Lrcget(app.data.paythis, app.data.song)
-          console.log(app.data)
-          app.data.paythis.setData({
+      // request({
+      //   url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`
+      // })
+      //   .then(res => {
+      //     app.data.song.lrc = res.data.showapi_res_body.lyric;
+      //     Lrcget(app.data.paythis, app.data.song)
+      //     console.log(app.data)
+      //     app.data.paythis.setData({
 
-            value: 0
-          })
-          pay(app.data.paythis, app.innerAudioContext, app.data.song);
+      //       value: 0
+      //     })
+      //     pay(app.data.paythis, app.innerAudioContext, app.data.song);
          
         
-        })
+      //   })
     })
 }
 
