@@ -1,18 +1,21 @@
-//logs.js
+// pages/play/play.js
 const util = require('../../utils/util.js')
 const tiem = require('../../utils/time.js')
 const app = getApp();
 const api = require('../api/index.js')
 
-
 Page({
+
+  /**
+   * 页面的初始数据
+   */
   data: {
     logs: [],
     songList: [],
     ins: '', //列表选中
     showtime: false,
-    loopstate:0,//f0代表顺序，1代表循环，2代表随机
-    loop:'../../image/sx.png',
+    loopstate: 0,//f0代表顺序，1代表循环，2代表随机
+    loop: '../../image/sx.png',
     lrc: [{
       lrc: '暂无歌词'
     }],
@@ -42,7 +45,7 @@ Page({
       this.setData({
         showtime: false
       })
-     
+
     }, 300)
 
   },
@@ -56,51 +59,51 @@ Page({
       this.setData({
         showtime: true
       })
-      
+
     }, 300)
 
   },
   //切换播放模式
-  changloop(){
-      if(this.data.loopstate==0){
-        this.setData({
-          loopstate:1,
-          loop: '../../image/xh.png'
+  changloop() {
+    if (this.data.loopstate == 0) {
+      this.setData({
+        loopstate: 1,
+        loop: '../../image/xh.png'
 
-        })
-        wx.showToast({
-          title: '循环播放',
-          icon: 'none',
-          duration: 1000
-        })
-      } else if (this.data.loopstate == 1){
-        this.setData({
-          loopstate:2,
-          loop: '../../image/sj.png'
+      })
+      wx.showToast({
+        title: '循环播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else if (this.data.loopstate == 1) {
+      this.setData({
+        loopstate: 2,
+        loop: '../../image/sj.png'
 
-        })
-        wx.showToast({
-          title: '随机播放',
-          icon: 'none',
-          duration: 1000
-        })
-      }else{
-        this.setData({
-          loopstate: 0,
-          loop: '../../image/sx.png'
+      })
+      wx.showToast({
+        title: '随机播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else {
+      this.setData({
+        loopstate: 0,
+        loop: '../../image/sx.png'
 
-        })
-        wx.showToast({
-          title: '顺序播放',
-          icon: 'none',
-          duration: 1000
-        })
-      }
+      })
+      wx.showToast({
+        title: '顺序播放',
+        icon: 'none',
+        duration: 1000
+      })
+    }
   },
   //切换进度条
   changeslider(e) {
 
-   
+
     if (this.data.max != 0) {
       app.innerAudioContext.seek(e.detail.value);
       this.setData({
@@ -114,7 +117,7 @@ Page({
   del(e) {
 
     var index = e.currentTarget.dataset.index,
-    
+
       that = this;
     wx.showModal({
       title: '提示',
@@ -122,16 +125,16 @@ Page({
       success(res) {
         if (res.confirm) {
           that.data.songList.splice(index, 1)
-         
+
           wx.setStorage({
             key: 'songlist',
             data: that.data.songList,
-            success: function(res) {
+            success: function (res) {
               console.log('异步保存成功');
               var song = wx.getStorageSync('songlist');
               app.data.songlist = song
               that.setData({
-                songList:song
+                songList: song
               })
             }
           })
@@ -144,14 +147,14 @@ Page({
 
   },
   //清空列表
-  clearse(){
-   var that = this;
+  clearse() {
+    var that = this;
     wx.showModal({
       title: '提示',
       content: '确定删除所有歌曲？',
       success(res) {
         if (res.confirm) {
-          var song =[]
+          var song = []
           that.setData({
             songList: song
           });
@@ -170,71 +173,83 @@ Page({
     })
 
   },
-  onShow() {
-    
-   setTimeout(()=>{
-     var song = wx.getStorageSync('songlist');
-     app.data.songlist=song
-     tiem.addsong(app.data);
-     this.setData({
-       songList: song
-     })
-     if (this.data.state) {
-       tiem.Readinfo(this, app.innerAudioContext, app)
-     }
-   },500)
-
-
-  
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
 
   },
-  onHide() {
-   
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+
   },
 
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+
+    setTimeout(() => {
+      var song = wx.getStorageSync('songlist');
+      app.data.songlist = song
+      app.data.paythis=this;
+      console.log(app.data)
+      tiem.addsong(app.data);
+      this.setData({
+        songList: song
+      })
+      if (this.data.state) {
+        tiem.Readinfo(this, app.innerAudioContext, app)
+      }
+    }, 500)
+
+  },
   //选择音乐
   pay(e) {
     this.setData({
       ins: e.currentTarget.dataset.index,
       value: 0
     })
-   
-    app.data.song = e.currentTarget.dataset.item;
-  if(app.data.song.pic==undefined){
-    tiem.wholelist(app)
-  }else{
-    tiem.Lrcget(this, app.data.song)
-    tiem.pay(this, app.innerAudioContext, app.data.song);
-  }
 
-  
-   
+    app.data.song = e.currentTarget.dataset.item;
+    if (app.data.song.pic == undefined) {
+      tiem.wholelist(app)
+    } else {
+      tiem.Lrcget(this, app.data.song)
+      tiem.pay(this, app.innerAudioContext, app.data.song);
+    }
+
+
+
   },
   //上一曲
   last() {
     if (this.data.ins > 0) {
-      tiem.Lastsong(this, app.innerAudioContext,app)
+      tiem.Lastsong(this, app.innerAudioContext, app)
     } else {
-    this.setData({
-      ins: app.data.songlist.length
-    })
+      this.setData({
+        ins: app.data.songlist.length
+      })
       tiem.Lastsong(this, app.innerAudioContext, app)
     }
   },
-  
-  
+
+
   //下一曲
   next() {
 
     if (this.data.songList.length - 1 > this.data.ins) {
-      tiem.Nextsong(this, app.innerAudioContext,app)
+      tiem.Nextsong(this, app.innerAudioContext, app)
     } else {
       this.setData({
-        ins:1
+        ins: 1
       })
       tiem.Lastsong(this, app.innerAudioContext, app)
     }
-    
+
   },
   //播放暂停
   pays() {
@@ -249,10 +264,10 @@ Page({
       if (this.data.state) {
         //播放音乐
         tiem.pay(this, app.innerAudioContext, app.data.song);
-       
-         
-        
-      
+
+
+
+
       } else {
         //暂停音乐
         tiem.suspend(this, app.innerAudioContext)
@@ -260,14 +275,39 @@ Page({
     }
     // console.log(innerAudioContext, 123)
   },
-  onLoad: function() {
-    
-    
-   
-    app.data.paythis = this;
-   
 
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
 
-    
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+
   }
 })

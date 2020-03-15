@@ -31,7 +31,7 @@ function Continuemusic() {
 
 //重头播放音乐
 function pay(that, app, datas) {
-
+  
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   app.play();
@@ -117,22 +117,25 @@ function pay(that, app, datas) {
 
     });
   
-    
+     
       //滚动歌词
+      if (that.data.lrc.length){
+        for (let i = 0; i < that.data.lrc.length; i++) {
 
-      for (let i = 0; i < that.data.lrc.length; i++) {
+          if (i < that.data.lrc.length - 1) {
+            if (that.data.lrc[i + 1].time > that.data.t && that.data.lrc[i].time < that.data.t) {
 
-        if (i < that.data.lrc.length - 1) {
-          if (that.data.lrc[i + 1].time > that.data.t && that.data.lrc[i].time < that.data.t) {
-        
-            if(i!=that.data.toLineNum){
-              that.setData({
-                toLineNum: i
-              })
+              if (i != that.data.toLineNum) {
+                that.setData({
+                  toLineNum: i
+                })
+              }
             }
           }
         }
+        
       }
+     
 
      
     })
@@ -286,30 +289,33 @@ function Randomplay(that, app, appInst) {
 }
 //获取歌词
 function Lrcget(that, datas) {
-  var lrc = [];
+  console.log(!datas.lrc, ...datas)
+  if (datas.lrc){
+    var lrc = [];
 
-  for (let i of datas.lrc.split('\n')) {
-    var obj = { lrc: '', time: '' }
-    obj.lrc = i.substring(10);
-    obj.time = Splitseconds(i.substring(1, 6));
+    for (let i of datas.lrc.split('\n')) {
+      var obj = { lrc: '', time: '' }
+      obj.lrc = i.substring(10);
+      obj.time = Splitseconds(i.substring(1, 6));
 
-    lrc.push(obj)
+      lrc.push(obj)
+    }
+    console.log(that)
+    that.setData({
+      lrc: lrc
+    })
+    //如果有乱码
+    var lcc = []
+    for (let i of that.data.lrc) {
+      var lc = { lrc: '', time: '' }
+      lc.lrc = i.lrc.split(']').join('');
+      lc.time = i.time;
+      lcc.push(lc)
+    }
+    that.setData({
+      lrc: lcc
+    })
   }
- 
-  that.setData({
-    lrc: lrc
-  })
-  //如果有乱码
-  var lcc = []
-  for (let i of that.data.lrc) {
-    var lc = { lrc: '', time: '' }
-    lc.lrc = i.lrc.split(']').join('');
-    lc.time = i.time;
-    lcc.push(lc)
-  }
-  that.setData({
-    lrc: lcc
-  })
 }
 //添加歌曲到播放列表
 function addsong(data) {
@@ -500,6 +506,7 @@ function wholelist(app) {
         .then(res => {
           app.data.song.lrc = res.data.showapi_res_body.lyric;
           Lrcget(app.data.paythis, app.data.song)
+          console.log(app.data)
           app.data.paythis.setData({
 
             value: 0

@@ -1,19 +1,19 @@
 {
   "pages": [
+    "pages/logs/logs",
     "pages/play/play",
-   "pages/logs/logs",
-    
-    "pages/singer/singer",
-    "pages/singerdetails/singerdetails",
     "pages/index/index",
+    "pages/singer/singer",
     
+    "pages/singerdetails/singerdetails",
     "pages/details/details"
-    
   ],
-  "requiredBackgroundModes":["audio"],
+  "requiredBackgroundModes": [
+    "audio"
+  ],
   "window": {
     "backgroundTextStyle": "light",
-    "onReachBottomDistance":50,
+    "onReachBottomDistance": 50,
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeChat",
     "navigationBarTextStyle": "black",
@@ -23,12 +23,12 @@
   },
   "tabBar": {
     "list": [
-      {
-        "pagePath": "pages/play/play",
-        "text": "播放器",
-        "iconPath": "./image/music.png",
-        "selectedIconPath": "./image/music1).png"
-      },
+        {
+          "pagePath": "pages/play/play",
+          "text": "播放器",
+          "iconPath": "./image/tj.png",
+          "selectedIconPath": "./image/tj1.png"
+        },
       {
         "pagePath": "pages/index/index",
         "text": "排行榜",
@@ -44,9 +44,10 @@
       {
         "pagePath": "pages/singer/singer",
         "text": "歌手",
-        "iconPath": "./image/singer.png",
-        "selectedIconPath": "./image/singer1.png"
+        "iconPath": "./image/tj.png",
+        "selectedIconPath": "./image/tj1.png"
       }
     ]
-  }
+  },
+  "sitemapLocation": "sitemap82.json"
 }
