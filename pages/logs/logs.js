@@ -135,7 +135,7 @@ Page({
     var flag
     var item = e.currentTarget.dataset.item;
     wx.request({
-      url: `http://music.163.com/api/song/media?id=${item.id}`,
+      url: `https://music.163.com/api/song/media?id=${item.id}`,
       success:(res)=>{
         console.log(res)
         item.lrc = res.data.lyric;

@@ -389,6 +389,25 @@ function addsong(data) {
             flag = false;
             console.log('添加')
           }
+        } else if (data.song.id !== undefined){
+          if (data.song.id === i.id){
+            flag = true;
+            songdata = data.song;
+            //获取存在歌所在的位置index的值
+            for (let i = 0; i < data.songlist.length; i++) {
+              if (songdata.title == data.songlist[i].title) {
+                data.paythis.setData({
+                  ins: i
+                })
+
+              }
+            }
+            console.log('重复了')
+            return
+          }else{
+            flag = false;
+            console.log('添加')
+          }
         } else {
           //歌手部分音乐是否添加
           if (i.musicId == data.song.musicId) {
@@ -507,11 +526,11 @@ function wholelist(app) {
       //     app.data.song.lrc = res.data.showapi_res_body.lyric;
       //     Lrcget(app.data.paythis, app.data.song)
       //     console.log(app.data)
-      //     app.data.paythis.setData({
+          app.data.paythis.setData({
 
-      //       value: 0
-      //     })
-      //     pay(app.data.paythis, app.innerAudioContext, app.data.song);
+            value: 0
+          })
+          pay(app.data.paythis, app.innerAudioContext, app.data.song);
          
         
       //   })

@@ -198,6 +198,7 @@ Page({
       app.data.paythis=this;
       console.log(app.data)
       tiem.addsong(app.data);
+      console.log(app,555)
       this.setData({
         songList: song
       })
@@ -217,7 +218,9 @@ Page({
     app.data.song = e.currentTarget.dataset.item;
     if (app.data.song.pic == undefined) {
       tiem.wholelist(app)
+      console.log('????')
     } else {
+      console.log('?3333??')
       tiem.Lrcget(this, app.data.song)
       tiem.pay(this, app.innerAudioContext, app.data.song);
     }
