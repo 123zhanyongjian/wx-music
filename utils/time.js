@@ -31,7 +31,7 @@ function Continuemusic() {
 
 //重头播放音乐
 function pay(that, app, datas) {
-  
+  Lrcget(that, datas)
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   app.play();
@@ -139,7 +139,7 @@ function pay(that, app, datas) {
 
      
     })
-  Lrcget(that, datas)
+  
 }
 //暂停音乐
 function suspend(that, app) {
@@ -289,7 +289,7 @@ function Randomplay(that, app, appInst) {
 }
 //获取歌词
 function Lrcget(that, datas) {
-  console.log(!datas.lrc, ...datas)
+  console.log(datas.lrc, ...datas)
   if (datas.lrc){
     var lrc = [];
 
@@ -519,21 +519,26 @@ function wholelist(app) {
   
 
       //获取歌词
-      // request({
-      //   url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`
-      // })
-      //   .then(res => {
-      //     app.data.song.lrc = res.data.showapi_res_body.lyric;
-      //     Lrcget(app.data.paythis, app.data.song)
-      //     console.log(app.data)
-          app.data.paythis.setData({
+      request({
+        url: `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${songmidid}&size=hq`
+      })
+        .then(res => {
+          request({
+            url: res.data.lrc
+          }).then(ret => {
+            app.data.song.lrc = ret.data
+            Lrcget(app.data.paythis, app.data.song)
+            console.log(app.data)
+            app.data.paythis.setData({
 
-            value: 0
+              value: 0
+            })
+            pay(app.data.paythis, app.innerAudioContext, app.data.song);
           })
-          pay(app.data.paythis, app.innerAudioContext, app.data.song);
+      
          
         
-      //   })
+        })
     })
 }
 

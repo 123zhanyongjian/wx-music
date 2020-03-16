@@ -92,31 +92,36 @@ Page({
         app.data.song['title'] = app.data.song.name;
         app.data.song['author'] = app.data.song.singer;
         app.data.song['pic'] = app.data.song.image;
-
-        wx.switchTab({
-          url: "../../pages/play/play",
-          success: function () {
-            app.data.paythis.setData({
-              value: 0,
-              ins: 0
-            })
-            time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-
-
-
-          }
-
-        })
         //获取歌词
         request({
-          url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`
+          url: `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${songmidid}&size=hq`
         })
           .then(res => {
-            app.data.song.lrc = res.data.showapi_res_body.lyric;
-            time.Lrcget(this, app.data.song)
+            request({
+              url: res.data.lrc
+            }).then(ret=>{
+              app.data.song.lrc = ret.data;
+              time.Lrcget(this, app.data.song)
+              wx.switchTab({
+                url: "../../pages/play/play",
+                success: function () {
+                  app.data.paythis.setData({
+                    value: 0,
+                    ins: 0
+                  })
+                  time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+
+
+
+                }
+
+              })
+              
+
+
+              console.log(this.data.list)
+            })
             
-          
-            console.log(this.data.list)
           })
       })
     app.data.songlist=this.data.songs;
@@ -133,7 +138,7 @@ Page({
   },
   //播放音乐
   pay(e){
-   
+    var request = time.Promisify(wx.request)
     var song = e.currentTarget.dataset.item;
     var songmidid = e.currentTarget.dataset.item.mid
     const _this = this;
@@ -178,18 +183,23 @@ Page({
 
         //获取歌词
         wx.request({
-          url: `https://route.showapi.com/213-2?showapi_appid=54411&musicid=${songmidid}&showapi_sign=55b7ca99e210452a86269a9f09def34c`,
+          url: `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${songmidid}&size=hq`,
           success: function (res) {
+            request({
+              url: res.data.lrc
+            })
+            .then(ret=>{
+              song.lrc = ret.data
+              setTimeout(() => {
+                app.data.paythis.setData({
+                  value: 0
+                })
+                time.pay(app.data.paythis, app.innerAudioContext, app.data.song, app);
 
-            song.lrc = res.data.showapi_res_body.lyric;
-            setTimeout(() => {
-              app.data.paythis.setData({
-                value: 0
-              })
-              time.pay(app.data.paythis, app.innerAudioContext, app.data.song, app);
-              
-            
-            }, 200)
+
+              }, 200)
+            })
+           
 
           }
         })
