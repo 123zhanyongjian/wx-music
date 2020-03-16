@@ -68,6 +68,7 @@ function pay(that, app, datas) {
       Lastsong(that, app, appInst)
     }
   })
+  
  
   
   app.title = datas.title;
@@ -83,7 +84,11 @@ function pay(that, app, datas) {
     showtime: false,
     pay: "../../image/zt.png"
   });
-
+  // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
+  app.onError(() => {
+    console.log("??????")
+    Nextsong(that, app, appInst)
+  })
   //走进度条
   
     app.onTimeUpdate(function(){
@@ -135,7 +140,11 @@ function pay(that, app, datas) {
         }
         
       }
-     
+      // 播放音乐出错的情况自动下一首；
+      app.onError(() => {
+        console.log("??????")
+        Nextsong(that, app, appInst)
+      })
 
      
     })
