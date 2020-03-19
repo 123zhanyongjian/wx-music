@@ -71,6 +71,7 @@ Page({
                   obj.author = item.artists[0].name;
                   obj.pic ='http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
                   obj.src = `https://music.163.com/song/media/outer/url?id=${item.id}.mp3`,
+                  obj.mvid=item.mvid
                   obj.id=item.id
                   arr.push(obj)
                 }
@@ -143,28 +144,53 @@ Page({
         if (item.pic == undefined) {
           console.log(11222)
           time.wholelist(app);
-
-          wx.switchTab({
-            url: "../../pages/play/play",
-          })
+    
+         
         } else {
           console.log(222)
           console.log(app)
-          wx.switchTab({
-            url: "../../pages/play/play",
-            success: function () {
-              app.data.paythis.setData({
-                value: 0
-              })
-              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+          if(item.mvid){
+            wx.request({
+              url: `https://musicapi.leanapp.cn/mv?mvid=${item.mvid}`,
+              success: (ret) => {
+                item.Mvsrc = ret.data.data.brs['480'];
+                wx.switchTab({
+                  url: "../../pages/play/play",
+                  success: function () {
+                    app.data.paythis.setData({
+                      value: 0,
+                      Mvsrc: item.Mvsrc
+                    })
+                    time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
 
-              that.setData({
-                song: []
-              })
+                    that.setData({
+                      song: []
+                    })
 
-            }
+                  }
 
-          })
+                })
+              }
+            })
+          }else{
+            wx.switchTab({
+              url: "../../pages/play/play",
+              success: function () {
+                app.data.paythis.setData({
+                  value: 0
+                })
+                time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+
+                that.setData({
+                  song: []
+                })
+
+              }
+
+            })
+          }
+
+        
         }
       }
     })

@@ -1,0 +1,47 @@
+.myVideo{
+  width: 100%;
+  position: absolute;
+  
+
+  
+}
+.menb{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  bottom: 0;
+  right: 0
+}
+@-webkit-keyframes openVideo{
+  from{
+    top:00rpx;
+  }
+  to{
+    top:-524rpx;
+   
+  }
+}
+@-webkit-keyframes closeVideo{
+  from{
+     top:-524rpx;
+  }
+  to{
+    top:0rpx;
+   
+  }
+}
+.open{
+  
+}
+.closeVideos{
+  animation: closeVideo .3s linear infinite;
+  animation-iteration-count:1;
+  animation-fill-mode : forwards;/*保留动画最后的样子*/
+  
+}
+.openVideos{
+  animation: openVideo .3s linear infinite;
+  animation-iteration-count:1;
+  animation-fill-mode : forwards;/*保留动画最后的样子*/
+}

@@ -17,7 +17,7 @@
           <view class='li' wx:for="{{song}}" data-item="{{item}}" wx:key="{{index}}" bindtap='pay'>
             <image  src='../../image/mm.png'></image>
             <text>{{item.title}}--{{item.author}}</text>
-            
+            <text wx:if="{{item.mvid}}">MV</text>
           </view>
       </view>
   </view>

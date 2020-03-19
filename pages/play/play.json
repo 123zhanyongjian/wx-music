@@ -1,3 +1,6 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+      "video":"../../component/video/video"
+  },
+  "navigationBarTitleText": "播放器"
 }

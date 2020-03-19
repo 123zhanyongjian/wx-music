@@ -4,6 +4,7 @@
       <image class="bgimg" src="{{img}}"></image>
       <view class="title">
         <view class="titles">{{title}}</view>
+        <view class="mv" wx:if="{{Mvsrc}}" bindtap="MvSHOW">MV</view>
         <view class="author">-{{author}}-</view>
       </view>
         <view>
@@ -69,6 +70,10 @@
           
     </swiper-item>
   </swiper>
+<view wx:if="{{Mv}}">
+<video show="{{Mv}}" src="{{Mvsrc}}"></video>
+<text wx:if="{{Mv}}" class="cuo" bindtap="cuos">×</text>
+</view>
 
 
 

@@ -142,7 +142,7 @@ function pay(that, app, datas) {
       }
       // 播放音乐出错的情况自动下一首；
       app.onError(() => {
-        console.log("??????")
+        wx.
         Nextsong(that, app, appInst)
       })
 

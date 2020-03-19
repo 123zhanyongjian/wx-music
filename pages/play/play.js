@@ -11,6 +11,8 @@ Page({
    */
   data: {
     logs: [],
+    Mv:false,
+    Mvsrc:'',
     songList: [],
     ins: '', //列表选中
     showtime: false,
@@ -49,9 +51,20 @@ Page({
     }, 300)
 
   },
+  // 关闭mv
+  cuos(){
+    setTimeout(() => {
+      this.setData({
+        Mv: false
+      })
 
+    }, 300)
+  },
   //打开歌曲列表
   open() {
+    if (this.data.Mv) {
+      return
+    }
     this.setData({
       close: false
     })
@@ -208,6 +221,14 @@ Page({
     }, 500)
 
   },
+  //MV播放
+  MvSHOW(){
+    //暂停音乐
+    tiem.suspend(this, app.innerAudioContext)
+    this.setData({
+      Mv:true
+    })
+  },
   //选择音乐
   pay(e) {
     this.setData({
@@ -230,6 +251,9 @@ Page({
   },
   //上一曲
   last() {
+    if (this.data.Mv) {
+      return
+    }
     if (this.data.ins > 0) {
       tiem.Lastsong(this, app.innerAudioContext, app)
     } else {
@@ -243,7 +267,9 @@ Page({
 
   //下一曲
   next() {
-
+    if (this.data.Mv) {
+      return
+    }
     if (this.data.songList.length - 1 > this.data.ins) {
       tiem.Nextsong(this, app.innerAudioContext, app)
     } else {
@@ -256,6 +282,9 @@ Page({
   },
   //播放暂停
   pays() {
+    if(this.data.Mv){
+      return
+    }
     var that = this;
     if (app.data.song == '') {
       wx.showToast({

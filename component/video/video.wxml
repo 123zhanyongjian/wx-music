@@ -1,0 +1,12 @@
+<view class="myVideo"  >
+<!-- <view class='menb' bindtap='closese'></view> -->
+<video autoplay="{{show}}" wx:if="{{show}}" class="{{show?'closeVideos viedos':'openVideos viedos'}}"
+src="{{src}}" enable-danmu danmu-btn controls></video>
+  <view class="btn-area">
+    <input bindblur="bindInputBlur"/>
+    <!-- <button bindtap="bindSendDanmu">发送弹幕</button> -->
+  </view>
+  <view>
+  
+</view>
+</view>

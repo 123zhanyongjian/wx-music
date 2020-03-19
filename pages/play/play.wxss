@@ -20,6 +20,16 @@
   left: 50%;
   transform: translate(-50% ,0)
 }
+.mv{
+  text-align: center;
+  font-size: 12px;
+  margin:10rpx auto;
+  width: 40px;
+  height: 15px;
+  /* display: inline-block; */
+  border :1rpx solid rgb(49, 194, 124);
+  color: rgb(49, 194, 124);
+}
 .titles{
    text-align: center;
 }
@@ -278,4 +288,21 @@ swiper{
   z-index: 1;
   bottom: 0;
   right: 0
+}
+.viedos{
+  position: absolute;
+  left: 0;
+  /* bottom: 0; */
+  left: 0;
+  right: 0;
+  /* z-index: 999; */
+}
+.cuo{
+position: absolute;
+top: 0;
+color: #fff;
+z-index: 3;
+right: 10rpx;
+font-size: 60rpx;
+
 }
