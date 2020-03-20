@@ -40,7 +40,7 @@ Page({
       this.setData({
         songs: nowData
       })
-      console.log(this.data.songs)
+      console.log(ret)
     })
   },
   _normallizeSongs: function (list) {
@@ -62,6 +62,7 @@ Page({
     var request = time.Promisify(wx.request)
     app.data.song = this.data.songs[0]
     var songmidid = app.data.song.mid
+    var mvid = app.data.song.vid
     request({
       url: `https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=5381&inCharset=utf-8&outCharset=utf-8&notice=0&format=jsonp&hostUin=0&loginUin=0&platform=yqq&needNewCode=0&cid=205361747&uin=0&filename=C400${songmidid}.m4a&guid=3913883408&songmid=${songmidid}&callback=callback`,
       data: {
@@ -120,6 +121,23 @@ Page({
 
 
               console.log(this.data.list)
+              //获取mv
+              if (mvid) {
+                request({
+                  url: `https://v1.itooi.cn/tencent/mv?id=${mvid}`
+                })
+                  .then(rev => {
+                    console.log(rev, '2222222222222222222222222222222222222222222222222222');
+                    let id;
+                    Object.keys(rev.data.data).forEach((item, index) => {
+                      if (index === 0) {
+                        id = { ...rev.data.data[item] }
+                      }
+                    })
+                    app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+                    app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+                  })
+              }
             })
             
           })
@@ -141,6 +159,7 @@ Page({
     var request = time.Promisify(wx.request)
     var song = e.currentTarget.dataset.item;
     var songmidid = e.currentTarget.dataset.item.mid
+    var mvid = e.currentTarget.dataset.item.vid
     const _this = this;
  
     wx.request({
@@ -203,6 +222,23 @@ Page({
 
           }
         })
+        //获取mv
+        if (mvid) {
+          request({
+            url: `https://v1.itooi.cn/tencent/mv?id=${mvid}`
+          })
+            .then(rev => {
+              console.log(rev, '2222222222222222222222222222222222222222222222222222');
+              let id;
+              Object.keys(rev.data.data).forEach((item, index) => {
+                if (index === 0) {
+                  id = { ...rev.data.data[item] }
+                }
+              })
+              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+              app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+            })
+        }
       
       }
     })

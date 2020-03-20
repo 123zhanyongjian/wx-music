@@ -10,7 +10,7 @@ Page({
     serach: "",
     interval: '',
     logo: '../../image/qqmusic.jpg',
-    state: '1',
+    state: '0',
     singer: '',//歌手
     array: ['QQ音乐搜索', '网易云音乐搜索'],
     song: [
@@ -102,6 +102,14 @@ Page({
                 i.pic = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + i.mid + '.jpg?max_age=2592000';
                 i.id = i.mid
               }
+              //将mv中歌名人名一样的赋值vid
+              for (let i of res2.data.song.itemlist){
+                for (let j of res2.data.mv.itemlist){
+                  if (i.name === j.name && i.singer === j.singer){
+                    i.vid = j.vid
+                  }
+                }
+              }
               that.setData({
                 singer: res2.data.singer.itemlist,
                 song: res2.data.song.itemlist
@@ -142,8 +150,16 @@ Page({
         item.lrc = res.data.lyric;
         app.data.song = item;
         if (item.pic == undefined) {
-          console.log(11222)
-          time.wholelist(app);
+         
+          wx.switchTab({
+            url: "../../pages/play/play",
+            success: function () {
+        
+              console.log(11222)
+              time.wholelist(app);
+            }
+
+          })
     
          
         } else {

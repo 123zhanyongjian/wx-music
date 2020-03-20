@@ -31,6 +31,8 @@ function Continuemusic() {
 
 //重头播放音乐
 function pay(that, app, datas) {
+ 
+ 
   Lrcget(that, datas)
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
@@ -79,15 +81,46 @@ function pay(that, app, datas) {
     title: datas.title,
     author: datas.author,
     img: datas.pic,
-
     state: false,
     showtime: false,
     pay: "../../image/zt.png"
   });
+  if (datas.Mvsrc){
+    that.setData({
+      Mvsrc: datas.Mvsrc,
+    })
+    console.log('???', datas)
+  }else{
+    that.setData({
+      Mvsrc:'',
+    })
+    console.log(111)
+  }
+  console.log(that)
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
-    console.log("??????")
-    Nextsong(that, app, appInst)
+    if (!datas.Mvsrc && !that.data.Mv){
+     console.log("??????")
+     Nextsong(that, app, appInst)
+   }else{
+     let sum=5;
+
+       let cls=setInterval(()=>{
+          sum=sum-1;
+         console.log("?????????", that.Mv)
+         if(!sum){
+           clearInterval(cls)
+           Nextsong(that, app, appInst)
+         }else{
+           if (that.data.Mv) {
+             clearInterval(cls);
+           }
+         }
+       },1000)
+     
+       console.log(sum)
+   
+   }
   })
   //走进度条
   
@@ -141,10 +174,10 @@ function pay(that, app, datas) {
         
       }
       // 播放音乐出错的情况自动下一首；
-      app.onError(() => {
-        wx.
-        Nextsong(that, app, appInst)
-      })
+      // app.onError(() => {
+      //   wx.
+      //   Nextsong(that, app, appInst)
+      // })
 
      
     })
@@ -482,6 +515,7 @@ function wholelist(app) {
   var request = Promisify(wx.request)
 
   var songmidid = app.data.song.mid
+  var mvid = app.data.song.vid
   request({
     url: `https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=5381&inCharset=utf-8&outCharset=utf-8&notice=0&format=jsonp&hostUin=0&loginUin=0&platform=yqq&needNewCode=0&cid=205361747&uin=0&filename=C400${songmidid}.m4a&guid=3913883408&songmid=${songmidid}&callback=callback`,
     data: {
@@ -548,6 +582,24 @@ function wholelist(app) {
          
         
         })
+      //获取mv
+      if (mvid){
+        request({
+          url: `https://v1.itooi.cn/tencent/mv?id=${mvid}`
+        })
+        .then(rev=>{
+          console.log(rev,'2222222222222222222222222222222222222222222222222222');
+          let id;
+          Object.keys(rev.data.data).forEach((item, index) => {
+            if(index===0){
+              id = { ...rev.data.data[item] }
+            }
+          })
+          app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+          app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+        })
+      }
+     
     })
 }
 

@@ -9,15 +9,16 @@
     <input type='text' class='input' placeholder='搜索歌手、歌曲、歌手' value="{{serach}}" bindinput ="serachs"></input>
   </view>
   <view style='background:#fff'>
-    <view class='singer' wx:key="{{idx}}" wx:for="{{singer}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>
+      <view class='singer' wx:key="{{idx}}" wx:for="{{singer}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>
         <image src="{{ite.pic}}" class="haderimg"></image>
         <view class='singername'>{{ite.name}}</view>
       </view>
+      <!-- QQ音乐mv信息 -->
       <view class='ul'>
           <view class='li' wx:for="{{song}}" data-item="{{item}}" wx:key="{{index}}" bindtap='pay'>
             <image  src='../../image/mm.png'></image>
             <text>{{item.title}}--{{item.author}}</text>
-            <text wx:if="{{item.mvid}}">MV</text>
+            <text class="mv" wx:if="{{item.mvid||item.vid}}">MV</text>
           </view>
       </view>
   </view>

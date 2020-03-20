@@ -1,4 +1,4 @@
-function Song({id, mid, singer, name, album, duration, image, musicId}) {
+function Song({id, mid, singer, name, album, duration, image, musicId,vid}) {
   this.id = id
   this.mid = mid
   this.singer = singer
@@ -7,6 +7,7 @@ function Song({id, mid, singer, name, album, duration, image, musicId}) {
   this.duration = duration
   this.image = image
   this.musicId = musicId
+  this.vid = vid
 }
 
 function createSong(musicData) {
@@ -17,6 +18,7 @@ function createSong(musicData) {
     name: musicData.songname,
     album: musicData.albumname,
     duration: musicData.interval,
+    vid : musicData.vid,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
     musicId: musicData.songid
   })

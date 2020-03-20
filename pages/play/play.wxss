@@ -22,10 +22,10 @@
 }
 .mv{
   text-align: center;
-  font-size: 12px;
+  font-size: 24rpx;
   margin:10rpx auto;
-  width: 40px;
-  height: 15px;
+  width: 80rpx;
+  height: 30rpx;
   /* display: inline-block; */
   border :1rpx solid rgb(49, 194, 124);
   color: rgb(49, 194, 124);
