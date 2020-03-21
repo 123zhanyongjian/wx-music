@@ -99,11 +99,11 @@ function pay(that, app, datas) {
   console.log(that)
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
-    if (!datas.Mvsrc && !that.data.Mv){
-     console.log("??????")
-     Nextsong(that, app, appInst)
-   }else{
-     let sum=5;
+    if (datas.Mvsrc){
+      datas.src = datas.Mvsrc
+      pay(that, app, datas)
+    }else{
+      let sum = 5;
 
        let cls=setInterval(()=>{
           sum=sum-1;
@@ -117,10 +117,31 @@ function pay(that, app, datas) {
            }
          }
        },1000)
-     
+
        console.log(sum)
+    }
+  //   if (!datas.Mvsrc && !that.data.Mv){
+  //    console.log("??????")
+  //    Nextsong(that, app, appInst)
+  //  }else{
+  //    let sum=5;
+
+  //      let cls=setInterval(()=>{
+  //         sum=sum-1;
+  //        console.log("?????????", that.Mv)
+  //        if(!sum){
+  //          clearInterval(cls)
+  //          Nextsong(that, app, appInst)
+  //        }else{
+  //          if (that.data.Mv) {
+  //            clearInterval(cls);
+  //          }
+  //        }
+  //      },1000)
+     
+  //      console.log(sum)
    
-   }
+  //  }
   })
   //走进度条
   

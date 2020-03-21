@@ -204,7 +204,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    console.log(this.data.Mvsrc);
     setTimeout(() => {
       var song = wx.getStorageSync('songlist');
       app.data.songlist = song
