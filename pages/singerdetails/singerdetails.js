@@ -89,7 +89,7 @@ Page({
         var res1 = res.data.replace("callback(", "")
         var res2 = JSON.parse(res1.substring(0, res1.length - 1))
         const playUrl = `http://dl.stream.qqmusic.qq.com/${res2.data.items[0].filename}?vkey=${res2.data.items[0].vkey}&guid=3913883408&uin=0&fromtag=66`
-        app.data.song.url = playUrl;
+        app.data.song.src = playUrl;
         app.data.song['title'] = app.data.song.name;
         app.data.song['author'] = app.data.song.singer;
         app.data.song['pic'] = app.data.song.image;
@@ -106,12 +106,7 @@ Page({
               wx.switchTab({
                 url: "../../pages/play/play",
                 success: function () {
-                  app.data.paythis.setData({
-                    value: 0,
-                    ins: 0
-                  })
-                  time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-
+                  console.log(app.data.paythis)
 
 
                 }
@@ -136,6 +131,18 @@ Page({
                     })
                     app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
                     app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+                    app.data.paythis.setData({
+                      value: 0,
+                      ins: 0
+                    })
+                    time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+                  })
+                  .catch(err=>{
+                    app.data.paythis.setData({
+                      value: 0,
+                      ins: 0
+                    })
+                    time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
                   })
               }
             })
@@ -185,7 +192,7 @@ Page({
         var res1 = res.data.replace("callback(", "")
         var res2 = JSON.parse(res1.substring(0, res1.length - 1))
         const playUrl = `http://dl.stream.qqmusic.qq.com/${res2.data.items[0].filename}?vkey=${res2.data.items[0].vkey}&guid=3913883408&uin=0&fromtag=66`
-        song.url=playUrl;
+        song.src=playUrl;
         song['title'] = song.name;
         song['author']=song.singer;
         song['pic']=song.image;
@@ -235,7 +242,8 @@ Page({
                   id = { ...rev.data.data[item] }
                 }
               })
-              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`;
+              console.log(app.data.paythis)
               app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
             })
         }

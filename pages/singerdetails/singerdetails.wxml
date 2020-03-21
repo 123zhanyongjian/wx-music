@@ -12,6 +12,8 @@
       <view class='text'>
         <text class="{{index<3?'active':''}}">{{index+1}}</text>
         <text>{{item.name}}--{{item.singer}}</text>
+         <text class="mv" wx:if="{{item.mvid||item.vid}}">MV</text>
+        
       </view>
 
     </view>

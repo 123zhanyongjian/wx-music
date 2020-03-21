@@ -37,14 +37,8 @@ function pay(that, app, datas) {
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   app.play();
-  console.log(datas)
  if(that.data.value==0){
-   if (datas.url == undefined) {
      app.src = datas.src;
-     console.log('进来了啊')
-   } else {
-     app.src = datas.url;
-   }
  }
   //苹果手机系统下一首
   app.onNext(() => {
@@ -101,7 +95,8 @@ function pay(that, app, datas) {
   app.onError(() => {
     if (datas.Mvsrc){
       datas.src = datas.Mvsrc
-      pay(that, app, datas)
+        pay(that, app, datas)
+      console.log(datas.Mvsrc)
     }else{
       let sum = 5;
 
@@ -352,7 +347,6 @@ function Randomplay(that, app, appInst) {
 }
 //获取歌词
 function Lrcget(that, datas) {
-  console.log(datas.lrc, ...datas)
   if (datas.lrc){
     var lrc = [];
 
@@ -592,7 +586,6 @@ function wholelist(app) {
           }).then(ret => {
             app.data.song.lrc = ret.data
             Lrcget(app.data.paythis, app.data.song)
-            console.log(app.data)
             app.data.paythis.setData({
 
               value: 0

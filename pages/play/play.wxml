@@ -51,7 +51,7 @@
         <image id="img" class="{{state?'auto imgstates':'auto imgspay'}}" src="{{img}}" animation="{{animationData}}"></image>
       </view>
     
-        <view  wx:for="{{lrc}}" wx:key="{{index}}" wx:if="{{lrc[index+1].time<t||lrc[index].time<t}}" class=" abc {{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
+        <view  wx:for="{{lrc}}" wx:key="id" wx:if="{{lrc[index+1].time<t||lrc[index].time<t}}" class=" abc {{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
    
 
     
