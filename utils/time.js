@@ -93,6 +93,7 @@ function pay(that, app, datas) {
   console.log(that)
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
+    wx.showLoading({ title:'正版音乐，正在解析' })
     if (datas.Mvsrc){
       datas.src = datas.Mvsrc
         pay(that, app, datas)
@@ -105,6 +106,11 @@ function pay(that, app, datas) {
          console.log("?????????", that.Mv)
          if(!sum){
            clearInterval(cls)
+           wx.showToast({
+             title: '解析失败',
+             icon: 'none',
+             duration: 1000
+           })
            Nextsong(that, app, appInst)
          }else{
            if (that.data.Mv) {
@@ -141,7 +147,7 @@ function pay(that, app, datas) {
   //走进度条
   
     app.onTimeUpdate(function(){
-
+      wx.hideLoading();
 
     that.setData({
       Duration: MinuteConversion(app.duration),
