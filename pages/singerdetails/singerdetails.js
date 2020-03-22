@@ -242,9 +242,9 @@ Page({
                   id = { ...rev.data.data[item] }
                 }
               })
-              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`;
+              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`;
               console.log(app.data.paythis)
-              app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+              app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
             })
         }
       

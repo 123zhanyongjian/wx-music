@@ -93,7 +93,7 @@ function pay(that, app, datas) {
   console.log(that)
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
-    wx.showLoading({ title:'正版音乐，正在解析' })
+    wx.showLoading({ title:'正版音乐解析中' })
     if (datas.Mvsrc){
       datas.src = datas.Mvsrc
         pay(that, app, datas)
@@ -615,8 +615,8 @@ function wholelist(app) {
               id = { ...rev.data.data[item] }
             }
           })
-          app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
-          app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+          app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
+          app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
         })
       }
      
