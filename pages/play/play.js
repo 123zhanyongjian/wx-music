@@ -210,7 +210,7 @@ Page({
       app.data.songlist = song
       app.data.paythis=this;
       console.log(app.data)
-      tiem.addsong(app.data);
+      tiem.newAddSong(app.data);
       console.log(app,555)
       this.setData({
         songList: song
