@@ -93,61 +93,44 @@ Page({
         app.data.song['title'] = app.data.song.name;
         app.data.song['author'] = app.data.song.singer;
         app.data.song['pic'] = app.data.song.image;
-        //获取歌词
-        request({
-          url: `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${songmidid}&size=hq`
+        wx.switchTab({
+          url: "../../pages/play/play",
+          success: function () {
+            console.log(app.data.paythis)
+
+
+          }
+
         })
-          .then(res => {
-            request({
-              url: res.data.lrc
-            }).then(ret=>{
-              app.data.song.lrc = ret.data;
-              time.Lrcget(this, app.data.song)
-              wx.switchTab({
-                url: "../../pages/play/play",
-                success: function () {
-                  console.log(app.data.paythis)
-
-
-                }
-
-              })
-              
-
-
-              console.log(this.data.list)
-              //获取mv
-              if (mvid) {
-                request({
-                  url: `https://v1.itooi.cn/tencent/mv?id=${mvid}`
-                })
-                  .then(rev => {
-                    console.log(rev, '2222222222222222222222222222222222222222222222222222');
-                    let id;
-                    Object.keys(rev.data.data).forEach((item, index) => {
-                      if (index === 0) {
-                        id = { ...rev.data.data[item] }
-                      }
-                    })
-                    app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
-                    app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
-                    app.data.paythis.setData({
-                      value: 0,
-                      ins: 0
-                    })
-                    time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-                  })
-                  .catch(err=>{
-                    app.data.paythis.setData({
-                      value: 0,
-                      ins: 0
-                    })
-                    time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-                  })
-              }
-            })
-            
+        //获取mv
+        if (mvid) {
+          request({
+            url: `https://v1.itooi.cn/tencent/mv?id=${mvid}`
           })
+            .then(rev => {
+              console.log(rev, '2222222222222222222222222222222222222222222222222222');
+              let id;
+              Object.keys(rev.data.data).forEach((item, index) => {
+                if (index === 0) {
+                  id = { ...rev.data.data[item] }
+                }
+              })
+              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+              app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+              app.data.paythis.setData({
+                value: 0,
+                ins: 0
+              })
+              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+            })
+            .catch(err => {
+              app.data.paythis.setData({
+                value: 0,
+                ins: 0
+              })
+              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+            })
+        }
       })
     app.data.songlist=this.data.songs;
     
@@ -206,29 +189,14 @@ Page({
 
           }
         })
-
-        //获取歌词
-        wx.request({
-          url: `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${songmidid}&size=hq`,
-          success: function (res) {
-            request({
-              url: res.data.lrc
-            })
-            .then(ret=>{
-              song.lrc = ret.data
-              setTimeout(() => {
-                app.data.paythis.setData({
-                  value: 0
-                })
-                time.pay(app.data.paythis, app.innerAudioContext, app.data.song, app);
+        setTimeout(() => {
+          app.data.paythis.setData({
+            value: 0
+          })
+          time.pay(app.data.paythis, app.innerAudioContext, app.data.song, app);
 
 
-              }, 200)
-            })
-           
-
-          }
-        })
+        }, 200)
         //获取mv
         if (mvid) {
           request({

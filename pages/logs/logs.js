@@ -143,73 +143,86 @@ Page({
     var that = this;
     var flag
     var item = e.currentTarget.dataset.item;
-    wx.request({
-      url: `https://music.163.com/api/song/media?id=${item.id}`,
-      success:(res)=>{
-        console.log(res)
-        item.lrc = res.data.lyric;
-        app.data.song = item;
-        if (item.pic == undefined) {
-         
-          wx.switchTab({
-            url: "../../pages/play/play",
-            success: function () {
-        
-              console.log(11222)
-              time.wholelist(app);
-            }
+     app.data.song = item;
+     if (this.data.state == 1){
+       if (item.mvid) {
+         wx.request({
+           url: `https://musicapi.leanapp.cn/mv?mvid=${item.mvid}`,
+           success: (ret) => {
+             item.Mvsrc = ret.data.data.brs['480'];
+             wx.switchTab({
+               url: "../../pages/play/play",
+               success: function () {
+                 app.data.paythis.setData({
+                   value: 0,
+                   Mvsrc: item.Mvsrc
+                 })
+                 time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
 
-          })
+                 that.setData({
+                   song: []
+                 })
+
+               }
+
+             })
+           }
+         })
+       } else {
+         wx.switchTab({
+           url: "../../pages/play/play",
+           success: function () {
+             app.data.paythis.setData({
+               value: 0
+             })
+             time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+
+             that.setData({
+               song: []
+             })
+
+           }
+
+         })
+       }
+     }else{
+       wx.switchTab({
+         url: "../../pages/play/play",
+         success: function () {
+
+           console.log(11222)
+           time.wholelist(app);
+         }
+
+       })
+     }
+    // wx.request({
+    //   url: `https://music.163.com/api/song/media?id=${item.id}`,
+    //   success:(res)=>{
+    //     console.log(res)
+    //     item.lrc = res.data.lyric;
+    //     app.data.song = item;
+    //     if (item.pic == undefined) {
+         
+    //       wx.switchTab({
+    //         url: "../../pages/play/play",
+    //         success: function () {
+        
+    //           console.log(11222)
+    //           time.wholelist(app);
+    //         }
+
+    //       })
     
          
-        } else {
-          console.log(222)
-          console.log(app)
-          if(item.mvid){
-            wx.request({
-              url: `https://musicapi.leanapp.cn/mv?mvid=${item.mvid}`,
-              success: (ret) => {
-                item.Mvsrc = ret.data.data.brs['480'];
-                wx.switchTab({
-                  url: "../../pages/play/play",
-                  success: function () {
-                    app.data.paythis.setData({
-                      value: 0,
-                      Mvsrc: item.Mvsrc
-                    })
-                    time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-
-                    that.setData({
-                      song: []
-                    })
-
-                  }
-
-                })
-              }
-            })
-          }else{
-            wx.switchTab({
-              url: "../../pages/play/play",
-              success: function () {
-                app.data.paythis.setData({
-                  value: 0
-                })
-                time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-
-                that.setData({
-                  song: []
-                })
-
-              }
-
-            })
-          }
+    //     } else {
+    //       console.log(222)
+    //       console.log(app)
 
         
-        }
-      }
-    })
+    //     }
+    //   }
+    // })
     
    
 

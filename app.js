@@ -58,30 +58,35 @@ App({
   //小程序关闭后下次进入还是上一次关闭时所保留的状态
    Closestate(that, datas){
     console.log(datas)
-  var obj = {
+  var obj1 = {
       max: that.data.max,
       state: that.data.state,
       value: that.data.value,
       pay: that.data.pay,
       ins:that.data.ins,
       t: that.data.t,
-      lrc: datas.lrc,
+      // lrc: datas.lrc,
       conduct: that.data.conduct,
       src: datas.src,
       title: datas.title,
       coverImgUrl: datas.pic,
+      id:datas.id,
+      mid:datas.mid,
       autoplay: false,
       author: datas.author,
       pic: datas.pic,
       url: datas.url,
-      datas:datas
-
+      datas
+     
     };
+     let obj={};
+     Object.assign(obj, obj1, datas.datas)
+    obj.lrc='';
     wx.setStorage({
       key: 'lastsong',
       data: obj,
       success: function (res) {
-        console.log('缓存成功', res)
+        console.log('缓存成功', res,obj)
       }
     })
 

@@ -32,10 +32,14 @@ function Continuemusic() {
 //重头播放音乐
 function pay(that, app, datas) {
  
- 
-  Lrcget(that, datas)
+  GetLRC(datas,that)
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
+  that.setData({
+    lrc: [{
+      lrc: '暂无歌词'
+    }],
+  })
   app.play();
  if(that.data.value==0){
      app.src = datas.src;
@@ -147,8 +151,11 @@ function pay(that, app, datas) {
   //走进度条
   
     app.onTimeUpdate(function(){
+      if(that.data.lrc.length===1){
+        Lrcget(that, datas)
+      }
       wx.hideLoading();
-
+      
     that.setData({
       Duration: MinuteConversion(app.duration),
       max: app.duration,
@@ -223,7 +230,7 @@ function Closestate(that, datas) {
     value: that.data.value,
     pay: that.data.pay,
     t: that.data.t,
-    lrc: datas.lrc,
+    // lrc: datas.lrc,
     conduct: that.data.conduct,
     src: datas.url,
     title: datas.title,
@@ -278,13 +285,13 @@ function Readinfo(that, app, appInst) {
           t: datas.t,
           ins: datas.ins,
           state: datas.state,
-          lrc: datas.lrc,
+          // lrc: datas.lrc,
           value: datas.value,
           pay: datas.pay,
           img: datas.coverImgUrl
 
         })
-      }, 100)
+      }, 0)
     },
   })
 }
@@ -580,28 +587,11 @@ function wholelist(app) {
           
           })
       }
-  
+      app.data.paythis.setData({
 
-      //获取歌词
-      request({
-        url: `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${songmidid}&size=hq`
+        value: 0
       })
-        .then(res => {
-          request({
-            url: res.data.lrc
-          }).then(ret => {
-            app.data.song.lrc = ret.data
-            Lrcget(app.data.paythis, app.data.song)
-            app.data.paythis.setData({
-
-              value: 0
-            })
-            pay(app.data.paythis, app.innerAudioContext, app.data.song);
-          })
-      
-         
-        
-        })
+      pay(app.data.paythis, app.innerAudioContext, app.data.song);
       //获取mv
       if (mvid){
         request({
@@ -622,6 +612,34 @@ function wholelist(app) {
      
     })
 }
+//请求歌词
+function GetLRC(data,that){
+  var request = Promisify(wx.request);
+  console.log(data)
+  let pic ='http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
+  let url;
+  if(pic===data.pic){
+    url = `https://music.163.com/api/song/media?id=${data.id}`
+  }else{
+    url = `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${data.mid}&size=hq`
+  }
+  request({
+    url: url,
+  })
+    .then(res => {
+      if (pic === data.pic){
+       data.lrc = res.data.lyric
+     }else{
+        request({
+          url: res.data.lrc
+        })
+          .then(ret => {
+            data.lrc = ret.data
 
+          })
+     }
+     
+    })
+}
 
-export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong, wholelist, Closestate, Readinfo, Promisify };
+export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong, wholelist, Closestate, Readinfo, Promisify, GetLRC};
