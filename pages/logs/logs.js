@@ -7,6 +7,7 @@ const api = require('../api/index.js');
 Page({
   data: {
     logs: [],
+    itemList:['立即播放','下一首播放'],
     serach: "",
     interval: '',
     logo: '../../image/qqmusic.jpg',
@@ -18,6 +19,37 @@ Page({
     ],
 
     state: false
+  },
+  showActionSheet(ev) {
+    let item = ev.currentTarget.dataset.item;
+    let that=this;
+    app.data.song = item;
+    console.log(item);
+    wx.showActionSheet({
+      itemList: this.data.itemList,
+
+      success(e) {
+        console.log("success")
+        console.log(e)
+        if (!e.camcle) {
+          if (e.tapIndex){
+            time.nextSongPay(app.data)
+          }else{
+            that.pay(ev)
+          }
+        } else {
+          // console.log("cancle")
+        }
+      },
+      fail(e) {
+        // console.log("fail")
+        // console.log(e)
+      },
+      complete(e) {
+        // console.log("complete")
+        // console.log(e)
+      }
+    })
   },
   //切换搜索模式
   bindPickerChange(e) {
@@ -144,6 +176,7 @@ Page({
     var flag
     var item = e.currentTarget.dataset.item;
      app.data.song = item;
+     time.newAddSong(app.data);
      if (this.data.state == 1){
        if (item.mvid) {
          wx.request({

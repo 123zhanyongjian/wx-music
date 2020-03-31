@@ -19,7 +19,7 @@ Page({
   pay(e) {
     var that = this;
     var item = e.currentTarget.dataset.item;
-   
+    console.log(item)
     var song;
     wx.request({
       url: api.default.host+'musicDetails?id='+e.currentTarget.dataset.item.song_id,
@@ -34,44 +34,61 @@ Page({
           return
         }
         song = res.data.result.songList[0];
-        song['url'] = song.showLink;
+        song['src'] = song.showLink;
         song['title'] = song.songName;
-        song['pic'] = song.songPicRadio;
+        song['pic'] = 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
         song['author'] = song.artistName,
+        song['id']=song.songId
           
        
-        console.log(that.data.song);
+        console.log(666,song);
         app.data.song =song;
+        tiem.newAddSong(app.data);
         //将http转换为https
         song.lrcLink=song.lrcLink.replace('http','https'),
         console.log(song.lrcLink)
         var flag
-        wx.request({
-          url: song.lrcLink,
-          success:function(ret){
-            app.data.song.lrc=ret.data;
-            //清空播放时长
-            app.data.paythis.setData({
-              value: 0
-            })
-            tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
-          
-            wx.switchTab({
-              url: "../../pages/play/play",
-              success: function () {
-                console.log(app.data);
+        if(song.lrcLink){
+          wx.request({
+            url: song.lrcLink,
+            //http转https
+  
+            success: function (ret) {
+              app.data.song.lrc = ret.data;
+              //清空播放时长
+              app.data.paythis.setData({
+                value: 0
+              })
+              tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
             
-
-
-
-              }
-            })
+              wx.switchTab({
+                url: "../../pages/play/play",
+                success: function () {
+                  console.log(app.data);
+  
+  
+  
+  
+                }
+              })
             
-        
-            console.log(app.data.song)
+            }
+          })
+  
+        }else{
+          tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
             
-          }
-        })
+              wx.switchTab({
+                url: "../../pages/play/play",
+                success: function () {
+                  console.log(app.data);
+  
+  
+  
+  
+                }
+              })
+        }
       
        
 

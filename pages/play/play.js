@@ -14,6 +14,7 @@ Page({
     Mv:false,
     Mvsrc:'',
     songList: [],
+    Crack:false,//false未开启 true开启破解
     ins: '', //列表选中
     showtime: false,
     loopstate: 0,//f0代表顺序，1代表循环，2代表随机
@@ -210,7 +211,6 @@ Page({
       app.data.songlist = song
       app.data.paythis=this;
       console.log(app.data)
-      tiem.newAddSong(app.data);
       console.log(app,555)
       this.setData({
         songList: song
@@ -251,7 +251,7 @@ Page({
   },
   //上一曲
   last() {
-    if (this.data.Mv) {
+    if (this.data.Mv || !this.data.songList.length) {
       return
     }
     if (this.data.ins > 0) {
@@ -267,7 +267,7 @@ Page({
 
   //下一曲
   next() {
-    if (this.data.Mv) {
+    if (this.data.Mv || !this.data.songList.length) {
       return
     }
     if (this.data.songList.length - 1 > this.data.ins) {

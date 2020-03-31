@@ -6,8 +6,40 @@ Page({
   data: {
     songs: [],
     n:0,
+    itemList: ['立即播放', '下一首播放'],
     list:[],//临时列表
     timer:''//定时器
+  },
+  showActionSheet(ev) {
+    let item = ev.currentTarget.dataset.item;
+    let that = this;
+    app.data.song = item;
+    console.log(item);
+    wx.showActionSheet({
+      itemList: this.data.itemList,
+
+      success(e) {
+        console.log("success")
+        console.log(e)
+        if (!e.camcle) {
+          if (e.tapIndex) {
+            time.nextSongPay(app.data)
+          } else {
+            that.pay(ev)
+          }
+        } else {
+          // console.log("cancle")
+        }
+      },
+      fail(e) {
+        // console.log("fail")
+        // console.log(e)
+      },
+      complete(e) {
+        // console.log("complete")
+        // console.log(e)
+      }
+    })
   },
   onLoad: function () {
     wx.setNavigationBarTitle({
@@ -61,6 +93,7 @@ Page({
   whole(){
     var request = time.Promisify(wx.request)
     app.data.song = this.data.songs[0]
+    time.newAddSong(app.data);
     var songmidid = app.data.song.mid
     var mvid = app.data.song.vid
     request({
@@ -115,10 +148,12 @@ Page({
                   id = { ...rev.data.data[item] }
                 }
               })
-              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
-              app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+              // app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=480`
+              app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
               app.data.paythis.setData({
                 value: 0,
+                Mvsrc: `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`,
+                Crack: false,//false未开启 true开启破解
                 ins: 0
               })
               time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
@@ -126,6 +161,7 @@ Page({
             .catch(err => {
               app.data.paythis.setData({
                 value: 0,
+                Crack: false,//false未开启 true开启破解
                 ins: 0
               })
               time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
@@ -180,6 +216,7 @@ Page({
         song['author']=song.singer;
         song['pic']=song.image;
         app.data.song = song;
+        time.newAddSong(app.data);
         wx.switchTab({
           url: "../../pages/play/play",
           success: function () {
@@ -191,7 +228,9 @@ Page({
         })
         setTimeout(() => {
           app.data.paythis.setData({
-            value: 0
+            value: 0,
+            Crack: false
+
           })
           time.pay(app.data.paythis, app.innerAudioContext, app.data.song, app);
 
@@ -210,9 +249,12 @@ Page({
                   id = { ...rev.data.data[item] }
                 }
               })
-              app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`;
+              // app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`;
               console.log(app.data.paythis)
               app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
+              app.data.paythis.setData({
+                Mvsrc: `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
+              })
             })
         }
       

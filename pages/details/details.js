@@ -33,59 +33,67 @@ Page({
           return
         }
         song = res.data.result.songList[0];
-        song['url'] = song.showLink;
+        song['src'] = song.showLink;
         song['title'] = song.songName;
-        song['pic'] = song.songPicRadio;
+        song['pic'] = 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
         song['author'] = song.artistName,
+        song['id']=song.songId
 
           that.setData({
             song: song
           })
 
-        console.log(that.data.song);
+        console.log(song,444);
         app.data.song = that.data.song;
+        tiem.newAddSong(app.data);
         //将http转换为https
         song.lrcLink = song.lrcLink.replace('http', 'https')
 
         var flag
-        wx.request({
-          url: song.lrcLink,
-          //http转https
-
-          success: function (ret) {
-            app.data.song.lrc = ret.data;
-            //清空播放时长
-            app.data.paythis.setData({
-              value: 0
-            })
-            tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
-          
-            wx.switchTab({
-              url: "../../pages/play/play",
-              success: function () {
-                console.log(app.data);
-
-
-
-
+          if(song.lrcLink){
+            wx.request({
+              url: song.lrcLink,
+              //http转https
+    
+              success: function (ret) {
+                app.data.song.lrc = ret.data;
+                //清空播放时长
+                app.data.paythis.setData({
+                  value: 0
+                })
+                tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
+              
+                wx.switchTab({
+                  url: "../../pages/play/play",
+                  success: function () {
+                    console.log(app.data);
+    
+    
+    
+    
+                  }
+                })
+              
               }
             })
-          
+    
+          }else{
+            tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
+              
+                wx.switchTab({
+                  url: "../../pages/play/play",
+                  success: function () {
+                    console.log(app.data);
+    
+    
+    
+    
+                  }
+                })
           }
-        })
 
 
 
-
-        wx.switchTab({
-          url: "../../pages/play/play",
-          success: function () {
-            console.log(app.data);
-
-
-
-          }
-        })
 
         app.data.state = true
 
