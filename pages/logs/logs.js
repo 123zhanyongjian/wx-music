@@ -9,15 +9,14 @@ Page({
     logs: [],
     serach: "",
     interval: '',
-    logo: '../../image/qqmusic.jpg',
-    state: '0',
+    logo: '../../image/wangyi.jpg',
+    state: '1',
     singer: '',//歌手
     array: ['QQ音乐搜索', '网易云音乐搜索'],
     song: [
 
     ],
 
-    state: false
   },
   //切换搜索模式
   bindPickerChange(e) {
@@ -36,12 +35,22 @@ Page({
   },
   //输入框监听
   serachs(e) {
-
     var that = this;
     var serach = e.detail.value;
-    // console.log(serach, pays);
+    this.setData({
+      serach
+    })
+    if(!serach.trim()){
+      this.setData({
 
-    if (serach != '') {
+        song: [],
+        singer: ''
+      })
+     
+      return
+    }
+
+    if (serach) { 
       if (e.timeStamp - this.data.interval < 1000) {
         return
       } else {
@@ -53,31 +62,28 @@ Page({
           song: [],
           singer: ''
         })
-        wx.showLoading({
-          title: '加载中...',
-        })
         if (this.data.state == 1) {
           wx.request({
-            url: api.default.host1 + 'search?keywords=' + serach,
+            url: api.default.host1 + '?msg=' + serach,
             success: function (res) {
               wx.hideLoading();
               console.log(res.data);
               //数据处理
               let arr=[];
-              res.data.result.songs.map((item,index,ite)=>{
+              res.data.data.map((item,index,ite)=>{
                 if(ite.length>0){
                   let obj={}
                   obj.title=item.name,
-                  obj.author = item.artists[0].name;
+                  obj.author = item.singername;
                   obj.pic ='http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
-                  obj.src = `https://music.163.com/song/media/outer/url?id=${item.id}.mp3`,
+                  // obj.src = `https://music.163.com/song/media/outer/url?id=${item.id}.mp3`,
                   obj.mvid=item.mvid
                   obj.id=item.id
                   arr.push(obj)
                 }
                 return arr;
               })
-              console.log(res.data.result.songs)
+              // console.log(res.data.result.songs)
               that.setData({
                 song: arr
 
@@ -120,11 +126,7 @@ Page({
         }
       }
     } else {
-      this.setData({
-
-        song: [],
-        singer: ''
-      })
+      
     }
 
 
@@ -143,8 +145,46 @@ Page({
     var that = this;
     var flag
     var item = e.currentTarget.dataset.item;
+    wx.showLoading({
+      title: '加载中',
+    })
+    const index = e.currentTarget.dataset.index
      app.data.song = item;
      if (this.data.state == 1){
+      wx.request({
+        url: api.default.host1 + '?msg=' + this.data.serach+'type=song&n='+index,
+        success: function (res) {
+          wx.hideLoading();
+          const {data} =  res.data
+          if(data.song_url?.indexOf('付费')!==-1){
+            item.src = data.mv_url
+          }else{
+            item.src = data.song_url
+          }
+          if(!item.src){
+            wx.showToast({
+              title: '无法播放',
+              icon:'error'
+            })
+            return
+          }
+          wx.switchTab({
+            url: "../../pages/play/play",
+            success: function () {
+              app.data.paythis.setData({
+                value: 0
+              })
+              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
+ 
+              that.setData({
+                song: []
+              })
+ 
+            }
+ 
+          })
+        }})
+      return  
        if (item.mvid) {
          wx.request({
            url: `https://musicapi.leanapp.cn/mv?mvid=${item.mvid}`,

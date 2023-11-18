@@ -15,7 +15,7 @@
       </view>
       <!-- QQ音乐mv信息 -->
       <view class='ul'>
-          <view class='li' wx:for="{{song}}" data-item="{{item}}" wx:key="{{index}}" bindtap='pay'>
+          <view class='li' wx:for="{{song}}" data-item="{{item}}" data-index="{{index}}" wx:key="{{index}}" bindtap='pay'>
             <image  src='../../image/mm.png'></image>
             <text>{{item.title}}--{{item.author}}</text>
             <text class="mv" wx:if="{{item.mvid||item.vid}}">MV</text>

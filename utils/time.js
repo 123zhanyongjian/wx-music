@@ -32,7 +32,7 @@ function Continuemusic() {
 //重头播放音乐
 function pay(that, app, datas) {
  
-  GetLRC(datas,that)
+  // GetLRC(datas,that)  暂时不要歌词
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   that.setData({
@@ -41,8 +41,10 @@ function pay(that, app, datas) {
     }],
   })
   app.play();
+  console.log(that.data)
   if (that.data.value == 0) {
     app.src = datas.src;
+    console.log(datas,'http://fsmvpc.tx.kugou.com/202311181500/0cab219be384bffe28fc937468da8ca5/v2/5dfb0d89b2bafaffcfbc754bc857d986/G249/M03/15/1B/mYcBAF_IzjSAdiRIBH7wxnLShhI047.mp4')
   }
   //苹果手机系统下一首
   app.onNext(() => {
