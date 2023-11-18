@@ -7,6 +7,7 @@ const api = require('../api/index.js');
 Page({
   data: {
     logs: [],
+    itemList:['立即播放','下一首播放'],
     serach: "",
     interval: '',
     logo: '../../image/wangyi.jpg',
@@ -17,6 +18,37 @@ Page({
 
     ],
 
+  },
+  showActionSheet(ev) {
+    let item = ev.currentTarget.dataset.item;
+    let that=this;
+    app.data.song = item;
+    console.log(item);
+    wx.showActionSheet({
+      itemList: this.data.itemList,
+
+      success(e) {
+        console.log("success")
+        console.log(e)
+        if (!e.camcle) {
+          if (e.tapIndex){
+            time.nextSongPay(app.data)
+          }else{
+            that.pay(ev)
+          }
+        } else {
+          // console.log("cancle")
+        }
+      },
+      fail(e) {
+        // console.log("fail")
+        // console.log(e)
+      },
+      complete(e) {
+        // console.log("complete")
+        // console.log(e)
+      }
+    })
   },
   //切换搜索模式
   bindPickerChange(e) {
@@ -149,23 +181,28 @@ Page({
       title: '加载中',
     })
     const index = e.currentTarget.dataset.index
-     app.data.song = item;
-     if (this.data.state == 1){
+    
+    app.data.song = item;
+     if (this.data.state == 1&&index!==undefined){
       wx.request({
         url: api.default.host1 + '?msg=' + this.data.serach+'type=song&n='+index,
         success: function (res) {
           wx.hideLoading();
           const {data} =  res.data
-          if(data.song_url?.indexOf('付费')!==-1){
+          if((data.song_url&&data.song_url.indexOf('付费')!==-1)||!data.song_url){
+            
             item.src = data.mv_url
           }else{
             item.src = data.song_url
           }
+        
+         
           if(!item.src){
             wx.showToast({
               title: '无法播放',
               icon:'error'
             })
+          
             return
           }
           wx.switchTab({
@@ -174,8 +211,10 @@ Page({
               app.data.paythis.setData({
                 value: 0
               })
+              time.newAddSong(app.data.paythis.data);
               time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
- 
+             
+
               that.setData({
                 song: []
               })
@@ -226,15 +265,15 @@ Page({
          })
        }
      }else{
-       wx.switchTab({
-         url: "../../pages/play/play",
-         success: function () {
+      //  wx.switchTab({
+      //    url: "../../pages/play/play",
+      //    success: function () {
 
-           console.log(11222)
-           time.wholelist(app);
-         }
+      //      console.log(11222)
+      //      time.wholelist(app);
+      //    }
 
-       })
+      //  })
      }
     // wx.request({
     //   url: `https://music.163.com/api/song/media?id=${item.id}`,

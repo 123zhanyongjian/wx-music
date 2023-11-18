@@ -44,7 +44,7 @@ function pay(that, app, datas) {
   console.log(that.data)
   if (that.data.value == 0) {
     app.src = datas.src;
-    console.log(datas,'http://fsmvpc.tx.kugou.com/202311181500/0cab219be384bffe28fc937468da8ca5/v2/5dfb0d89b2bafaffcfbc754bc857d986/G249/M03/15/1B/mYcBAF_IzjSAdiRIBH7wxnLShhI047.mp4')
+    console.log("?????")
   }
   //苹果手机系统下一首
   app.onNext(() => {
@@ -85,23 +85,18 @@ function pay(that, app, datas) {
     showtime: false,
     pay: "../../image/zt.png"
   });
-  if (datas.Mvsrc) {
-    that.setData({
-      Mvsrc: datas.Mvsrc,
-    })
-    console.log('???', datas)
-  } else {
-    that.setData({
-      Mvsrc: '',
-    })
-    console.log(111)
-  }
-  console.log(that)
+ 
+  console.log(datas)
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
     wx.showLoading({ title: '正版音乐解析中' })
-    if (datas.Mvsrc) {
+    if (datas.Mvsrc && !that.data.Crack) {
       datas.src = datas.Mvsrc
+      that.setData({
+        Crack:true,
+        value:0,
+        src: datas.src
+      })
       pay(that, app, datas)
       console.log(datas.Mvsrc)
     } else {
@@ -109,7 +104,7 @@ function pay(that, app, datas) {
 
       let cls = setInterval(() => {
         sum = sum - 1;
-        console.log("?????????", that.Mv)
+        console.log("?????????",datas)
         if (!sum) {
           clearInterval(cls)
           wx.showToast({
@@ -239,6 +234,7 @@ function Closestate(that, datas) {
     state: that.data.state,
     value: that.data.value,
     pay: that.data.pay,
+    Crack: that.data.Crack,
     t: that.data.t,
     // lrc: datas.lrc,
     conduct: that.data.conduct,
@@ -287,6 +283,7 @@ function Readinfo(that, app, appInst) {
         app.seek(datas.value)
         that.setData({
           max: datas.max,
+          Crack: that.data.Crack,
           conduct: datas.conduct,
           title: datas.title,
           author: datas.author,
@@ -310,7 +307,8 @@ function Nextsong(that, app, appInst) {
   var datas = that.data.songList[that.data.ins + 1];
   that.setData({
     ins: that.data.ins + 1,
-    value: 0
+    value: 0,
+    Crack: false,
   });
   appInst.data.song = datas;
   if (appInst.data.song.pic == undefined) {
@@ -334,7 +332,8 @@ function Lastsong(that, app, appInst) {
   var datas = that.data.songList[that.data.ins - 1];
   that.setData({
     ins: that.data.ins - 1,
-    value: 0
+    value: 0,
+    Crack: false,
   });
   appInst.data.song = datas;
   if (appInst.data.song.pic == undefined) {
@@ -354,7 +353,8 @@ function Randomplay(that, app, appInst) {
   var inst = Math.floor(Math.random() * length);
   that.setData({
     ins: inst,
-    value: 0
+    value: 0,
+    Crack: false,
   });
   var datas = that.data.songList[inst];
   appInst.data.song = datas;
@@ -397,140 +397,6 @@ function Lrcget(that, datas) {
     })
   }
 }
-//添加歌曲到播放列表
-function addsong(data) {
-
-  //创建临时歌曲数据
-  var songdata
-  var flag = true
-  if (data.songlist == '') {
-    data.songlist = []
-  }
-  if (data.song != '') {
-
-    if (data.songlist.length == 0) {
-
-      data.songlist.unshift(data.song);
-      data.paythis.setData({
-        ins: 0
-      })
-
-
-      wx.setStorage({
-        key: 'songlist',
-        data: data.songlist,
-        success: function (res) {
-          console.log('异步保存成功')
-        }
-      })
-
-    } else if (data.songlist.length < 99) {
-
-      for (let i of data.songlist) {
-
-        if (data.song.songid == undefined && data.song.songId != undefined) {
-          if (data.song.songId == i.songid || data.song.songId == i.songId) {
-            flag = true;
-            //记录下存在的歌
-            songdata = data.song;
-            //获取存在歌所在的位置index的值
-            for (let i = 0; i < data.songlist.length; i++) {
-              if (songdata.title == data.songlist[i].title) {
-                data.paythis.setData({
-                  ins: i
-                })
-
-              }
-            }
-            console.log('重复了')
-            return
-          } else {
-            flag = false;
-
-            console.log('添加')
-          }
-        } else if (data.song.songid != undefined && data.song.songId == undefined) {
-          if (data.song.songid == i.songid || data.song.songid == i.songId) {
-            flag = true;
-            songdata = data.song;
-            //获取存在歌所在的位置index的值
-            for (let i = 0; i < data.songlist.length; i++) {
-              if (songdata.title == data.songlist[i].title) {
-                data.paythis.setData({
-                  ins: i
-                })
-
-              }
-            }
-            console.log('重复了')
-            return
-
-          } else {
-            flag = false;
-            console.log('添加')
-          }
-        } else if (data.song.id !== undefined) {
-          if (data.song.id === i.id) {
-            flag = true;
-            songdata = data.song;
-            //获取存在歌所在的位置index的值
-            for (let i = 0; i < data.songlist.length; i++) {
-              if (songdata.title == data.songlist[i].title) {
-                data.paythis.setData({
-                  ins: i
-                })
-
-              }
-            }
-            console.log('重复了')
-            return
-          } else {
-            flag = false;
-            console.log('添加')
-          }
-        } else {
-          //歌手部分音乐是否添加
-          if (i.musicId == data.song.musicId) {
-            flag = true;
-            songdata = data.song;
-            //获取存在歌所在的位置index的值
-            for (let i = 0; i < data.songlist.length; i++) {
-              if (songdata.title == data.songlist[i].title) {
-                data.paythis.setData({
-                  ins: i
-                })
-
-              }
-            }
-            console.log('重复了')
-            return
-          } else {
-            flag = false;
-
-            console.log('添加')
-          }
-        }
-
-      }
-
-    }
-    if (!flag) {
-      data.songlist.unshift(data.song)
-      data.paythis.setData({
-        ins: 0
-      })
-
-      wx.setStorage({
-        key: 'songlist',
-        data: data.songlist,
-        success: function (res) {
-          console.log('异步保存成功')
-        }
-      })
-    }
-  }
-
-}
 //自定义promise函数
 function Promisify(fn) {
   return function (obj = {}) {
@@ -551,7 +417,10 @@ function Promisify(fn) {
 //歌单全部问题
 function wholelist(app) {
   var request = Promisify(wx.request)
-
+  app.data.paythis.setData({
+    Crack:false
+  })
+  console.log('?????434343')
   var songmidid = app.data.song.mid
   var mvid = app.data.song.vid
   request({
@@ -593,33 +462,56 @@ function wholelist(app) {
             res = res.data.replace('getOneSongInfoCallback(', '');
             res = JSON.parse(res.substring(0, res.length - 1))
             app.data.song.pic = `https://y.gtimg.cn/music/photo_new/T002R300x300M000${res.data[0].album.mid}.jpg?max_age=2592000`
+            //获取mv
+            if (mvid) {
+              request({
+                url: `https://v1.itooi.cn/tencent/mv?id=${mvid}`
+              })
+                .then(rev => {
+                  console.log(rev, '2222222222222222222222222222222222222222222222222222');
+                  let id;
+                  Object.keys(rev.data.data).forEach((item, index) => {
+                    if (index === 0) {
+                      id = { ...rev.data.data[item] }
+                    }
+                  })
+                  // app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
+                  app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
+
+                  app.data.paythis.setData({
+                    Mvsrc: appInst.data.song.Mvsrc,
+                    Crack: false,
+                    value: 0
+                  })
+                  console.log('???', app.data.song)
+                  pay(app.data.paythis, app.innerAudioContext, app.data.song);
+                })
+
+            } else {
+              app.data.paythis.setData({
+                Mvsrc: '',
+                Crack: false,
+                value: 0
+
+              })
+              console.log(111)
+              pay(app.data.paythis, app.innerAudioContext, app.data.song);
+            }
 
 
           })
-      }
-      app.data.paythis.setData({
+      }else{
+        app.data.paythis.setData({
 
-        value: 0
-      })
-      pay(app.data.paythis, app.innerAudioContext, app.data.song);
-      //获取mv
-      if (mvid) {
-        request({
-          url: `https://v1.itooi.cn/tencent/mv?id=${mvid}`
+          value: 0, Crack: false,
+
         })
-          .then(rev => {
-            console.log(rev, '2222222222222222222222222222222222222222222222222222');
-            let id;
-            Object.keys(rev.data.data).forEach((item, index) => {
-              if (index === 0) {
-                id = { ...rev.data.data[item] }
-              }
-            })
-            app.data.paythis.data.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
-            app.data.song.Mvsrc = `https://v1.itooi.cn/tencent/mvUrl?id=${id.gmid}&quality=270`
-          })
+        pay(app.data.paythis, app.innerAudioContext, app.data.song);
+        console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
       }
-
+     
+     
+     
     })
 }
 //请求歌词
@@ -677,4 +569,42 @@ function newAddSong(data) {
     })
   }
 }
-export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, addsong, wholelist, Closestate, Readinfo, Promisify, newAddSong };
+//下一首播放
+function nextSongPay(data){
+  //现在播放的和选的是一样的，结束
+  if(data.songlist[data.paythis.data.ins].id===data.song.id){
+    console.log('一样的，结束');
+    return
+  }
+  let ins = data.paythis.data.ins;
+  let indexs
+  console.log(data)
+  data.songlist = data.songlist.length === 0 ? [] : data.songlist
+  let flag = data.songlist.some((item, index) => {
+    indexs = index;
+    return item.id === data.song.id
+
+  })
+  if(flag){
+    data.songlist.splice(indexs,1)//删除原有的歌曲
+   if(ins){
+     data.paythis.setData({
+       ins: ins - 1
+     })
+   }else{
+     data.paythis.setData({
+       ins: 0
+     })
+   }
+  }
+  data.songlist.splice(ins+1,0,data.song);//将新歌添加到播放
+  console.log(ins)
+  wx.setStorage({
+    key: 'songlist',
+    data: data.songlist,
+    success: function (res) {
+      console.log('异步保存成功', data.songlist)
+    }
+  })
+}
+export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, wholelist, Closestate, Readinfo, Promisify, newAddSong, nextSongPay };
