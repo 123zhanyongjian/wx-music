@@ -48,6 +48,13 @@
    
    
 }
+.love{
+  position: absolute;
+  width: 60rpx;
+  right:120rpx;
+ height: 60rpx;
+  bottom:270rpx;
+}
 .loop{
    position: absolute;
     width: 60rpx;

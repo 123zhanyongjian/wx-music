@@ -1,3 +1,6 @@
+const app = getApp()
+const tiem = require('../../utils/time.js')
+
 Component({
   /**
    * 组件的属性列表
@@ -14,6 +17,10 @@ Component({
     src:{
       type:String,
       value:'',
+    },
+    initialTime:{
+      type:Number,
+      value:0
     }
   },
 
@@ -28,6 +35,14 @@ Component({
    * 组件的方法列表
    */
   methods: {
-
+    bindtimeupdate(e){
+      if(this.src===app.data.paythis.src){
+        app.data.paythis.setData({
+          value:e.detail.currentTime,
+          conduct: tiem.MinuteConversion(e.detail.currentTime)
+        })
+      }
+   
+    }
   }
 })

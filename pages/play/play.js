@@ -12,6 +12,7 @@ Page({
   data: {
     logs: [],
     Mv:false,
+    love:'../../image/love.png',
     Mvsrc:'',
     songList: [],
     Crack:false,//false未开启 true开启破解
@@ -19,6 +20,7 @@ Page({
     showtime: false,
     loopstate: 0,//f0代表顺序，1代表循环，2代表随机
     loop: '../../image/sx.png',
+    loveState:true,
     lrc: [{
       lrc: '暂无歌词'
     }],
@@ -37,7 +39,8 @@ Page({
     state: true,
     animationData: {},
     setInterval: '',
-    close: false
+    close: false,
+    song:{}
   },
   //关闭歌曲列表
   closese() {
@@ -51,6 +54,11 @@ Page({
 
     }, 300)
 
+  },
+  binderrorImg(){
+    this.setData({
+      img:'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'
+    })
   },
   // 关闭mv
   cuos(){
@@ -114,6 +122,12 @@ Page({
       })
     }
   },
+  changlove(){
+    wx.showToast({
+      title:'收藏功能开发中',
+      icon:'none'
+    })
+  },
   //切换进度条
   changeslider(e) {
 
@@ -138,27 +152,36 @@ Page({
       content: '确定删除该歌曲？',
       success(res) {
         if (res.confirm) {
-          that.data.songList.splice(index, 1)
-
-          wx.setStorage({
-            key: 'songlist',
-            data: that.data.songList,
-            success: function (res) {
-              console.log('异步保存成功');
-              var song = wx.getStorageSync('songlist');
-              app.data.songlist = song
-              that.setData({
-                songList: song
-              })
-            }
-          })
-
+        
+          that.delSong(index)
+         
         } else if (res.cancel) {
           console.log('用户点击取消')
         }
       }
     })
 
+  },
+  delSong(index){
+    const that =this
+    that.data.songList.splice(index, 1)
+        
+    wx.setStorage({
+      key: 'songlist',
+      data: that.data.songList,
+      success: function (res) {
+        console.log('异步保存成功');
+        var song = wx.getStorageSync('songlist');
+        app.data.songlist = song
+        that.setData({
+          songList: song,
+        })
+        if(index===that.data.ins){
+         
+          tiem.pay(that, app.innerAudioContext, app,1)
+        }
+      }
+    })
   },
   //清空列表
   clearse() {
@@ -191,7 +214,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    app.data.paythis=this;
+      if(this.data.state){
+      tiem.Readinfo(this, app.innerAudioContext, app)
 
+      }
   },
 
   /**
@@ -205,18 +232,17 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    console.log(this.data.Mvsrc);
     setTimeout(() => {
       var song = wx.getStorageSync('songlist');
+      const loveList = wx.getStorageSync('loveList')||[]
       app.data.songlist = song
-      app.data.paythis=this;
+      app.data.loveList = loveList
       console.log(app.data)
       console.log(app,555)
       this.setData({
         songList: song
       })
       if (this.data.state) {
-        tiem.Readinfo(this, app.innerAudioContext, app)
       }
     }, 500)
 
@@ -225,9 +251,16 @@ Page({
   MvSHOW(){
     //暂停音乐
     tiem.suspend(this, app.innerAudioContext)
+    
+   
     this.setData({
       Mv:true
     })
+    
+   setTimeout(() => {
+    const mv = wx.createVideoContext('myMv')
+   mv.pause()
+   }, 5000);
   },
   //选择音乐
   pay(e) {
@@ -237,13 +270,16 @@ Page({
     })
 
     app.data.song = e.currentTarget.dataset.item;
-    if (app.data.song.pic == undefined) {
-      tiem.wholelist(app)
-      console.log('????')
+      if(!app.data.song.src){
+        app.data.song.src='http://www.baidu.com'
+      }
+    if (app.data.song.islink) {
+      console.log(this.data.value,444)
+    tiem.pay(this, app.innerAudioContext, app.data.song,1);
     } else {
       console.log('?3333??')
       tiem.Lrcget(this, app.data.song)
-      tiem.pay(this, app.innerAudioContext, app.data.song);
+      tiem.pay(this, app.innerAudioContext, app.data.song,1);
     }
 
 
@@ -267,6 +303,7 @@ Page({
 
   //下一曲
   next() {
+    console.log(this.data)
     if (this.data.Mv || !this.data.songList.length) {
       return
     }

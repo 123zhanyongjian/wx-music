@@ -12,7 +12,9 @@ Page({
 
   data: {
     singer: [],
-    title: ''
+    list:[],
+    title: '',
+    serach:''
   },
   onReachBottom() {
     console.log('到底了')
@@ -49,6 +51,39 @@ Page({
             singer: _that._normallizeSinger(res2.data.list)
           })
         }
+      }
+    })
+  },
+  serachs(e){
+    var serach = e.detail.value;
+    const that = this
+    if(!serach){
+      that.setData({
+        list:[]
+      })
+      return
+    }
+    wx.request({
+      url: `https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&format=jsonp&key=${serach}&g_tk=5381&jsonpCallback=SmartboxKeysCallbackmod_top_search3847&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`,
+      success: function (res) {
+        wx.hideLoading();
+        let res1 = res.data.replace('SmartboxKeysCallbackmod_top_search3847(', '')
+        let res2 = JSON.parse(res1.substring(0, res1.length - 1));
+        console.log(res2)
+        for (let i of res2.data.song.itemlist) {
+          i.title = i.name;
+          i.author = i.singer
+
+        }
+        //获取高清图
+        for (let i of res2.data.singer.itemlist) {
+          i.pic = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + i.mid + '.jpg?max_age=2592000';
+          i.id = i.mid
+        }
+        that.setData({
+          list: res2.data.singer.itemlist,
+
+        })
       }
     })
   },

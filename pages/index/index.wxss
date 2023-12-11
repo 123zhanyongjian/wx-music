@@ -1,71 +1,43 @@
+.containers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20rpx;
+  padding: 20rpx;
+  background: linear-gradient(45deg, #D8E9F2, #BEDCE4);  
 
-.bt{
-  position: absolute;
-  left:32rpx;
-  width: 100%;
-  border-left: 6rpx solid red;
-  font-size: 32rpx;
-  font-weight: 700;
-  padding-left: 8rpx;
-  color: red;
-  height:42rpx;
- 
-  }
-  .img{
-    display: flex;
-    background: white;
-    margin:10rpx 0; 
-    
-  }
-  .imhs{
-    flex: 1
-  }
-  .img image{
-    padding-top:10rpx;
-   
-    width: 230rpx;
-    height:298rpx;
-  }
-  .right{
-    flex: 3
-  }
-  .type{
-    background-color: #f1f1f1;
-  }
-  .content{
-   text-align: center;
-   height: 60rpx;
-   line-height: 60rpx;
-    width: 100%;
-    font-size: 32rpx;
-    color: #999;
-    border-bottom: 2rpx solid #f1f1f1;
-    
-  }
-  .ul{
-  width: 100%;
 }
-.li{
-  
-  position: relative;
-  background: white;
-  height:60rpx;
-  border-bottom: 2rpx solid #f9f9f9;
+
+.musicItem {
+  width:90%;
+  box-shadow: rgba(0,0,0,0.07) 0 3px 5px;
+  overflow: hidden;
+  text-align: center;
+  margin: 20rpx;
+  padding: 10rpx;
+  background: #fff;
 }
-.li>image{
-  width: 20rpx;
-  height: 20rpx;
-  position: absolute; 
-  left:33rpx;
-  top: 12rpx;
+
+.cover {
+  width: 300rpx;
+  height: 200rpx;
+  object-fit: cover;
 }
-.li>.text{
-  
- height: 100%;
- overflow: hidden;
-  color: #999;
- 
-  margin-left:60rpx;
-  font-size: 28rpx;
-  line-height: 60rpx;
+
+/* .musicMeta {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+} */
+
+.title {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.description {
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+  font-size: 20rpx;
+  color: #666666;
 }

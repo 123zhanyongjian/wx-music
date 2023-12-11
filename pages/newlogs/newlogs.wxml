@@ -1,12 +1,12 @@
 <view class='main'>
   <view class='serach'>
- 
+   <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
    
  
   <image class='serachimg' src="{{logo}}"></image>
- 
+   </picker>
    <image class='serachimgs' src="../../image/down.png"></image>
-    <input type='text' class='input' placeholder='搜索歌曲、歌手(周杰伦)' value="{{serach}}" bindinput ="serachs"></input>
+    <input type='text' class='input' placeholder='搜索歌曲、歌手' value="{{serach}}" bindinput ="serachs"></input>
   </view>
   <view style='background:#fff'>
       <view class='singer' wx:key="{{idx}}" wx:for="{{singer}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>
@@ -15,7 +15,7 @@
       </view>
       <!-- QQ音乐mv信息 -->
       <view class='ul'>
-          <view class='li' wx:for="{{song}}" data-item="{{item}}" data-index="{{index}}" wx:key="{{index}}" bindtap='pay'>
+          <view>
           <view class='li' wx:for="{{song}}" data-item="{{item}}" wx:key="{{index}}" bindtap='pay' bindlongpress="showActionSheet">
             <image  src='../../image/mm.png'></image>
             <text>{{item.title}}--{{item.author}}</text>

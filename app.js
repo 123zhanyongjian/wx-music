@@ -57,9 +57,9 @@ App({
   },
   //小程序关闭后下次进入还是上一次关闭时所保留的状态
    Closestate(that, datas){
-    console.log(datas)
   var obj1 = {
       max: that.data.max,
+      InitialValue:true,
       state: that.data.state,
       value: that.data.value,
       pay: that.data.pay,
@@ -107,6 +107,7 @@ App({
     song:'',
     songlist:[],
     state:false,
-    first:0
+    first:0,
+    loveList:[]
   }
 })

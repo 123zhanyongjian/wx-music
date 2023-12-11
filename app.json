@@ -4,7 +4,7 @@
     "pages/logs/logs",
     "pages/index/index",
     "pages/singer/singer",
-    
+    "pages/newlogs/newlogs",
     "pages/singerdetails/singerdetails",
     "pages/details/details"
   ],
@@ -31,13 +31,20 @@
         },
       {
         "pagePath": "pages/index/index",
-        "text": "排行榜",
+        "text": "推荐",
         "iconPath": "./image/tj.png",
         "selectedIconPath": "./image/tj1.png"
       },
       {
+        "pagePath": "pages/newlogs/newlogs",
+        "text": "新搜索",
+        "iconPath": "./image/ss.png",
+        "selectedIconPath": "./image/ss1.png"
+      },
+
+      {
         "pagePath": "pages/logs/logs",
-        "text": "搜索",
+        "text": "旧搜索",
         "iconPath": "./image/ss.png",
         "selectedIconPath": "./image/ss1.png"
       },

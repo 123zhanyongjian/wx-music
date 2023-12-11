@@ -1,4 +1,10 @@
 <view class="mains">
+  <image class='serachimg' src="{{logo}}"></image>
+  <input type='text' class='input' placeholder='搜索歌手' value="{{serach}}" bindinput ="serachs"></input>
+  <view class='singers' wx:key="{{idx}}" wx:for="{{list}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>
+        <image src="{{ite.pic}}" class="haderimg" style='top:20rpx;'></image>
+        <view class='singername' style='top:30rpx'>{{ite.name}}</view>
+      </view>
   <scroll-view scroll-y scroll-with-animation scroll-into-view="line{{title}}">
   
     <view wx:for="{{singer}}" wx:key="{{index}}" wx:for-index="index" class='singerlist'>

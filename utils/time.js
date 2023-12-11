@@ -1,5 +1,10 @@
 var appInst = getApp();
 var thats = this;
+const utils = require('./util')
+let InitialValue = true;
+let InitialValue1 = true
+let errorFlag = false
+var request = Promisify(wx.request)
 //秒转分钟
 function MinuteConversion(second) {
   var Minute = parseInt(second / 60);
@@ -30,9 +35,7 @@ function Continuemusic() {
 }
 
 //重头播放音乐
-function pay(that, app, datas) {
- 
-  // GetLRC(datas,that)  暂时不要歌词
+async function pay(that, app, datas, restart) {
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   that.setData({
@@ -41,10 +44,24 @@ function pay(that, app, datas) {
     }],
   })
   app.play();
-  console.log(that.data)
-  if (that.data.value == 0) {
-    app.src = datas.src;
-    console.log("?????")
+  if (that.data.value === 0 || restart) {
+    // 新音乐才重新赋值
+    app.src = datas.src||'http://www.baidu.com';
+    app.title = datas.title;
+    app.coverImgUrl = datas.pic;
+    app.autoplay = false;
+    app.singer = datas.author
+    console.log(datas.src, 54321)
+    that.setData({
+      title: datas.title,
+      song:datas,
+      author: datas.author,
+      img: datas.pic,
+      Mvsrc: datas.isMv ? datas.src : '',
+      state: false,
+      showtime: false,
+      pay: "../../image/zt.png"
+    });
   }
   //苹果手机系统下一首
   app.onNext(() => {
@@ -73,86 +90,49 @@ function pay(that, app, datas) {
 
 
 
-  app.title = datas.title;
-  app.coverImgUrl = datas.pic;
-  app.autoplay = false;
 
-  that.setData({
-    title: datas.title,
-    author: datas.author,
-    img: datas.pic,
-    state: false,
-    showtime: false,
-    pay: "../../image/zt.png"
-  });
- 
-  console.log(datas)
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
-    wx.showLoading({ title: '正版音乐解析中' })
-    if (datas.Mvsrc && !that.data.Crack) {
-      datas.src = datas.Mvsrc
-      that.setData({
-        Crack:true,
-        value:0,
-        src: datas.src
-      })
-      pay(that, app, datas)
-      console.log(datas.Mvsrc)
-    } else {
-      let sum = 5;
-
-      let cls = setInterval(() => {
-        sum = sum - 1;
-        console.log("?????????",datas)
-        if (!sum) {
-          clearInterval(cls)
-          wx.showToast({
-            title: '解析失败',
-            icon: 'none',
-            duration: 1000
+  
+      utils.errorSong(datas.mId, datas, (e) => {
+        errorFlag=true;
+       console.log(e,5555)
+        if (e.stauts) {
+          app.title = datas.title;
+          app.coverImgUrl = datas.pic;
+          app.autoplay = false;
+          app.singer = datas.author
+          app.src = e.src;
+          that.data.songList[that.data.ins].src = e.src
+          console.log(e)
+          wx.setStorage({
+            key: 'songlist',
+            data: that.data.songList,
+            success: function (res) {
+              console.log('异步保存成功');
+            }
           })
-          Nextsong(that, app, appInst)
-        } else {
-          if (that.data.Mv) {
-            clearInterval(cls);
-          }
+          return
+        }else{
+        //   console.log(123)
+         that.next()
+          
         }
-      }, 1000)
+        console.log(543)
+        
+      })
+    // }
+   
 
-      console.log(sum)
-    }
-    //   if (!datas.Mvsrc && !that.data.Mv){
-    //    console.log("??????")
-    //    Nextsong(that, app, appInst)
-    //  }else{
-    //    let sum=5;
-
-    //      let cls=setInterval(()=>{
-    //         sum=sum-1;
-    //        console.log("?????????", that.Mv)
-    //        if(!sum){
-    //          clearInterval(cls)
-    //          Nextsong(that, app, appInst)
-    //        }else{
-    //          if (that.data.Mv) {
-    //            clearInterval(cls);
-    //          }
-    //        }
-    //      },1000)
-
-    //      console.log(sum)
-
-    //  }
   })
   //走进度条
-  
-    app.onTimeUpdate(function(){
-      if(that.data.lrc.length===1){
-        Lrcget(that, datas)
-      }
-      wx.hideLoading();
-      
+
+  app.onTimeUpdate(function () {
+    if(that.data.lrc.length===1&&datas.lrc){
+      Lrcget(that, datas)
+    }
+
+
     that.setData({
       Duration: MinuteConversion(app.duration),
       max: app.duration,
@@ -164,9 +144,9 @@ function pay(that, app, datas) {
       //音乐播完自动下一曲
       if (that.data.loopstate == 0) {
         //顺序播放
-        if(that.data.ins!==that.data.songList.length-1){
+        if (that.data.ins !== that.data.songList.length - 1) {
           Nextsong(that, app, appInst)
-        }else{
+        } else {
           app.seek(0)
           that.setData({
             value: 0
@@ -201,6 +181,7 @@ function pay(that, app, datas) {
               that.setData({
                 toLineNum: i
               })
+              // app.singer = that.data.lrc[i].lrc; // 显示动态歌词在左面
             }
           }
         }
@@ -215,10 +196,16 @@ function pay(that, app, datas) {
 
 
   })
+  // 获取歌词
+  if (datas.islink && !datas.lrc) {
+    datas.lrc = await utils.GETlRC(datas.id)
+
+  }
 
 }
 //暂停音乐
 function suspend(that, app) {
+  InitialValue = false
   app.pause();
   clearInterval(that.data.setInterval);
   that.setData({
@@ -260,14 +247,28 @@ function Closestate(that, datas) {
 }
 //读取小程序关闭后下次进入还是上一次关闭时所保留的信息
 function Readinfo(that, app, appInst) {
-
+  console.log(InitialValue, 444)
   wx.getStorage({
     key: 'lastsong',
     success: function (res) {
+      const datas = res.data;
+      that.setData({
+        max: datas.max,
+        Crack: that.data.Crack,
+        conduct: datas.conduct,
+        title: datas.title,
+        author: datas.author,
+        Duration: MinuteConversion(datas.max),
+        src: datas.src,
+        t: datas.t,
+        ins: datas.ins,
+        state: datas.state,
+        // lrc: datas.lrc,
+        value: datas.value,
+        pay: datas.pay,
+        img: datas.coverImgUrl
 
-      var datas = res.data;
-
-      appInst.data.song = datas;
+      })
       if (datas.src == undefined) {
         app.src = datas.url;
       } else {
@@ -275,30 +276,24 @@ function Readinfo(that, app, appInst) {
       }
       app.title = datas.title;
       app.coverImgUrl = datas.coverImgUrl;
+      app.seek(datas.value)
 
-      app.autoplay = false;
+      appInst.data.song = datas;
 
-      setTimeout(() => {
-        suspend(that, app)
-        app.seek(datas.value)
-        that.setData({
-          max: datas.max,
-          Crack: that.data.Crack,
-          conduct: datas.conduct,
-          title: datas.title,
-          author: datas.author,
-          Duration: MinuteConversion(datas.max),
-          src: datas.src,
-          t: datas.t,
-          ins: datas.ins,
-          state: datas.state,
-          // lrc: datas.lrc,
-          value: datas.value,
-          pay: datas.pay,
-          img: datas.coverImgUrl
+      app.onCanplay(() => {
+        if (InitialValue && InitialValue1) {
+          app.seek(datas.value)
+          InitialValue1 = false
+        }
+      })
+      app.onSeeked(() => {
+        if (InitialValue) {
+          suspend(that, app)
 
-        })
-      }, 0)
+        }
+      })
+
+
     },
   })
 }
@@ -416,9 +411,8 @@ function Promisify(fn) {
 
 //歌单全部问题
 function wholelist(app) {
-  var request = Promisify(wx.request)
   app.data.paythis.setData({
-    Crack:false
+    Crack: false
   })
   console.log('?????434343')
   var songmidid = app.data.song.mid
@@ -500,7 +494,7 @@ function wholelist(app) {
 
 
           })
-      }else{
+      } else {
         app.data.paythis.setData({
 
           value: 0, Crack: false,
@@ -509,51 +503,55 @@ function wholelist(app) {
         pay(app.data.paythis, app.innerAudioContext, app.data.song);
         console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
       }
-     
-     
-     
+
+
+
     })
 }
 //请求歌词
-function GetLRC(data,that){
+function GetLRC(data, that) {
   var request = Promisify(wx.request);
   console.log(data)
-  let pic ='http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
+  let pic = 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
   let url;
-  if(pic===data.pic){
+  if (pic === data.pic) {
     url = `https://music.163.com/api/song/media?id=${data.id}`
-  }else{
+  } else {
     url = `https://api.mlwei.com/music/api/?key=523077333&cache=1&type=song&id=${data.mid}&size=hq`
   }
   request({
     url: url,
   })
     .then(res => {
-      if (pic === data.pic){
-       data.lrc = res.data.lyric
-     }else{
+      if (pic === data.pic) {
+        data.lrc = res.data.lyric
+      } else {
         request({
           url: res.data.lrc
         })
           .then(ret => {
-            data.lrc = ret.data})}})}
+            data.lrc = ret.data
+          })
+      }
+    })
+}
 
 // 新添加歌单方法
 function newAddSong(data) {
   let indexs
   console.log(data)
-  data.songlist=data.songlist.length===0?[]:data.songlist
+  data.songlist = Array.isArray(data.songlist) ? data.songlist : []
   let flag = data.songlist.some((item, index) => {
     indexs = index;
-    return item.id === data.song.id
+    return item.src === data.song.src
 
   })
-  if(flag){
+  if (flag) {
     data.paythis.setData({
-      ins:indexs
+      ins: indexs
     })
-  }else{
-    if(data.song){
+  } else {
+    if (data.song) {
       data.songlist.unshift(data.song)
     }
     data.paythis.setData({
@@ -564,40 +562,40 @@ function newAddSong(data) {
       key: 'songlist',
       data: data.songlist,
       success: function (res) {
-        console.log('异步保存成功',data.songlist)
+        console.log('异步保存成功', data.songlist)
       }
     })
   }
 }
 //下一首播放
-function nextSongPay(data){
+function nextSongPay(data) {
   //现在播放的和选的是一样的，结束
-  if(data.songlist[data.paythis.data.ins].id===data.song.id){
+  if (data.songlist[data.paythis.data.ins].id === data.song.id) {
     console.log('一样的，结束');
     return
   }
   let ins = data.paythis.data.ins;
   let indexs
   console.log(data)
-  data.songlist = data.songlist.length === 0 ? [] : data.songlist
+  data.songlist = Array.isArray(data.songlist) ? data.songlist : []
   let flag = data.songlist.some((item, index) => {
     indexs = index;
     return item.id === data.song.id
 
   })
-  if(flag){
-    data.songlist.splice(indexs,1)//删除原有的歌曲
-   if(ins){
-     data.paythis.setData({
-       ins: ins - 1
-     })
-   }else{
-     data.paythis.setData({
-       ins: 0
-     })
-   }
+  if (flag) {
+    data.songlist.splice(indexs, 1)//删除原有的歌曲
+    if (ins) {
+      data.paythis.setData({
+        ins: ins - 1
+      })
+    } else {
+      data.paythis.setData({
+        ins: 0
+      })
+    }
   }
-  data.songlist.splice(ins+1,0,data.song);//将新歌添加到播放
+  data.songlist.splice(ins + 1, 0, data.song);//将新歌添加到播放
   console.log(ins)
   wx.setStorage({
     key: 'songlist',
@@ -607,4 +605,11 @@ function nextSongPay(data){
     }
   })
 }
-export { MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, wholelist, Closestate, Readinfo, Promisify, newAddSong, nextSongPay };
+function debounce() {
+  let timeout = null;
+  return function (fn, wait) {
+      if (timeout !== null) clearTimeout(timeout);
+      timeout = setTimeout(fn, wait);
+  }
+}
+export {debounce, MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, wholelist, Closestate, Readinfo, Promisify, newAddSong, nextSongPay };

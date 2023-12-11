@@ -1,24 +1,20 @@
-<view class='mains'>
-  <view class='type'>
-    
-    <view class='img' wx:for="{{data}}" wx:key="{{index}}">
-      <view class='imhs' bindtap='change' data-data="{{item}}">
-        <image src='{{item.pic_s192}}'></image>
+<view class="containers">
+ <block >
+    <view class="musicItem" data-data="{{'mylove'}}"  bindtap="change1">
+      <image src="../../image/20966300.jpg" class="cover"/>
+      <view class="musicMeta">
+        <view class="title">{{'我的收藏'}}</view>
+        <!-- <view class="description">{{item.description}}</view> -->
       </view>
-      <view class='right'>
-        <view class='content'>{{item.name}}</view>
-        <view class='ul'>
-          <view class='li' wx:for="{{item.content}}" wx:for-index="idx" wx:for-item="ite" data-item="{{ite}}" wx:key="{{idx}}" bindtap='pay'>
-            <image src='../../image/mm.png'></image>
-            <view class='text'>{{ite.title}}--{{ite.author}}</view>
-
-          </view>
-        </view>
+    </view>
+  </block>
+  <block wx:for="{{musicList}}" >
+    <view class="musicItem" data-data="{{item}}"  bindtap="change">
+      <image src="{{item.img}}" class="cover"/>
+      <view class="musicMeta">
+        <view class="title">{{item.name}}</view>
+        <view class="description">{{item.description}}</view>
       </view>
-
     </view>
-    <view>
-      <view></view>
-    </view>
-  </view>
+  </block>
 </view>

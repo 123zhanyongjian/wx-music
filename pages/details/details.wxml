@@ -1,7 +1,11 @@
 <view class="mains">
-  <view class='h3'>
+  <view class=''>
     <!-- 音乐图片 -->
-    <image src='{{src}}'></image>
+      <view >
+      <image class='imgs' style="background-image:url({{src}})"></image>
+      <view class='btn' bindtap='whole'>播放全部</view>
+      <view class='ng'></view>
+    </view>
 
 
 
@@ -14,7 +18,7 @@
 
       <view class='text'>
         <text class="{{index<3?'active':''}}">{{index+1}}</text>
-        <text>{{item.title}}--{{item.author}}</text>
+        <text>{{item.title}}--{{item.singer}}</text>
       </view>
 
     </view>

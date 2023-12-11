@@ -5,13 +5,59 @@ const api = require('../api/index.js')
 const tiem=require('../../utils/time.js')
 Page({
   data: {
-    motto: 'Hello World',
-    data:[],
-    song:'',
-    src:'',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    imgUrl: '',
+    title: '',
+    name: '',
+    musicList: [
+      {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+      {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+      {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+      {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+      {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+
+
+        {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },  {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+      {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+      {
+        src: 'http://xxxx.xxxx',
+        name: '音乐1',
+        description: '这是一个非常棒的音乐推荐'
+      },
+      
+    
+    ]
   },
   //事件处理函数
  //播放音乐
@@ -107,11 +153,18 @@ Page({
   },
   //跳转到详情
   change(e){
-    var id = e.currentTarget.dataset.data.type;
-    var src = e.currentTarget.dataset.data.pic_s444
+    console.log(e)
+    var id = e.currentTarget.dataset.data.id;
+    var src = e.currentTarget.dataset.data.img
     console.log(e)
     wx.navigateTo({
       url:"../../pages/details/details?id="+id+'&&src='+src
+    })
+  },
+  change1(){
+    wx.showToast({
+      title:'收藏功能开发中',
+      icon:'none'
     })
   },
   onLoad: function () {
@@ -121,13 +174,16 @@ Page({
 
     })
     wx.request({
-      url: api.default.host +'musicRankings',
+      url: 'https://tonzhon.com/api/recommended_playlists',
       success:function(res){
         wx.hideLoading();
         console.log(res);
         that.setData({
-         data:res.data.result
+         musicList:res.data.playlists.map(i=>({...i,img:`https://static.tonzhon.com/${i.cover}`}))
         })
+      },
+      fail:()=>{
+        wx.hideLoading();
       }
     })
     

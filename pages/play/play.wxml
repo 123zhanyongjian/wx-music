@@ -1,7 +1,7 @@
 <!-- pages/play/play.wxml -->
 <view class="mains">
  <!-- 显示标题 -->
-      <image class="bgimg" src="{{img}}"></image>
+      <image class="bgimg" src="{{'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'}}"></image>
       <view class="title">
         <view class="titles">{{title}}</view>
         <view class="mv" wx:if="{{Mvsrc}}" bindtap="MvSHOW">MV</view>
@@ -22,6 +22,7 @@
       </view>
       <!-- 循环随机切换按钮 -->
        <image class='loop' src="{{loop}}" bindtap="changloop"></image>
+       <image class='love' src="{{loveState?'../../image/love.png':'../../image/love1.png'}}" bindtap="changlove"></image>
         <!-- 音乐播放列表 -->
         <!-- 关闭蒙版 -->
         <view class='menb' wx:if="{{showtime}}" bindtap='closese'></view>
@@ -48,7 +49,7 @@
     <swiper-item>
      
       <view class="imgs">
-        <image id="img" class="{{state?'auto imgstates':'auto imgspay'}}" src="{{img}}" animation="{{animationData}}"></image>
+        <image id="img"  binderror="binderrorImg"  class="{{state?'auto imgstates':'auto imgspay'}}" src="{{img}}" animation="{{animationData}}"></image>
       </view>
     
         <view  wx:for="{{lrc}}" wx:key="id" wx:if="{{lrc[index+1].time<t||lrc[index].time<t}}" class=" abc {{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
@@ -71,7 +72,7 @@
     </swiper-item>
   </swiper>
 <view wx:if="{{Mv}}">
-<video show="{{Mv}}" src="{{Mvsrc}}"></video>
+<video id="myMv" 	initial-time="{{value}}" show="{{Mv}}" src="{{Mvsrc}}"></video>
 <text wx:if="{{Mv}}" class="cuo" bindtap="cuos">×</text>
 </view>
 
