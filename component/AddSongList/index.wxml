@@ -1,0 +1,18 @@
+<modal class="modal" mode="none" title='{{title}}' bindconfirm="formSubmit" bindreset="resetForm" bindcancel="cancelModal">  
+  <view class="container">  
+    <image  bindtap="imagePicker" wx:if="{{music.image}}" class="preview-image" src="{{music.image}}" mode="aspectFill"></image> 
+    <view wx:else bindtap="imagePicker" style="border:1px dashed #999"  class="preview-image">
+        <view class="" hover-class="none" hover-stop-propagation="false">
+            +
+        </view>
+       <view>
+        上传图片
+       </view> 
+    </view> 
+    <form>  
+      <view class="form-item">    
+        <input bindinput="getInput" class="form-input" type="text" placeholder="请输入歌单名称" value="{{music.title}}" />  
+      </view>  
+    </form>  
+  </view>  
+</modal>

@@ -1,0 +1,141 @@
+/* Popup.wxss */  
+.container {  
+  position: fixed;  
+  z-index:30;
+  bottom: 0;  
+  left: 0;  
+  right:0;  
+  height:30vh; 
+  padding:10px;
+  padding-top: 60px;
+  overflow-y: hidden;
+  background-color: rgba(255, 255, 255, 1);  
+  box-shadow: -2px -5px 8px 1px #999;
+}  
+  .ul{
+    height:26vh;
+    overflow: scroll;
+  }
+.popup-wrapper {  
+  /* width: 300px;   */
+ 
+}  
+  
+.popup-content {  
+  /* position: absolute;  
+  top: 50%;  
+  left: 50%;   */
+  transform-origin: center;  
+}  
+  
+.popup-header {  
+  font-size: 36rpx;  
+  font-weight: 500;  
+  margin-bottom: 10px;  
+  position: absolute;
+  color:rgb(0, 149, 255) ;
+  top: 20rpx;
+  left: 0;
+  right: 0;
+  text-align: center;
+}  
+.mains{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  z-index: 9;
+  background-color: rgba(0,0,0,.5);
+}
+ .confirm{
+   position: absolute;
+   right: 10px;
+   top: 20rpx;
+   border:none;
+   background-color: transparent;
+   font-size: 32rpx;
+ } 
+ .cancel{
+  position: absolute;
+  left: 10px;
+  top: 20rpx;
+  border:none;
+  background-color: transparent;
+  font-size: 32rpx;
+ }
+.popup-body {  
+ 
+}  
+  
+.popup-footer {  
+  display: flex;  
+  justify-content: space-between;  
+}
+.closes1{
+  animation: close1 .3s linear infinite;
+  animation-iteration-count:1;
+  animation-fill-mode : forwards;/*保留动画最后的样子*/
+  
+}
+.opens1{
+  animation: open1 .3s linear infinite;
+  animation-iteration-count:1;
+  animation-fill-mode : forwards;/*保留动画最后的样子*/
+}
+@-webkit-keyframes open1{
+  from{
+    height:0;
+  }
+  to{
+    height:30vh;
+   
+  }
+}
+@-webkit-keyframes close1{
+  from{
+    height:30vh;
+  }
+  to{
+    height:0;
+   
+  }
+}
+.radio{
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 36rpx;
+  padding: 10px;
+  color:#333;
+  font-weight: 500;
+  padding: 10px;
+  text-align: center;
+  /* background-color: red; */
+}
+.getData{
+  margin-top:20rpx;
+  text-align: center;
+  font-size: 32rpx;
+  color:#888;
+  font-weight: 400;
+
+}
+.nodata{
+ 
+  text-align: center;
+  padding-top: 60rpx;
+}
+.nodata image{
+  width: 100rpx;
+  height: 100rpx;
+}
+.nodata view{
+  margin-top: 20rpx;
+  font-size: 32rpx;
+  color:#aaa
+}
+.nodata text{
+ 
+  color:rgb(0, 149, 255)
+}

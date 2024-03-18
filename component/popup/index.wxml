@@ -1,0 +1,52 @@
+<!-- Popup.wxml -->  
+<wxs src="../../pages/singerdetails/singerdetails.wxs" module="module"></wxs>
+
+<view class="mains" catchtap="cancel" scroll-x="false">
+
+  <view catchtap="stops" class="{{show?'opens1':'closes1'}}, container" >  
+
+<animation animation="{{animationData}}">
+  <view class="popup-header">{{header}}</view>  
+  <view bindtap="confirm" class="confirm">确认</view>  
+      <view bindtap="cancel" class="cancel">取消</view>  
+<view class="popup-wrapper" >  
+  <view class="popup-content">  
+   
+    <view bindtap="stop" class="popup-body">
+      <addSongList bind:close="close" bind:newSongList="newSongList" wx:if="{{addSongListFlag}}"/>  
+
+         <!-- 获取歌单列表 -->
+    <view  bindchange="">
+          <view class="" style="text-align:center;font-size:24rpx" hover-class="none" hover-stop-propagation="false">
+            {{song.title}}-{{module.substrins(song.singer,10)||module.substrins(song.author,10)}}
+          </view>
+        <scroll-view   scroll-y="{{popusShow?false:true}}" class="{{popusShow?'popusShowopen':''}} ul" >
+
+        <view wx:if="{{playlist.length}}" class="ui" hover-class="none" hover-stop-propagation="false">
+          <view style="background:{{changeId === item.id?'rgb(233,242,254)':''}};color:{{changeId === item.id?'#007aff':''}}" data-id = "{{item.id}}" catchtap="clickList" class="radio" wx:for="{{playlist}}" :key="item.id">
+        {{item.name}}
+          
+        </view>
+        <view class="getData">
+          {{playlist.length===count?'没有更多了':'加载更多'}}(<text catchtap="newListBtn" style=" color:rgb(0, 149, 255)" wx:if="{{playlist.length===count}}">新建</text>一个？)
+        </view>
+        </view>
+        </scroll-view>
+        <view wx:if="{{playlist.length===0}}" class="nodata">
+    <image class="" src="../../image/nodata.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload="">
+        
+    </image>
+    <view class="" hover-class="none" hover-stop-propagation="false">
+        歌单列表为空，去<text bindtap="newListBtn">新建</text>一个？
+    </view>
+  </view>
+    </view>
+    
+    
+    </view>  
+     
+    </view>  
+  </view>  
+</animation>
+</view>
+</view>

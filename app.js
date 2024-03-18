@@ -1,9 +1,10 @@
 //app.js
 // const tiem=require('./utils/time.js')
+const host = require('./pages/api/index').host
 App({
+  host,
   onLaunch: function () {
     this.innerAudioContext = wx.getBackgroundAudioManager();
-
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
@@ -12,6 +13,96 @@ App({
     // 登录
     wx.login({
       success: res => {
+          wx.request({
+            url:this.host+'/userGetopenId',
+            data:{code:res.code},
+          success:re=>{
+           this.data.openId = re.data.data
+           wx.getUserInfo({
+            success:ret=>{
+            this.data.userInfo = ret.userInfo;
+            wx.showLoading({
+              title: '加载中'
+            })
+            wx.request({
+              url:`${this.host}/userinfo?id=${re.data.data}`,
+              success:res1=>{
+                if(res1.data?.data?.length){
+                  wx.hideLoading()
+                  // 有用户 将数据直接赋值到userinfo
+                  this.data.userInfo =res1.data?.data[0]
+                  if(this.data.userInfo.headimg){
+                    this.data.userInfo.avatarUrl = this.host+'/'+this.data.userInfo.headimg
+                  }
+
+                  console.log(this.data.userInfo,333)
+                }else{
+
+                  // 没有用户 新增接口
+                  wx.request({
+                    url:`${this.host}/addUser`,
+                    method:'post',
+                    data:{
+                      userName:ret.userInfo.nickName,
+                      userId:re.data.data
+                    },
+                    success:(val)=>{
+                      
+                      if(val.data.coed===200){
+                        wx.request({
+                          url:`${this.host}/userinfo?id=${re.data.data}`,
+                          success:rets=>{
+                            wx.hideLoading()
+                            if(rets.data?.data?.length){
+                              // 有用户 将数据直接赋值到userinfo
+                              this.data.userInfo =rets.data?.data[0]
+                              if(this.data.userInfo.headimg){
+                                this.data.userInfo.avatarUrl = this.host+'/'+this.data.userInfo.headimg
+                              }
+                            }},
+                            fail:(err)=>{
+                              wx.hideLoading()
+                              setTimeout(() => {
+                                wx.showToast({
+                                  title: err,
+                                  icon:'error'
+                                })
+                               }, 200);
+                            }
+                          })
+                              // console.log(this.data.userInfo,333)
+                      }
+                    },
+                    fail:(err)=>{
+                      wx.hideLoading()
+                      setTimeout(() => {
+                        wx.showToast({
+                          title: err,
+                          icon:'error'
+                        })
+                       }, 200);
+                    }
+                  })
+                }
+              },
+              fail:(err)=>{
+                wx.hideLoading()
+               setTimeout(() => {
+                wx.showToast({
+                  title: err,
+                  icon:'error'
+                })
+               }, 200);
+              }
+            })
+            }
+          })
+           // 查询后端信息
+
+          }
+        })
+       
+
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
       }
     })
@@ -102,6 +193,8 @@ App({
     
   },
   data: {
+
+    openId:'', // 用户唯一值
     userInfo: null,
     am:'aaa',
     song:'',

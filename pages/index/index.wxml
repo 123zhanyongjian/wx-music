@@ -1,7 +1,7 @@
 <view class="containers">
  <block >
     <view class="musicItem" data-data="{{'mylove'}}"  bindtap="change1">
-      <image src="../../image/20966300.jpg" class="cover"/>
+      <view  class="cover" style="background-image: url({{myLovesrc}});"></view>
       <view class="musicMeta">
         <view class="title">{{'我的收藏'}}</view>
         <!-- <view class="description">{{item.description}}</view> -->
@@ -10,7 +10,7 @@
   </block>
   <block wx:for="{{musicList}}" >
     <view class="musicItem" data-data="{{item}}"  bindtap="change">
-      <image src="{{item.img}}" class="cover"/>
+      <view style="background-image: url({{item.img}});" class="cover"></view>
       <view class="musicMeta">
         <view class="title">{{item.name}}</view>
         <view class="description">{{item.description}}</view>

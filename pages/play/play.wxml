@@ -1,14 +1,19 @@
 <!-- pages/play/play.wxml -->
-<view class="mains">
+<wxs src="../singerdetails/singerdetails.wxs" module="module"></wxs>
+
+<view class="">
  <!-- 显示标题 -->
-      <image class="bgimg" src="{{'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'}}"></image>
+      <image class="bgimg" src="{{img}}"></image>
+      <view class="mains">
+        
+      </view>
       <view class="title">
         <view class="titles">{{title}}</view>
         <view class="mv" wx:if="{{Mvsrc}}" bindtap="MvSHOW">MV</view>
-        <view class="author">-{{author}}-</view>
+        <view class="author">-{{module.substrins(author,10)}}-</view>
       </view>
         <view>
-        <view class='Conduct'>{{conduct}}</view>
+           <view class='Conduct'>{{conduct}}</view>
         <view class='Duration'>{{Duration}}</view>
         <slider class='slider' min="0" max="{{max}}" step="1" value="{{value}}" backgroundColor="#e9e9e9" block-size="14" block-color="#ffffff" bindchanging="" bindchange="changeslider">
 
@@ -22,7 +27,8 @@
       </view>
       <!-- 循环随机切换按钮 -->
        <image class='loop' src="{{loop}}" bindtap="changloop"></image>
-       <image class='love' src="{{loveState?'../../image/love.png':'../../image/love1.png'}}" bindtap="changlove"></image>
+       <image src="../../image/push.png" class="push" catchtap="pushplaylist"/>
+       <image class='love' src="{{!loveState?'../../image/love.png':'../../image/love1.png'}}" bindtap="changlove"></image>
         <!-- 音乐播放列表 -->
         <!-- 关闭蒙版 -->
         <view class='menb' wx:if="{{showtime}}" bindtap='closese'></view>
@@ -33,8 +39,9 @@
           <view class='titlelist'>歌单列表({{songList.length}})</view>
           <scroll-view class='scroll-viewlist' scroll-y="true">
             <view class="song {{index===ins?'active':''}}" wx:for="{{songList}}" wx:key="{{index}}" data-index="{{index}}" data-item="{{item}}" bindtap='pay' bindlongpress="del">
-              <image src='../../image/mm.png'></image>
-              <view class='text'>{{item.title==undefined?item.name:item.title}}--{{item.author==undefined?item.singer:item.author}}</view>
+               <image wx:if="{{!(item.id===id&&!state)}}" src="../../image/mm.png"></image>
+               <image  wx:else style="width:50rpx;height:50rpx;top:16rpx;left:50rpx"  src="../../image/music.gif"></image>
+              <view class='text'> <text>{{index+1}}</text>{{item.title==undefined?item.name:item.title}}--{{item.author==undefined?item.singer:item.author}}  </view>
             </view>
 
 
@@ -61,7 +68,7 @@
     <swiper-item>
         
           <view class='lrc'>
-          <scroll-view class='scroll-view'  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum}}">
+          <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum}}">
                <view id="line{{index}}" class="lrcs {{item.time==t?active:''}}"  wx:for="{{lrc}}" wx:key="{{index}}">
                 
                  <view class="{{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
@@ -76,7 +83,8 @@
 <text wx:if="{{Mv}}" class="cuo" bindtap="cuos">×</text>
 </view>
 
-
+<popup song="{{song}}"  bind:close="popusShowChange" show="{{popusShow}}"  wx:if="{{popusShow}}" header="添加到歌单" >
+</popup>
 
 
 

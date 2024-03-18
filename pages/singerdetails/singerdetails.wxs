@@ -1,0 +1,10 @@
+
+function substrins(str='',length=0){
+  if(str.length<length){
+    return str
+  }
+  return str.slice(0,length)+'...'
+}
+module.exports={
+  substrins:substrins
+}

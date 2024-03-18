@@ -21,17 +21,21 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "condition": true
   },
   "compileType": "miniprogram",
-  "libVersion": "3.2.2",
+  "libVersion": "2.25.3",
   "appid": "wx9512f6138b9a9965",
   "projectname": "wx-music",
   "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
+  "simulatorPluginLibVersion": {
+    "wxext14566970e7e9f62": "2.27.3"
+  },
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "projectArchitecture": "multiPlatform"
 }

@@ -108,7 +108,7 @@ Page({
             obj.pic ='http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
             // obj.src = `https://music.163.com/song/media/outer/url?id=${item.id}.mp3`,
             obj.mvid=item.mvid
-            obj.id=item.id
+            obj.id=item.hash
             obj.mId=2 // 表示 gaiId的资源
             arr.push(obj)
           }

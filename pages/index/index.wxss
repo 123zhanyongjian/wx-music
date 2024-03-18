@@ -20,7 +20,8 @@
 .cover {
   width: 300rpx;
   height: 200rpx;
-  object-fit: cover;
+  background-position: center center;
+  background-size: cover;
 }
 
 /* .musicMeta {

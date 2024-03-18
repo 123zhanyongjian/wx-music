@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "addSongList":"../../component/AddSongList"
+  },
+  "navigationBarTitleText":"个人中心"
+}

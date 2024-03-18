@@ -10,17 +10,18 @@ Page({
    * 页面的初始数据
    */
   data: {
+    popusShow:false,
     logs: [],
-    Mv:false,
-    love:'../../image/love.png',
-    Mvsrc:'',
+    Mv: false,
+    love: '../../image/love.png',
+    Mvsrc: '',
     songList: [],
-    Crack:false,//false未开启 true开启破解
+    Crack: false,//false未开启 true开启破解
     ins: '', //列表选中
     showtime: false,
     loopstate: 0,//f0代表顺序，1代表循环，2代表随机
     loop: '../../image/sx.png',
-    loveState:true,
+    loveState: false,
     lrc: [{
       lrc: '暂无歌词'
     }],
@@ -31,7 +32,7 @@ Page({
     Duration: '', //总时长
     value: 0,
     toLineNum: 0, //滚动条位置
-    img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542972480302&di=66796f3d0a9efc6e207ba1b3a6f7ac28&imgtype=0&src=http%3A%2F%2Fimg.25pp.com%2Fuploadfile%2Fsoft%2Fimages%2F2014%2F0820%2F20140820100344572.jpg',
+    img: '',
     author: '暂无',
     src: '',
     title: '暂无歌曲',
@@ -40,7 +41,8 @@ Page({
     animationData: {},
     setInterval: '',
     close: false,
-    song:{}
+    song: {},
+    id: '' // 当前播放的id
   },
   //关闭歌曲列表
   closese() {
@@ -55,13 +57,29 @@ Page({
     }, 300)
 
   },
-  binderrorImg(){
+  binderrorImg() {
     this.setData({
-      img:'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'
+      img: 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'
+    })
+  },
+  popusShowChange(){
+    this.setData({
+      popusShow:false
+    })
+  },
+  pushplaylist(){
+    if(!this.data.song?.id){
+      return wx.showToast({
+        title: '没有可添加的音乐',
+        icon:'none'
+      })
+    }
+    this.setData({
+      popusShow:true
     })
   },
   // 关闭mv
-  cuos(){
+  cuos() {
     setTimeout(() => {
       this.setData({
         Mv: false
@@ -122,11 +140,62 @@ Page({
       })
     }
   },
-  changlove(){
-    wx.showToast({
-      title:'收藏功能开发中',
-      icon:'none'
+  changlove() {
+    const that= this
+    if (!this.data.loveState) {
+      // 设置为喜欢
+      this.setData({
+        loveState: true
+      })
+      if (app.data.loveList.findIndex(i => i.id ===  this.data.song.id) === -1) {
+        const obj = {
+          ...app.data.song,
+          love:true
+        }
+        delete obj.lrc
+        app.data.loveList.push(obj)
+      }
+      wx.setStorage({
+        key: 'loveList',
+        data: app.data.loveList,
+        success: function (res) {
+          console.log('异步保存成功');
+          that.getLoveList()
+
+        }
+      })
+      return
+    }
+    // 取消喜欢
+    this.setData({
+      loveState: false
     })
+    app.data.loveList.splice(app.data.loveList.findIndex(i => i.id === this.data.song.id), 1)
+    wx.setStorage({
+      key: 'loveList',
+      data: app.data.loveList,
+      success: function (res) {
+        console.log('异步保存成功');
+
+      }
+    })
+  },
+  getLoveList() {
+    wx.getStorage({
+      key: 'loveList',
+      success: (res) => {
+      app.data.loveList = res.data
+      },
+      fail: () => {
+        wx.showToast({
+          title: '暂时没有收藏内容',
+          icon: 'none'
+        })
+      }
+    })
+  },
+  returnloveList(){
+    return app.data.loveList
   },
   //切换进度条
   changeslider(e) {
@@ -152,9 +221,9 @@ Page({
       content: '确定删除该歌曲？',
       success(res) {
         if (res.confirm) {
-        
+
           that.delSong(index)
-         
+
         } else if (res.cancel) {
           console.log('用户点击取消')
         }
@@ -162,10 +231,16 @@ Page({
     })
 
   },
-  delSong(index){
-    const that =this
+  changeTitle(){
+    wx.setNavigationBarTitle({
+      title: app.data.song.title
+    })
+  },
+  delSong(index) {
+    const that = this;
+    const arr = that.data.songList.slice() // 深拷贝
     that.data.songList.splice(index, 1)
-        
+
     wx.setStorage({
       key: 'songlist',
       data: that.data.songList,
@@ -175,11 +250,15 @@ Page({
         app.data.songlist = song
         that.setData({
           songList: song,
+          ins:that.data.songList.findIndex(i=>i.id===app.data.song.id)
         })
-        if(index===that.data.ins){
-         
-          tiem.pay(that, app.innerAudioContext, app,1)
-        }
+         if (that.data.ins===-1&&!that.data.state) {
+        that.setData({
+          value:0
+        })
+        app.data.song = arr[index+1]
+      tiem.pay(that, app.innerAudioContext, app.data.song, 1)
+    }
       }
     })
   },
@@ -214,11 +293,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    app.data.paythis=this;
-      if(this.data.state){
+    app.data.paythis = this;
+    this.getLoveList()
+    if (this.data.state) {
       tiem.Readinfo(this, app.innerAudioContext, app)
 
-      }
+    }
   },
 
   /**
@@ -234,11 +314,11 @@ Page({
   onShow: function () {
     setTimeout(() => {
       var song = wx.getStorageSync('songlist');
-      const loveList = wx.getStorageSync('loveList')||[]
+      const loveList = wx.getStorageSync('loveList') || []
       app.data.songlist = song
       app.data.loveList = loveList
       console.log(app.data)
-      console.log(app,555)
+      console.log(this, 555)
       this.setData({
         songList: song
       })
@@ -248,19 +328,19 @@ Page({
 
   },
   //MV播放
-  MvSHOW(){
+  MvSHOW() {
     //暂停音乐
     tiem.suspend(this, app.innerAudioContext)
-    
-   
+
+
     this.setData({
-      Mv:true
+      Mv: true
     })
-    
-   setTimeout(() => {
-    const mv = wx.createVideoContext('myMv')
-   mv.pause()
-   }, 5000);
+
+    setTimeout(() => {
+      const mv = wx.createVideoContext('myMv')
+      mv.pause()
+    }, 5000);
   },
   //选择音乐
   pay(e) {
@@ -269,17 +349,18 @@ Page({
       value: 0
     })
 
-    app.data.song = e.currentTarget.dataset.item;
-      if(!app.data.song.src){
-        app.data.song.src='http://www.baidu.com'
-      }
-    if (app.data.song.islink) {
-      console.log(this.data.value,444)
-    tiem.pay(this, app.innerAudioContext, app.data.song,1);
+    app.data.song =this.data.songList[e.currentTarget.dataset.index];
+    console.log(app.data.song,222)
+    if (!app.data.song.src) {
+      app.data.song.src = 'http://www.baidu.com'
+    }
+    if (app.data.song.mId === 3) {
+      console.log(this.data.value, 444)
+      tiem.pay(this, app.innerAudioContext, app.data.song, 1);
     } else {
       console.log('?3333??')
       tiem.Lrcget(this, app.data.song)
-      tiem.pay(this, app.innerAudioContext, app.data.song,1);
+      tiem.pay(this, app.innerAudioContext, app.data.song, 1);
     }
 
 
@@ -319,7 +400,7 @@ Page({
   },
   //播放暂停
   pays() {
-    if(this.data.Mv){
+    if (this.data.Mv) {
       return
     }
     var that = this;

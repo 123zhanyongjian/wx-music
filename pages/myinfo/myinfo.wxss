@@ -1,0 +1,154 @@
+/* index.wxss */  
+.containerse {  
+    display: flex;  
+    /* flex-direction: column;   */
+    align-items: center;  
+    justify-content: space-between;  
+    padding: 0;
+  }  
+.info{
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+
+    width: 100%;
+    height: 500rpx;
+    /* max-height:40vh; */
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+}
+  .avatar {  
+    width: 160rpx;  
+    height: 160rpx;  
+    border-radius: 50%;  
+    margin:120rpx auto 20rpx auto;  
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);  
+
+  }  
+    
+  .username {  
+    font-size: 24rpx;  
+    font-weight: bold;  
+    margin-bottom: 10px;  
+  }  
+    
+  .gender {  
+    font-size: 18rpx;  
+    color: #999999;  
+  }  
+    
+  .playlist {  
+    display: flex;  
+    justify-content:flex-start;
+    flex-wrap: wrap;  
+    margin-top: 500rpx;
+  }  
+    
+  .playlist-item {  
+    min-width: 33%;  
+    margin-bottom: 20px;
+    height: 200rpx;
+    padding: 10px;  
+    border-radius: 10px;  
+    background-color: #888;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
+  }  
+    
+  .playlist-icon {  
+    width: 80rpx;  
+    height: 80rpx;  
+    border-radius: 50%;  
+  }  
+    
+  .playlist-title {  
+    font-size: 24rpx;  
+    font-weight: bold;  
+  }  
+    
+  .playlist-artist {  
+    font-size: 18rpx;  
+    color: #666666;  
+    display: flex;
+  }
+
+
+  .containers {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20rpx;
+    padding: 20rpx;
+    background: linear-gradient(45deg, #D8E9F2, #BEDCE4);  
+  
+  }
+  
+  .musicItem {
+    width:40vw;
+    box-shadow: rgba(0,0,0,0.07) 0 3px 5px;
+    overflow: hidden;
+    text-align: center;
+    margin: 20rpx;
+    padding: 10rpx;
+    border-radius: 10rpx;
+    background: #fff;
+  }
+  
+  .cover {
+    width: 300rpx;
+    height: 200rpx;
+    /* object-fit: cover; */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    /* background-position: auto; */
+
+  }
+  
+  /* .musicMeta {
+    display: flex;
+    align-items: center;
+    padding: 20rpx;
+  } */
+  
+  .title {
+    margin-top: 20rpx;
+    font-size: 26rpx;
+    color: #333333;
+  }
+  
+  .description {
+    margin-top: 10rpx;
+    margin-bottom: 10rpx;
+    font-size: 20rpx;
+    color: #666666;
+  }
+  .newListBtn{
+    text-align: right;
+    margin-right: 10rpx;
+    font-size: 36rpx;
+    font-weight: 500;
+    color:#fff;
+    padding:20rpx;
+  }
+  .nodata{
+    background-color: #eee;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 500rpx;
+    text-align: center;
+    padding-top: 140rpx;
+  }
+  .nodata image{
+    width: 200rpx;
+    height: 200rpx;
+  }
+  .nodata view{
+    font-size: 32rpx;
+    color:#aaa
+  }
+  .nodata text{
+    color:rgb(0, 149, 255)
+  }

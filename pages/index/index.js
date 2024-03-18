@@ -1,59 +1,28 @@
 //index.js
 //获取应用实例
 const app = getApp();
-const api = require('../api/index.js')
+const api = require('../../utils/api')
 const tiem=require('../../utils/time.js')
+const {img} = require('../../utils/loveBg')
+
 Page({
   data: {
     imgUrl: '',
     title: '',
     name: '',
+    myLovesrc:img,
     musicList: [
       {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
+        src:app.host+'/kw.jpg',
+        name:'酷我热歌榜（每天更新）',
+        id:'kw',
+        img:app.host+'/kw.jpg',
+        noRefresh:true
       },
       {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
-      },
-      {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
-      },
-      {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
-      },
-      {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
-      },
-
-
-        {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
-      },  {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
-      },
-      {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
-      },
-      {
-        src: 'http://xxxx.xxxx',
-        name: '音乐1',
-        description: '这是一个非常棒的音乐推荐'
+        src: 'https://p1.music.126.net/sby9mSmSydldzT0fsEE6MQ==/109951167965618537.jpg',
+        name: '周杰伦',
+        id:'jay'
       },
       
     
@@ -61,96 +30,7 @@ Page({
   },
   //事件处理函数
  //播放音乐
-  
-  pay(e) {
-    var that = this;
-    var item = e.currentTarget.dataset.item;
-    console.log(item)
-    var song;
-    wx.request({
-      url: api.default.host+'musicDetails?id='+e.currentTarget.dataset.item.song_id,
-      success:function(res){
-        console.log(res.data,55)
-        if (res.data.result.songList==''){
-          wx.showToast({
-            title: '链接已失效',
-            icon: 'none',
-            duration: 1500
-          })
-          return
-        }
-        song = res.data.result.songList[0];
-        song['src'] = song.showLink;
-        song['title'] = song.songName;
-        song['pic'] = 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
-        song['author'] = song.artistName,
-        song['id']=song.songId
-          
-       
-        console.log(666,song);
-        app.data.song =song;
-        tiem.newAddSong(app.data);
-        //将http转换为https
-        song.lrcLink=song.lrcLink.replace('http','https'),
-        console.log(song.lrcLink)
-        var flag
-        if(song.lrcLink){
-          wx.request({
-            url: song.lrcLink,
-            //http转https
-  
-            success: function (ret) {
-              app.data.song.lrc = ret.data;
-              //清空播放时长
-              app.data.paythis.setData({
-                value: 0
-              })
-              tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
-            
-              wx.switchTab({
-                url: "../../pages/play/play",
-                success: function () {
-                  console.log(app.data);
-  
-  
-  
-  
-                }
-              })
-            
-            }
-          })
-  
-        }else{
-          tiem.pay(app.data.paythis, app.innerAudioContext, app.data.song)
-            
-              wx.switchTab({
-                url: "../../pages/play/play",
-                success: function () {
-                  console.log(app.data);
-  
-  
-  
-  
-                }
-              })
-        }
-      
-       
 
-      
-       
-
-        app.data.state = true
-       
-        
-        console.log(app.data)
-      },
-     
-    })
-   
-
-  },
   //跳转到详情
   change(e){
     console.log(e)
@@ -162,9 +42,8 @@ Page({
     })
   },
   change1(){
-    wx.showToast({
-      title:'收藏功能开发中',
-      icon:'none'
+    wx.navigateTo({
+      url:"../../pages/details/details?id=my&&src="+this.data.myLovesrc
     })
   },
   onLoad: function () {
@@ -173,13 +52,18 @@ Page({
       title: '加载中',
 
     })
+    api.getJaySongList((res)=>{
+      that.setData({
+        [`musicList[1].img`]:res[0].pic||'https://p1.music.126.net/sby9mSmSydldzT0fsEE6MQ==/109951167965618537.jpg'
+      })
+    })
     wx.request({
       url: 'https://tonzhon.com/api/recommended_playlists',
       success:function(res){
         wx.hideLoading();
         console.log(res);
         that.setData({
-         musicList:res.data.playlists.map(i=>({...i,img:`https://static.tonzhon.com/${i.cover}`}))
+         musicList:that.data.musicList.concat(res.data.playlists.map(i=>({...i,img:`https://static.tonzhon.com/${i.cover}`})))
         })
       },
       fail:()=>{

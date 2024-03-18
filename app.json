@@ -4,6 +4,8 @@
     "pages/logs/logs",
     "pages/index/index",
     "pages/singer/singer",
+    "pages/myinfo/myinfo",
+    "pages/playlistInfo/playlistInfo",
     "pages/newlogs/newlogs",
     "pages/singerdetails/singerdetails",
     "pages/details/details"
@@ -22,12 +24,14 @@
     ]
   },
   "tabBar": {
+    "color": "#bfbfbf",
+    "selectedColor": "#14b5b2",
     "list": [
         {
           "pagePath": "pages/play/play",
           "text": "播放器",
-          "iconPath": "./image/tj.png",
-          "selectedIconPath": "./image/tj1.png"
+          "iconPath": "./image/pay.png",
+          "selectedIconPath": "./image/pay1.png"
         },
       {
         "pagePath": "pages/index/index",
@@ -37,24 +41,24 @@
       },
       {
         "pagePath": "pages/newlogs/newlogs",
-        "text": "新搜索",
-        "iconPath": "./image/ss.png",
-        "selectedIconPath": "./image/ss1.png"
-      },
-
-      {
-        "pagePath": "pages/logs/logs",
-        "text": "旧搜索",
+        "text": "搜索",
         "iconPath": "./image/ss.png",
         "selectedIconPath": "./image/ss1.png"
       },
       {
         "pagePath": "pages/singer/singer",
         "text": "歌手",
-        "iconPath": "./image/tj.png",
-        "selectedIconPath": "./image/tj1.png"
+        "iconPath": "./image/singer.png",
+        "selectedIconPath": "./image/singer1.png"
+      },
+      {
+        "pagePath": "pages/myinfo/myinfo",
+        "text": "个人中心",
+        "iconPath": "./image/me.png",
+        "selectedIconPath": "./image/me1.png"
       }
+     
     ]
-  },
+  }, 
   "sitemapLocation": "sitemap82.json"
 }

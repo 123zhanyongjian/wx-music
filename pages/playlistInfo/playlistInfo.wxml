@@ -1,0 +1,29 @@
+<wxs src="../singerdetails/singerdetails.wxs" module="module"></wxs>
+<view class='mains'>
+    <view >
+    <image class="mores" src="../../image/morew.png" bind:tap="moreClick">
+      
+    </image>
+      <image class='imgs' style="background-image:url({{image}})"></image>
+      <view class='btn' bindtap='whole'>播放全部</view>
+      <view class='ng'></view>
+    </view>
+    <scroll-view scroll-y="{{popusShow?false:true}}" class="{{popusShow?'popusShowopen':''}} ul scroll-view" >
+     
+    <view class='li' wx:for="{{songs}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" bindlongpress="showActionSheet">
+       <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
+               <image class="logo"  wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx"  src="../../image/music.gif"></image>
+
+      <view data-item='{{item}}' class='text' bindtap='pay'>
+        <!-- <text class="{{index<3?'active':''}} serial">{{index+1}}</text> -->
+        <view class="title">{{item.title}}</view>
+        <view class="author">{{module.substrins(item.singer,10)||module.substrins(item.author,10)}}</view>          
+      </view>
+        <image data-item='{{item}}' bindtap='pay' class="plays" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
+        <image data-item='{{item}}' bindtap='more' class="more" src="../../image/more.png"></image>
+    </view>
+    </scroll-view>
+
+ 
+</view>
+<addSongList id="addSongList" bind:close="close" bind:newSongList="editSongList" wx:if="{{addSongListFlag}}"/>

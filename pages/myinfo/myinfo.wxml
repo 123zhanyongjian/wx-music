@@ -1,0 +1,37 @@
+<!-- index.wxml -->  
+<view class="containerse">  
+    <view class="info">
+        <view class="newListBtn" bindtap="newListBtn" hover-class="none" hover-stop-propagation="false">
+           新建歌单
+        </view>
+          <button style="padding:0" class="avatar"  open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+         <image class="avatar" style="margin:0" src="{{userInfo.avatarUrl}}" mode="aspectFit"></image>  
+         </button>
+         <input class="username" type="nickname" value="{{userInfo.userName}}" bindblur="changeName" bindconfirm="changeName">
+         </input>
+        
+        
+    </view>
+  
+  <view  class="playlist">  
+  <block wx:for="{{playlist}}" >
+    <view class="musicItem"  data-id="{{item.id}}"  bindtap="change">
+      <view style="background-image:url({{item.img}}); border-radius: 10px;" class="cover"></view>
+      <view class="musicMeta">
+        <view class="title">{{item.name}}</view>
+      </view>
+    </view>
+  </block>
+  <view wx:if="{{playlist.length===0}}" class="nodata">
+    <image class="" src="../../image/nodata.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload="">
+        
+    </image>
+    <view class="" hover-class="none" hover-stop-propagation="false">
+        歌单列表为空，去<text bindtap="newListBtn">新建</text>一个？
+    </view>
+  </view>
+  </view>  
+
+</view>
+
+<addSongList bind:close="close" bind:newSongList="newSongList" wx:if="{{addSongListFlag}}"/>

@@ -3,6 +3,9 @@
   position: absolute;
   top: 0;
   bottom: 0;left: 0;right: 0;
+
+  background-color: rgba(0, 0, 0, .6);
+  /* z-index:1; */
 }
 .bgimg{
    position: absolute;
@@ -18,7 +21,8 @@
   
   color: white;
   left: 50%;
-  transform: translate(-50% ,0)
+  transform: translate(-50% ,0);
+  z-index:4
 }
 
 .titles{
@@ -30,7 +34,7 @@
 }
 .imgs{
   position: absolute;
-   
+  z-index:7;
     top: 40%;
     left: 50%;
     transform: translate(-50%,-50%)
@@ -41,6 +45,7 @@
   border-radius: 50%;
 }
 .control{
+  z-index:4;
   position: absolute;
     bottom:200rpx;
      left: 48%;
@@ -54,6 +59,15 @@
   right:120rpx;
  height: 60rpx;
   bottom:270rpx;
+  z-index:4
+}
+.push{
+  position: absolute;
+  width: 60rpx;
+  right:40rpx;
+ height: 60rpx;
+  bottom:270rpx;
+  z-index:4
 }
 .loop{
    position: absolute;
@@ -61,11 +75,13 @@
     left:120rpx;
    height: 60rpx;
     bottom:270rpx;
+    z-index:4
 }
 .last{
   width: 90rpx;
   height: 90rpx;
   margin-left:40rpx; 
+
 }
 
 .last1{
@@ -106,6 +122,7 @@ animation: rotation 20s linear infinite;
   bottom: 360rpx;
   left: 76rpx;
   position: absolute;
+  z-index:6
 }
 .Conduct{
    bottom: 364rpx;
@@ -114,6 +131,7 @@ animation: rotation 20s linear infinite;
    margin:20rpx;
 
    position: absolute;
+   z-index:4
 }
 .Duration{
    bottom: 364rpx;
@@ -122,9 +140,10 @@ animation: rotation 20s linear infinite;
    margin:20rpx;
   right: 0;
    position: absolute;
+   z-index:4
 }
 #songlist{
-  
+  z-index:4;
   position: absolute;
   bottom: 0;
  width: 100%;
@@ -137,6 +156,7 @@ animation: rotation 20s linear infinite;
 }
 .close{
   position: absolute;
+  z-index:4;
   top: 10rpx;
   right: 0;
   font-size:26rpx;
@@ -155,6 +175,7 @@ animation: rotation 20s linear infinite;
   margin-right: 10rpx;
   color: white;
   padding:10rpx; 
+  z-index:4;
 }
 @-webkit-keyframes close{
   from{
@@ -189,6 +210,7 @@ animation: rotation 20s linear infinite;
   position: absolute;
   bottom: 20rpx;
   right: 20rpx;
+  z-index:4;
 }
 .order>image{
     width: 60rpx;
@@ -221,6 +243,7 @@ animation: rotation 20s linear infinite;
   bottom: 50rpx;
   text-align: center;
   z-index: -1;
+  z-index:4;
 }
 ::-webkit-scrollbar{
 width: 0;
@@ -241,6 +264,7 @@ color: transparent;
   position: absolute; 
   left:60rpx;
   top: 32rpx;
+  z-index:4;
 }
 .song .text{
     margin-left: 100rpx;
@@ -267,6 +291,7 @@ swiper{
   color: #fff;
   left: 0;
   right: 0;
+  z-index:4;
 }
 .lrcs{
   margin-top: 20rpx;
@@ -283,9 +308,9 @@ swiper{
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
   bottom: 0;
-  right: 0
+  right: 0;
+  z-index:5;
 }
 .viedos{
   position: absolute;
@@ -293,6 +318,7 @@ swiper{
   /* bottom: 0; */
   left: 0;
   right: 0;
+  z-index:4;
   /* z-index: 999; */
 }
 .cuo{
@@ -302,5 +328,11 @@ color: #fff;
 z-index: 3;
 right: 10rpx;
 font-size: 60rpx;
+z-index:4;
 
+}
+.music{
+  width: 10px;
+  height: 10px;
+  
 }

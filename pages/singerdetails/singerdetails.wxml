@@ -1,23 +1,28 @@
+<wxs src="./singerdetails.wxs" module="module"></wxs>
 <view class='mains'>
     <view >
       <image class='imgs' style="background-image:url({{image}})"></image>
       <view class='btn' bindtap='whole'>播放全部</view>
       <view class='ng'></view>
     </view>
-    <scroll-view scroll-y class='ul' >
+    <scroll-view scroll-y="{{popusShow?false:true}}" class="{{popusShow?'popusShowopen':''}} ul scroll-view" >
      
-    <view class='li' wx:for="{{songs}}" wx:key="{{index}}" bindtap='pay' data-item='{{item}}' bindmyevent="childEvent" bindlongpress="showActionSheet">
-      <image src='../../image/mm.png'></image>
+    <view class='li' wx:for="{{songs}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" bindlongpress="showActionSheet">
+       <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
+               <image class="logo"  wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx"  src="../../image/music.gif"></image>
 
-      <view class='text'>
-        <text class="{{index<3?'active':''}}">{{index+1}}</text>
-        <text>{{item.name}}--{{item.singer}}</text>
-         <text class="mv" wx:if="{{item.mvid||item.vid}}">MV</text>
-        
+      <view data-item='{{item}}' class='text' bindtap='pay'>
+        <!-- <text class="{{index<3?'active':''}} serial">{{index+1}}</text> -->
+        <view class="title">{{item.title}}</view>
+        <view class="author">{{module.substrins(item.singer,10)||module.substrins(item.author,10)}}</view>          
       </view>
-
+        <image data-item='{{item}}' bindtap='pay' class="plays" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
+        <image data-item='{{item}}' bindtap='more' class="more" src="../../image/more.png"></image>
     </view>
-
+    <popup song="{{song}}"  bind:close="popusShowChange" show="{{popusShow}}"  wx:if="{{popusShow}}" header="添加到歌单" >
+ 
+    </popup>
     </scroll-view>
-
+    
+ 
 </view>

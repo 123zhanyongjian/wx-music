@@ -36,6 +36,7 @@ function Continuemusic() {
 
 //重头播放音乐
 async function pay(that, app, datas, restart) {
+  datas.errorNum = 0
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   that.setData({
@@ -43,10 +44,14 @@ async function pay(that, app, datas, restart) {
       lrc: '暂无歌词'
     }],
   })
-  app.play();
+
   if (that.data.value === 0 || restart) {
     // 新音乐才重新赋值
-    app.src = datas.src||'http://www.baidu.com';
+    const loveList = that.returnloveList()
+    that.changeTitle() /// 修改标题
+    datas.src = datas.src ?? 'http://www.baidu.com'
+    console.log(loveList, 333, datas.src, 444)
+    app.src = datas.src;
     app.title = datas.title;
     app.coverImgUrl = datas.pic;
     app.autoplay = false;
@@ -54,15 +59,19 @@ async function pay(that, app, datas, restart) {
     console.log(datas.src, 54321)
     that.setData({
       title: datas.title,
-      song:datas,
+      song: datas,
       author: datas.author,
       img: datas.pic,
       Mvsrc: datas.isMv ? datas.src : '',
       state: false,
       showtime: false,
-      pay: "../../image/zt.png"
+      pay: "../../image/zt.png",
+      id: datas.id,
+      loveState: loveList.some(i => i.id === datas.id),
+      ins: ([].concat(that.data.songList)).findIndex(i => i.id === datas.id)
     });
   }
+  app.play();
   //苹果手机系统下一首
   app.onNext(() => {
 
@@ -93,46 +102,87 @@ async function pay(that, app, datas, restart) {
 
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
-  
-      utils.errorSong(datas.mId, datas, (e) => {
-        errorFlag=true;
-       console.log(e,5555)
-        if (e.stauts) {
-          app.title = datas.title;
-          app.coverImgUrl = datas.pic;
-          app.autoplay = false;
-          app.singer = datas.author
-          app.src = e.src;
-          that.data.songList[that.data.ins].src = e.src
-          console.log(e)
-          wx.setStorage({
-            key: 'songlist',
-            data: that.data.songList,
-            success: function (res) {
-              console.log('异步保存成功');
-            }
-          })
-          return
-        }else{
-        //   console.log(123)
-         that.next()
-          
+    if(datas.errorNum>2){
+     // 链接来源出错 下一首
+     wx.showToast({
+      title:'地址失效',
+      icon:'error'
+    })
+    setTimeout(() => {
+      that.next()
+    }, 2000);
+    return
+  }
+
+  wx.showLoading({
+    title: '加载中',
+  })
+  utils.errorSong(datas.mId, datas, (e) => {
+    errorFlag = true;
+    wx.hideLoading()
+    if (e.stauts) {
+    
+      datas.errorNum++
+      app.title = datas.title;
+      app.coverImgUrl = datas.pic;
+      app.autoplay = false;
+      app.singer = datas.author;
+      datas.src = e.src;
+      app.src = e.src;
+      if (that.data.songList.findIndex(i => i.id === datas.id) !== -1) {
+        that.data.songList[that.data.songList.findIndex(i => i.id === datas.id)].src = e.src;
+       if(e.newid){
+        that.data.songList[that.data.songList.findIndex(i => i.id === datas.id)].newid = e.newid
+       }
+        that.data.songList[that.data.songList.findIndex(i => i.id === datas.id)].pic = e.pic||datas.pic
+      }
+      if (e.lrc) {
+        datas.lrc = e.lrc
+        Lrcget(that, datas)
+      }
+      if(e.pic){
+        that.setData({
+          img:e.pic
+        })
+        datas.pic = e.pic
+        app.coverImgUrl = e.pic
+      }
+      wx.setStorage({
+        key: 'songlist',
+        data: that.data.songList,
+        success: function (res) {
+          console.log('异步保存成功');
         }
-        console.log(543)
-        
       })
+      return
+    } else {
+      wx.hideLoading()
+      //   console.log(123)
+      that.next()
+
+    }
+    console.log(543)
+
+  })
     // }
-   
+
 
   })
   //走进度条
 
-  app.onTimeUpdate(function () {
-    if(that.data.lrc.length===1&&datas.lrc){
+  app.onTimeUpdate(async function () {
+    if (that.data.lrc.length === 1 && datas.lrc) {
       Lrcget(that, datas)
     }
-
-
+   
+    if (that.data.ins === -1 || that.data.ins !== that.data.songList.findIndex(i => i.id === datas.id)) {
+      that.setData({
+        ins: that.data.songList.findIndex(i => i.id === datas.id)
+      })
+    }
+    if(that.data.value>2){
+      datas.errorNum = 0 // 如果成功播放 就清空错误次数
+    }
     that.setData({
       Duration: MinuteConversion(app.duration),
       max: app.duration,
@@ -144,15 +194,7 @@ async function pay(that, app, datas, restart) {
       //音乐播完自动下一曲
       if (that.data.loopstate == 0) {
         //顺序播放
-        if (that.data.ins !== that.data.songList.length - 1) {
-          Nextsong(that, app, appInst)
-        } else {
-          app.seek(0)
-          that.setData({
-            value: 0
-          })
-          pay(that, app, datas)
-        }
+        that.next()
       } else if (that.data.loopstate == 1) {
 
         app.seek(0)
@@ -197,9 +239,24 @@ async function pay(that, app, datas, restart) {
 
   })
   // 获取歌词
-  if (datas.islink && !datas.lrc) {
+  if (datas.mId === 3 && !datas.lrc) {
     datas.lrc = await utils.GETlRC(datas.id)
 
+  }
+  if(datas.mId===5&&that.data.lrc.length === 1&&!datas.lrc){
+    // 获取歌词
+    const res  =await request({
+      url:appInst.host+'/songinfo',
+      method:'post',
+      data:{
+        id:datas.id
+      }
+    })
+    that.setData({
+      lrc:res.data.lrc
+    })
+    datas.lrc = res.data.lrc
+    console.log(res.data)
   }
 
 }
@@ -266,6 +323,7 @@ function Readinfo(that, app, appInst) {
         // lrc: datas.lrc,
         value: datas.value,
         pay: datas.pay,
+        id: datas.id,
         img: datas.coverImgUrl
 
       })
@@ -301,7 +359,6 @@ function Readinfo(that, app, appInst) {
 function Nextsong(that, app, appInst) {
   var datas = that.data.songList[that.data.ins + 1];
   that.setData({
-    ins: that.data.ins + 1,
     value: 0,
     Crack: false,
   });
@@ -316,7 +373,7 @@ function Nextsong(that, app, appInst) {
 
 
 
-    pay(that, app, datas);
+    pay(that, app, datas, 1);
   }
 
 
@@ -326,7 +383,6 @@ function Lastsong(that, app, appInst) {
 
   var datas = that.data.songList[that.data.ins - 1];
   that.setData({
-    ins: that.data.ins - 1,
     value: 0,
     Crack: false,
   });
@@ -347,7 +403,6 @@ function Randomplay(that, app, appInst) {
 
   var inst = Math.floor(Math.random() * length);
   that.setData({
-    ins: inst,
     value: 0,
     Crack: false,
   });
@@ -365,17 +420,19 @@ function Randomplay(that, app, appInst) {
 }
 //获取歌词
 function Lrcget(that, datas) {
+  const Lrctime =/(\d{1,2}:\d{2}\.?\d+)/g
+  const lrcs  =/\[(\d{1,2}:\d{2}\.?\d+)\]/g
   if (datas.lrc) {
     var lrc = [];
 
     for (let i of datas.lrc.split('\n')) {
       var obj = { lrc: '', time: '' }
-      obj.lrc = i.substring(10);
-      obj.time = Splitseconds(i.substring(1, 6));
+      obj.lrc = i.replace(lrcs,'');
+      obj.time = Splitseconds((i.match(Lrctime))?(i.match(Lrctime))[0]:'');
 
       lrc.push(obj)
     }
-    console.log(that)
+    console.log(lrc)
     that.setData({
       lrc: lrc
     })
@@ -543,21 +600,15 @@ function newAddSong(data) {
   data.songlist = Array.isArray(data.songlist) ? data.songlist : []
   let flag = data.songlist.some((item, index) => {
     indexs = index;
-    return item.src === data.song.src
+    return item.id === data.song.id
 
   })
   if (flag) {
-    data.paythis.setData({
-      ins: indexs
-    })
+    return
   } else {
     if (data.song) {
       data.songlist.unshift(data.song)
     }
-    data.paythis.setData({
-      ins: 0
-    })
-
     wx.setStorage({
       key: 'songlist',
       data: data.songlist,
@@ -570,11 +621,13 @@ function newAddSong(data) {
 //下一首播放
 function nextSongPay(data) {
   //现在播放的和选的是一样的，结束
-  if (data.songlist[data.paythis.data.ins].id === data.song.id) {
-    console.log('一样的，结束');
-    return
+  console.log(data.songlist[data.paythis.data.ins],data.song)
+  if (data.songlist[data.paythis.data.ins]?.id === data.song.id) {
+    return wx.showToast({
+      title: '正在播放中',
+      icon: 'none'
+    })
   }
-  let ins = data.paythis.data.ins;
   let indexs
   console.log(data)
   data.songlist = Array.isArray(data.songlist) ? data.songlist : []
@@ -585,31 +638,28 @@ function nextSongPay(data) {
   })
   if (flag) {
     data.songlist.splice(indexs, 1)//删除原有的歌曲
-    if (ins) {
-      data.paythis.setData({
-        ins: ins - 1
-      })
-    } else {
-      data.paythis.setData({
-        ins: 0
-      })
-    }
   }
-  data.songlist.splice(ins + 1, 0, data.song);//将新歌添加到播放
-  console.log(ins)
-  wx.setStorage({
-    key: 'songlist',
-    data: data.songlist,
-    success: function (res) {
-      console.log('异步保存成功', data.songlist)
-    }
-  })
+  setTimeout(() => {
+    let ins = data.paythis.data.ins;
+    data.songlist.splice(ins + 1, 0, data.song);//将新歌添加到播放
+    wx.showToast({
+      title: '添加成功',
+      icon: 'success'
+    })
+    wx.setStorage({
+      key: 'songlist',
+      data: data.songlist,
+      success: function (res) {
+        console.log('异步保存成功', data.songlist)
+      }
+    })
+  }, 500); // 需要获取最新的ins 所以用了延迟
 }
 function debounce() {
   let timeout = null;
   return function (fn, wait) {
-      if (timeout !== null) clearTimeout(timeout);
-      timeout = setTimeout(fn, wait);
+    if (timeout !== null) clearTimeout(timeout);
+    timeout = setTimeout(fn, wait);
   }
 }
-export {debounce, MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, wholelist, Closestate, Readinfo, Promisify, newAddSong, nextSongPay };
+export { debounce, MinuteConversion, pay, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, wholelist, Closestate, Readinfo, Promisify, newAddSong, nextSongPay };
