@@ -216,8 +216,8 @@ Page({
       wx.hideLoading()
       setTimeout(() => {
         wx.showToast({
-          title:err.message,
-          icon:'error'
+          title:err.errMsg,
+          // icon:'error'
         })
       }, 200);
     }

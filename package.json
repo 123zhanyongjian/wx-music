@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "miniprogram-to-uniapp": "^2.2.6"
+  }
+}

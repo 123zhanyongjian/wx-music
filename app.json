@@ -1,11 +1,15 @@
 {
   "pages": [
     "pages/play/play",
-    "pages/logs/logs",
     "pages/index/index",
+  
+    "pages/logs/logs",
+    "pages/alubms/alubms",
+   
     "pages/singer/singer",
     "pages/myinfo/myinfo",
     "pages/playlistInfo/playlistInfo",
+  
     "pages/newlogs/newlogs",
     "pages/singerdetails/singerdetails",
     "pages/details/details"
@@ -27,12 +31,7 @@
     "color": "#bfbfbf",
     "selectedColor": "#14b5b2",
     "list": [
-        {
-          "pagePath": "pages/play/play",
-          "text": "播放器",
-          "iconPath": "./image/pay.png",
-          "selectedIconPath": "./image/pay1.png"
-        },
+     
       {
         "pagePath": "pages/index/index",
         "text": "推荐",
@@ -44,6 +43,12 @@
         "text": "搜索",
         "iconPath": "./image/ss.png",
         "selectedIconPath": "./image/ss1.png"
+      },
+      {
+        "pagePath": "pages/play/play",
+        "text": "播放器",
+        "iconPath": "./image/pay.png",
+        "selectedIconPath": "./image/pay1.png"
       },
       {
         "pagePath": "pages/singer/singer",

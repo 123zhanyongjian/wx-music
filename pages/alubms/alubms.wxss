@@ -4,10 +4,18 @@
   text-align: center;
   left: 0;right: 0;
 }
-.li:nth-child(1){
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  padding-bottom: 20rpx;
+.imgs{
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  background-size:cover;
+  background-position: center center;
+  height: 525rpx;
+  filter: blur(40px);
+  
+}
+.mains{
+  
 }
 .headLog{
   position: absolute;
@@ -23,23 +31,16 @@
   top: 50rpx;
   color: rgb(255, 255, 255,.8);
 }
+.text{
+  /* margin-top:5px; */
+  padding:10px 10px 10px 0;
+  font-size:24rpx;
+  color: rgb(255, 255, 255,.6);
+}
 .headLog>image{
-  height: 260rpx;
-  width: 260rpx; 
-  border-radius: 15px;
-}
-.imgs{
-  position: absolute;
-  z-index: 0;
-  width: 100%;
-  background-size:cover;
-  background-position: center center;
-  height: 525rpx;
-  filter: blur(40px);
-  
-}
-.mains{
-  
+   height: 260rpx;
+   width: 260rpx; 
+   border-radius: 15px;
 }
 .btn{
   position: absolute;
@@ -68,7 +69,7 @@
 .ng{
   position: absolute;
  /* z-index: 1; */
-   height: 400rpx;
+   height: 525rpx;
   width: 100%;
   background:rgba(0, 0, 0, .5);
 }
@@ -78,6 +79,8 @@
 }
 .ul{
   width: 100%;
+  border-radius: 16px;
+  /* background: red !important; */
  
 }
 .popusShowopen{
@@ -87,10 +90,15 @@
 .li{
   
   position: relative;
-  background: white;
+  /* background: white; */
   min-height:100rpx;
   padding:0 50rpx; 
   border-bottom: 2rpx solid #f9f9f9;
+ 
+}
+.li:nth-child(1){
+  border-radius: 16px;
+  padding-bottom: 20rpx;
 }
 .li>.logo{
   width: 30rpx;
@@ -107,7 +115,11 @@
  z-index: 0;
  width: 100%;
  background-size:100% 100%;
- top: 390rpx;
+ top: 490rpx;
+ transform:translateX(0%);  
+ transition: all 0.5s ease-in-out; /* 平滑过渡所有属性 */ 
+ /* box-shadow: -3px -7px 8px 7px rgba(255, 255, 255); */
+ padding-bottom: 20rpx;
 }
 .li>.text{
   font-size:32rpx;
@@ -117,9 +129,10 @@
  height: 100%;
  flex-wrap: wrap;
  overflow: hidden;
+
  width: 70vw;
   margin-left:20rpx;
-  color: #333;
+  color: #000 !important;
   /* line-height: 100rpx; */
 
   
@@ -135,7 +148,7 @@
  
 }
 .active{
-  color: red;
+  color: rgb(20,180,187);
 }
 .author{
   color:#999;
@@ -162,14 +175,13 @@
   width: 60rpx;
   height: 60rpx;
 }
-.mores{
+.more{
   position: absolute;
-  right: 15rpx;
-  z-index: 10;
+  right: 10rpx;
   top: 15px;
   width: 60rpx;
   /* box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);   */
-  /* border-left: 1px solid #ccc; */
+  border-left: 1px solid #ccc;
   /* box-shadow: ; */
   height: 60rpx;
 }
@@ -213,13 +225,50 @@
  
   color:rgb(0, 149, 255)
 }
-.more{
+.listtop{
+  /* margin-bottom: 10rpx; */
+}
+.musicAndAlbums{
+  display: flex;
   position: absolute;
-  right: 10rpx;
-  top: 15px;
-  width: 60rpx;
-  /* box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);   */
-  border-left: 1px solid #ccc;
-  /* box-shadow: ; */
-  height: 60rpx;
+  bottom: -10rpx;
+  left: 0;
+  /* background-color: red; */
+  height: 140rpx;
+  right: 0;
+  color: rgb(255, 255, 255,.8);
+  z-index: 10;
+  justify-content: space-around;
+  
+}
+.musicAndAlbums  image{
+  /* flex:1 */
+  width: 50rpx;
+  height: 50rpx;
+  vertical-align: middle;
+}
+.musicAndAlbums text{
+  margin-left: 15px;
+}
+.active1{
+  transform: translateX(-100%);
+  z-index:999;
+  height: 60vh;
+}
+.active2{
+  transform: translateX(100%);
+  z-index: 999;
+  height: 60vh;
+}
+.alubmsList{
+  display: flex;
+  padding:10px 20px;
+}
+.alubmsList image{
+  height: 180rpx;
+  width: 180rpx;
+  border-radius: 10px;
+}
+.alubmsList .title{
+  margin-left: 20px;
 }

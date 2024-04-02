@@ -1,13 +1,32 @@
+<wxs src="../singerdetails/singerdetails.wxs" module="module"></wxs>
 <view class="mains">
   <view class=''>
     <!-- 音乐图片 -->
       <view >
       <image class='imgs' style="background-image:url({{src}})"></image>
-      <view class='btn' bindtap='whole'>播放全部</view>
-      <view class="btn1" wx:if="{{loveId}}" bindtap="synchronous">
-        同步云端
+    <image wx:if="{{id==='my'}}" class="mores" src="../../image/morew.png" bind:tap="synchronous">
+      </image>
+     
+      <view class='ng'>
+        <view class="headLog">
+      <image src="{{src}}" />
       </view>
-      <view class='ng'></view>
+      <view class="singer">
+        <view  hover-class="none" hover-stop-propagation="false">
+          {{title}}
+         
+        </view>
+        <view wx:if="{{id==='kw'}}" class="text" catchtap="openSingerInfo">
+      日期：{{time}}
+        </view>
+        <view wx:if="{{id!=='kw'&&id!=='my'}}" class="text" catchtap="openSingerInfo">
+        {{module.substrins(singerInfo,110)}}
+        </view>
+        <view wx:if="{{id!=='kw'&&id!=='my'}}" class="text">
+        {{tag}}
+        </view>
+      </view>
+      </view>
     </view>
 
 
@@ -15,7 +34,12 @@
   </view>
   <scroll-view  class="{{popusShow?'popusShowopen':''}} ul scroll-view" scroll-y="{{popusShow?false:true}}" >
   
-   
+    <view class="li">
+             <view class="logo listtop" style="width:100%;left: 20rpx;" bindtap='whole'>
+              <image    style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
+              <text>播放全部({{total}})</text>
+             </view>
+     </view>
     <view class='li' wx:for="{{list}}" wx:key="{{index}}" data-item='{{item}}' bindlongpress="showActionSheet">
   <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
                <image class="logo"  wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx"  src="../../image/music.gif"></image>

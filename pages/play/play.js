@@ -19,7 +19,7 @@ Page({
     Crack: false,//false未开启 true开启破解
     ins: '', //列表选中
     showtime: false,
-    loopstate: 0,//f0代表顺序，1代表循环，2代表随机
+    loopstate: 0,//0代表顺序，1代表循环，2代表随机
     loop: '../../image/sx.png',
     loveState: false,
     lrc: [{
@@ -42,8 +42,25 @@ Page({
     setInterval: '',
     close: false,
     song: {},
-    id: '' // 当前播放的id
+    id: '', // 当前播放的id
+    isScroll:false
+
   },
+  binddragend(e){
+    const str = setTimeout(() => {
+        this.setData({
+          isScroll:false
+        })
+        clearTimeout(str)
+    }, 2000);
+  },
+  binddragstart(e){
+    this.setData({
+      isScroll:true
+    })
+  },
+
+
   //关闭歌曲列表
   closese() {
     this.setData({
@@ -102,6 +119,25 @@ Page({
 
     }, 300)
 
+  },
+  changeSeek(e){
+    if(this.data.isScroll){
+      const obj={
+        detail:{
+          value:e.currentTarget?.dataset?.time
+        }
+      }
+      this.changeslider(obj);
+      if(this.data.state){
+        // 如果暂停就播放
+        app.innerAudioContext.play();
+      }
+      this.binddragend()
+    }
+  },
+  // mv播放异常
+  bindMvError(e){
+    console.log(e)
   },
   //切换播放模式
   changloop() {
@@ -294,7 +330,7 @@ Page({
    */
   onLoad: function (options) {
     app.data.paythis = this;
-    this.getLoveList()
+    // this.getLoveList()
     if (this.data.state) {
       tiem.Readinfo(this, app.innerAudioContext, app)
 
@@ -339,7 +375,8 @@ Page({
 
     setTimeout(() => {
       const mv = wx.createVideoContext('myMv')
-      mv.pause()
+      mv.seek(20);
+      console.log(mv,333)
     }, 5000);
   },
   //选择音乐
@@ -351,9 +388,7 @@ Page({
 
     app.data.song =this.data.songList[e.currentTarget.dataset.index];
     console.log(app.data.song,222)
-    if (!app.data.song.src) {
-      app.data.song.src = 'http://www.baidu.com'
-    }
+    
     if (app.data.song.mId === 3) {
       console.log(this.data.value, 444)
       tiem.pay(this, app.innerAudioContext, app.data.song, 1);

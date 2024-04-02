@@ -10,10 +10,14 @@
   </block>
   <block wx:for="{{musicList}}" >
     <view class="musicItem" data-data="{{item}}"  bindtap="change">
-      <view style="background-image: url({{item.img}});" class="cover"></view>
+      <view style="background-image: url({{item.img}});border-radius:5px;" class="cover"></view>
       <view class="musicMeta">
+        <view class="description" wx:if="{{item.id!=='kw'}}">
+        <view><image class="hot" src="../../image/hot.png" mode=""/>{{item.hot}}</view>
+        <view style="height: 32rpx;vertical-align: text-bottom;margin-right: 16rpx;line-height: 32rpx;">共{{item.total}}首</view>
+        </view>
         <view class="title">{{item.name}}</view>
-        <view class="description">{{item.description}}</view>
+      
       </view>
     </view>
   </block>

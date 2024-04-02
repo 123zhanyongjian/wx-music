@@ -3,6 +3,7 @@ const app = getApp();
 const time = require('../../utils/time.js')
 const api = require('../../utils/api')
 const utils = require('../../utils/util')
+
 const { img } = require('../../utils/loveBg')
 Page({
 
@@ -12,6 +13,7 @@ Page({
   data: { 
     popusShow:false,
     list: [],
+    tag:'',
     src: '',
     total:300,
     pageSize:68,
@@ -260,7 +262,7 @@ return
       })
         return
     }
-    if(this.data.id==='kw'){
+    if(this.data.id!=='my'){
       app.data.song = song;
       wx.switchTab({
         url: "../../pages/play/play",
@@ -369,7 +371,7 @@ return
     app.data.songlist = this.data.list
     const arr = app.data.songlist.slice()
     
-    if(this.data.id==='kw'){
+    if(this.data.id!=='my'){
       app.data.song = this.data.list[0];
       wx.switchTab({
         url: "../../pages/play/play",
@@ -429,6 +431,82 @@ return
 
 
   },
+    moreClick(){
+    const that = this
+    wx.showActionSheet({
+      itemList: this.data.itemList,
+
+      success(e) {
+        console.log("success")
+        console.log(e)
+        if (!e.camcle) {
+          if (e.tapIndex===0) {
+            that.setData({
+              addSongListFlag:true
+            })
+          that.selectComponent('#addSongList')
+          .setData({
+            ['music.title']: that.data.name,
+            ['music.image']:that.data.image,
+            title:'编辑歌单'
+          })
+          } else {
+            // that.pay(ev)
+            wx.showModal({
+              title: '删除歌单',
+              content: '确定删除该歌单吗？一旦删除无法撤回，是否继续',
+              complete: async (res) => {
+                if (res.cancel) {
+                  
+                }
+            
+                if (res.confirm) {
+                  try{
+                    wx.showLoading({
+                      title: '加载中',
+                    })
+                    const res1 = await request({
+                      url:app.host+'/playlist/del',
+                      method:'delete',
+                      data:{
+                        id:that.data.id
+                      }
+                    })
+                    wx.hideLoading()
+                    if(res1.data.code===200){
+                      setTimeout(() => {
+                        wx.showToast({
+                          title: '删除成功',
+                          icon:'success'
+                        })
+                        wx.navigateBack(-1)
+                      }, 200);
+                    }
+                  }catch(err){
+                    wx.hideLoading()
+                    wx.showToast({
+                      title: err.message,
+                      icon:'error'
+                    })
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          // console.log("cancle")
+        }
+      },
+      fail(e) {
+        // console.log("fail")
+        // console.log(e)
+      },
+      complete(e) {
+        // console.log("complete")
+        // console.log(e)
+      }
+    })
+  },
   onLoad(e) {
     if (e.id === 'my') {
       // 收藏列表
@@ -439,6 +517,7 @@ return
             src: img,
             list: res.data,
             id: 'my',
+            title:'我喜欢',
             time:'',
             loveId:app.data.userInfo?.playList?.filter(i=>i.islove)[0]?.id,
             paydata:app.data?.paythis?.data
@@ -451,6 +530,8 @@ return
           })
           this.setData({
             id: 'my',
+            src: img,
+            title:'我喜欢',
             loveId:app.data.userInfo?.playList?.filter(i=>i.islove)[0]?.id,
             paydata:app.data?.paythis?.data
           })
@@ -475,53 +556,70 @@ return
     } else if(e.id==='kw'){
       this.setData({
         src:e.src,
-        id:e.id
+        id:e.id,
+        title:'酷我热歌榜',
+        pageSize:68
       })
      
      this.getkwTop(this.data.pageNum)
       return
+    }else{
+      this.setData({
+        id:e.id,
+        pageSize:10
+      })
+      this.getSongList()
     }
-    var that = this;
+    
+    
+  
+  },
+  getSongList(page=this.data.pageNum){
     wx.showLoading({
       title: '加载中...',
     })
-    
+  if(page===1){
+    this.setData({
+      list:[]
+    })
+  }
     wx.request({
-      url: 'https://tonzhon.com/api/playlists/' + e.id,
-      success: function (res) {
-        wx.hideLoading()
-        if (res.data.success) {
-          that.setData({
-            list: res.data.playlist.songs.map(i => ({
-              title: i.name,
-              id: i.newId,
-              loveId:'',
-              singer: i?.artists.map(it => it.name).join('-'),
-              islink: true,
-              type: (i.newId)[0],
-              pic: e.src,
-              src: i.newId,
-              author: i?.artists.map(it => it.name).join('-'),
-              mId: 3,// 该资源下的搜索内容
-              classId:e.id // 属于哪个推荐类的ID 用于显示当前播放的是哪个推荐下的内容
-            })),
-            src: e.src,
-            id:e.id,
-            paydata:app.data?.paythis?.data
-
-          })
-        }
-
-
+      url: app.host+'/recommenInfo',
+      data:{
+        page,
+        id:this.data.id
       },
-      fail: () => {
+      method:'get',
+      success:(res)=>{
+        wx.hideLoading();
+        this.setData({
+          list:this.data.list.concat(res.data.data?.list),
+          time:res.data.data?.time,
+          src:res.data.data?.img,
+          singerInfo:res.data.data?.info,
+          total:res.data.data?.total,
+          tag:res.data.data?.tag
+        })
+        wx.setNavigationBarTitle({
+          title: `${res.data.data.name}`,
+        })
+      },
+      fail:(err)=>{
         wx.hideLoading()
+        setTimeout(() => {
+          wx.showToast({
+            title:err.message,
+            icon:'none'
+          })
+        }, 200);
       }
     })
   },
   onReachBottom() {
   if(this.data.id==='kw'){
     utils.changePage.call(this,'getkwTop')
+  }else if(this.data.id!=='kw'&&this.data.id!=='my'){
+    utils.changePage.call(this,'getSongList')
   }
   },
   

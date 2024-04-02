@@ -15,6 +15,7 @@
   margin: 20rpx;
   padding: 10rpx;
   background: #fff;
+  border-radius: 6px;
 }
 
 .cover {
@@ -41,4 +42,12 @@
   margin-bottom: 10rpx;
   font-size: 20rpx;
   color: #666666;
+  display: flex;
+  justify-content: space-between;
+  /* padding: 0 10px; */
+}
+.hot{
+  width: 32rpx;
+  height: 32rpx;
+  vertical-align:text-bottom;
 }

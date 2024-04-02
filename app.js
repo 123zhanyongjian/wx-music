@@ -64,8 +64,8 @@ App({
                               wx.hideLoading()
                               setTimeout(() => {
                                 wx.showToast({
-                                  title: err,
-                                  icon:'error'
+                                  title: err.errMsg,
+                                  // icon:'error'
                                 })
                                }, 200);
                             }
@@ -77,8 +77,8 @@ App({
                       wx.hideLoading()
                       setTimeout(() => {
                         wx.showToast({
-                          title: err,
-                          icon:'error'
+                          title: err.errMsg,
+                          // icon:'error'
                         })
                        }, 200);
                     }
@@ -89,8 +89,8 @@ App({
                 wx.hideLoading()
                setTimeout(() => {
                 wx.showToast({
-                  title: err,
-                  icon:'error'
+                  title: err.errMsg,
+                  // icon:'error'
                 })
                }, 200);
               }

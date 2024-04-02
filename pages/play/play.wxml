@@ -15,7 +15,7 @@
         <view>
            <view class='Conduct'>{{conduct}}</view>
         <view class='Duration'>{{Duration}}</view>
-        <slider class='slider' min="0" max="{{max}}" step="1" value="{{value}}" backgroundColor="#e9e9e9" block-size="14" block-color="#ffffff" bindchanging="" bindchange="changeslider">
+        <slider class='slider' min="0" max="{{max}}" step="1" value="{{value}}" activeColor="rgb(20,180,187)" backgroundColor="#e9e9e9" block-size="14" block-color="#ffffff" bindchanging="" bindchange="changeslider">
 
         </slider>
       </view>
@@ -56,6 +56,7 @@
     <swiper-item>
      
       <view class="imgs">
+     
         <image id="img"  binderror="binderrorImg"  class="{{state?'auto imgstates':'auto imgspay'}}" src="{{img}}" animation="{{animationData}}"></image>
       </view>
     
@@ -68,10 +69,10 @@
     <swiper-item>
         
           <view class='lrc'>
-          <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum}}">
-               <view id="line{{index}}" class="lrcs {{item.time==t?active:''}}"  wx:for="{{lrc}}" wx:key="{{index}}">
+          <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum}}" enhanced  binddragstart="binddragstart" binddragend="binddragend">
+               <view id="line{{index}}" class="lrcs "  wx:for="{{lrc}}" wx:key="{{index}}" data-time="{{item.time}}" catchtap="changeSeek">
                 
-                 <view class="{{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
+                 <view class="lrcText {{lrc[index+1].time<t||lrc[index].time>t?'':'activelrc'}}">{{item.lrc}}</view>
                </view>
           </scroll-view>
           </view>
@@ -79,7 +80,7 @@
     </swiper-item>
   </swiper>
 <view wx:if="{{Mv}}">
-<video id="myMv" 	initial-time="{{value}}" show="{{Mv}}" src="{{Mvsrc}}"></video>
+<video id="myMv" 	initial-time="{{value}}" show="{{Mv}}" src="{{Mvsrc}}"  binderror="bindMvError"></video>
 <text wx:if="{{Mv}}" class="cuo" bindtap="cuos">×</text>
 </view>
 

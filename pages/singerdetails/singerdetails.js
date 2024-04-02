@@ -10,14 +10,20 @@ Page({
     range: ['选项1', '选项2', '选项3', '选项4', '选项5', '选项6', '选项7', '选项8', '选项9', '选项10'], // 初始选项列表，可以根据需要修改为100个选项  
     value: '', // 存储选中的值
     songs: [],
+    albums:[],
     n: 0,
     pageNum:1,
+    change:true,
+    lastPage:false,
     pageSize:68,
     count:0,
+    singerInfo:'',
     total:360,
     song:{},
     playlist:[],
+    albumPage:1,
     paydata:'',
+    type:1,//1单曲，2专辑
     itemList: ['立即播放', '下一首播放','添加到歌单'],
     list: [],//临时列表
     timer: ''//定时器
@@ -70,6 +76,32 @@ Page({
   more(e){
     this.showActionSheet(e)
   },
+  changeType(e){
+    
+    this.setData({
+      type:Number(e.currentTarget.dataset.type),
+      change:false
+    })
+  const str=  setTimeout(() => {
+      this.setData({
+    
+        change:Number(e.currentTarget.dataset.type)===2?false:true
+      })
+      clearTimeout(str)
+    }, 600);
+  },
+  openSingerInfo(){
+    if(this.data.singerInfo.length>110){
+      wx.showModal({
+        title:this.data.title,
+        content:this.data.singerInfo,
+        showCancel:false,
+        confirmText:'我知道了',
+        confirmColor:'#14B4BB'
+
+      })
+    }
+  },
   onLoad: function () {
     wx.setNavigationBarTitle({
       title: app.data.singer.name
@@ -112,21 +144,47 @@ Page({
         songs:[]
       })
     }
+    if(this.data.albumPage===1){
+      this.setData({
+        albums:[]
+      })
+    }
       // 爱听音乐
       wx.showLoading({
         title: '加载中',
       })
       request({
-        url:app.host+`/musicList?name=${this.data.title}&page=${page}`
+        url:app.host+`/musicList?name=${this.data.title}&singer=1&page=${page}`
       })
       .then(res=>{
-        wx.hideLoading()
+        
         if(res.data.code===200){
           that.setData({
             songs:this.data.songs.concat(res.data.data?.data?.map(i=>({...i,pic:this.data.image}))),
             // total:res.data.data.total*1,
+            singerId:res.data.data.singerId,
             paydata:app.data?.paythis?.data
           })
+          if(page===1){
+            wx.hideLoading()
+            request({
+              url:app.host+'/singerInfo',
+              method:'post',
+              data:{
+                id:res.data.data.singerId
+              }
+            })
+            .then(ret=>{
+             this.setData({
+              singerInfo:ret.data.data?.singerInfo,
+              albums:this.data.albums.concat(ret.data.data?.album),
+              lastPage:ret.data.data?.lastPage
+             })
+            })
+          }else{
+            wx.hideLoading()
+          }
+
           return
         }
       
@@ -247,10 +305,48 @@ Page({
 
 
   },
-
+  // 进入专辑详情
+  goAlubms(e){
+    const id = e.currentTarget.dataset.item.id;
+    const name =  e.currentTarget.dataset.item.name;
+    const img =  e.currentTarget.dataset.item.img;
+    app.data.albumImg = img
+    wx.navigateTo({
+      url: `../alubms/alubms?id=${id}&name=${name}&img=${img}`
+    })
+  },
   /*上拉加载更多歌曲*/
   onReachBottom() {
-   utils.changePage.call(this,'getsongList')
+   if(this.data.type===1){
+    utils.changePage.call(this,'getsongList')
+   }else if(this.data.type===2){
+    if(!this.data.lastPage){
+      wx.showLoading({
+        title: '加载中',
+      })
+      request({
+        url:app.host+'/singerInfo',
+        method:'post',
+        data:{
+          id:this.data.singerId,
+          page:++this.data.albumPage
+        }
+      })
+      .then(ret=>{
+        wx.hideLoading()
+       this.setData({
+        singerInfo:ret.data.data?.singerInfo,
+        albums:this.data.albums.concat(ret.data.data?.album),
+        lastPage:ret.data.data?.lastPage
+       })
+      })
+    }else{
+      wx.showToast({
+        title: '我已经到底了',
+        icon:'none'
+      })
+    }
+   }
     // this.getSingerDetail(app.data.singer.id, this.data.songs.length)
     // console.log("sdsd")
   }

@@ -86,6 +86,6 @@
   width: 80rpx;
   height: 30rpx;
   /* display: inline-block; */
-  border :1rpx solid rgb(49, 194, 124);
-  color: rgb(49, 194, 124);
+  border :1rpx solid rgb(20,180,187);
+  color: rgb(20,180,187);
 }

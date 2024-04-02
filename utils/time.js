@@ -39,19 +39,9 @@ async function pay(that, app, datas, restart) {
   datas.errorNum = 0
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
-  that.setData({
-    lrc: [{
-      lrc: '暂无歌词'
-    }],
-  })
-
   if (that.data.value === 0 || restart) {
     // 新音乐才重新赋值
     const loveList = that.returnloveList()
-    that.changeTitle() /// 修改标题
-    datas.src = datas.src ?? 'http://www.baidu.com'
-    console.log(loveList, 333, datas.src, 444)
-    app.src = datas.src;
     app.title = datas.title;
     app.coverImgUrl = datas.pic;
     app.autoplay = false;
@@ -62,15 +52,93 @@ async function pay(that, app, datas, restart) {
       song: datas,
       author: datas.author,
       img: datas.pic,
-      Mvsrc: datas.isMv ? datas.src : '',
+      Mvsrc: datas.isMv ? appInst.host+'/mv?id='+datas.id : '',
       state: false,
       showtime: false,
       pay: "../../image/zt.png",
+      isScroll:false,
       id: datas.id,
       loveState: loveList.some(i => i.id === datas.id),
-      ins: ([].concat(that.data.songList)).findIndex(i => i.id === datas.id)
+      ins: ([].concat(that.data.songList)).findIndex(i => i.id === datas.id),
+      lrc: [{
+        lrc: '暂无歌词'
+      }],
     });
+    that.changeTitle() /// 修改标题
+    if(!datas.src){
+      wx.showLoading({
+        title: '加载中',
+      })
+      utils.errorSong(datas.mId, datas, async(e) => {
+        errorFlag = true;
+        wx.hideLoading()
+        if (e.stauts) {
+        
+          datas.errorNum++
+          app.title = datas.title;
+          app.coverImgUrl = datas.pic;
+          app.autoplay = false;
+          app.singer = datas.author;
+          datas.src = e.src;
+          app.src = e.src;
+          if (that.data.songList.findIndex(i => i.id === datas.id) !== -1) {
+            that.data.songList[that.data.songList.findIndex(i => i.id === datas.id)].src = e.src;
+           if(e.newid){
+            that.data.songList[that.data.songList.findIndex(i => i.id === datas.id)].newid = e.newid
+           }
+            that.data.songList[that.data.songList.findIndex(i => i.id === datas.id)].pic = e.pic||datas.pic
+          }
+          if (e.lrc) {
+            datas.lrc = e.lrc
+            Lrcget(that, datas)
+          }
+          if(e.pic){
+            that.setData({
+              img:e.pic
+            })
+            datas.pic = e.pic
+            app.coverImgUrl = e.pic
+          }
+          wx.setStorage({
+            key: 'songlist',
+            data: that.data.songList,
+            success: function (res) {
+              console.log('异步保存成功');
+            }
+          })
+    
+    
+    
+          //将最新的数据保存起来
+          const rem = await request({
+            url: appInst.host + '/editSong',
+            method: 'post',
+            data: {
+              song: {
+                id:datas.id,
+                src:datas.src,
+                pic:datas.pic,
+                lrc:datas.lrc
+              }
+            }
+          })
+          console.log(rem,333)
+          return
+        } else {
+          wx.hideLoading()
+          //   console.log(123)
+          that.next()
+    
+        }
+        console.log(543)
+    
+      })
+    }
+    else{
+    app.src = datas.src;
+   
   }
+}
   app.play();
   //苹果手机系统下一首
   app.onNext(() => {
@@ -117,7 +185,7 @@ async function pay(that, app, datas, restart) {
   wx.showLoading({
     title: '加载中',
   })
-  utils.errorSong(datas.mId, datas, (e) => {
+  utils.errorSong(datas.mId, datas, async(e) => {
     errorFlag = true;
     wx.hideLoading()
     if (e.stauts) {
@@ -154,6 +222,23 @@ async function pay(that, app, datas, restart) {
           console.log('异步保存成功');
         }
       })
+
+
+
+      //将最新的数据保存起来
+      const rem = await request({
+        url: appInst.host + '/editSong',
+        method: 'post',
+        data: {
+          song: {
+            id:datas.id,
+            src:datas.src,
+            pic:datas.pic,
+            lrc:datas.lrc
+          }
+        }
+      })
+      console.log(rem,333)
       return
     } else {
       wx.hideLoading()
@@ -219,7 +304,7 @@ async function pay(that, app, datas, restart) {
         if (i < that.data.lrc.length - 1) {
           if (that.data.lrc[i + 1].time > that.data.t && that.data.lrc[i].time < that.data.t) {
 
-            if (i != that.data.toLineNum) {
+            if (i != that.data.toLineNum&&!that.data.isScroll) {
               that.setData({
                 toLineNum: i
               })
@@ -243,7 +328,7 @@ async function pay(that, app, datas, restart) {
     datas.lrc = await utils.GETlRC(datas.id)
 
   }
-  if(datas.mId===5&&that.data.lrc.length === 1&&!datas.lrc){
+  if(datas.mId===5&&that.data.lrc.length === 1&&!datas.lrc&&!datas.getLrc){
     // 获取歌词
     const res  =await request({
       url:appInst.host+'/songinfo',
@@ -255,8 +340,10 @@ async function pay(that, app, datas, restart) {
     that.setData({
       lrc:res.data.lrc
     })
-    datas.lrc = res.data.lrc
-    console.log(res.data)
+    datas.lrc = res.data.lrc;
+    datas.getLrc = true
+    Lrcget(that,datas)
+  
   }
 
 }
@@ -444,6 +531,8 @@ function Lrcget(that, datas) {
       lc.time = i.time;
       lcc.push(lc)
     }
+    lcc[lcc.length-1].time =60+(lcc[lcc.length-2].time) //
+  
     that.setData({
       lrc: lcc
     })
@@ -607,7 +696,8 @@ function newAddSong(data) {
     return
   } else {
     if (data.song) {
-      data.songlist.unshift(data.song)
+      
+      data.songlist.splice((data.paythis.data.ins+1),0,data.song)
     }
     wx.setStorage({
       key: 'songlist',

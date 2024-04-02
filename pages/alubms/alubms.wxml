@@ -1,4 +1,4 @@
-<wxs src="./singerdetails.wxs" module="module"></wxs>
+<wxs src="../singerdetails/singerdetails.wxs" module="module"></wxs>
 <view class='mains'>
     <view >
       <image class='imgs' style="background-image:url({{image}})"></image>
@@ -8,22 +8,16 @@
       </view>
       <view class="singer">
         <view  hover-class="none" hover-stop-propagation="false">
-          {{title}}
+          {{name}}
+        </view>
+        <view style="margin-top: 10px;font-size: 24rpx;" hover-class="none" hover-stop-propagation="false">
+          发行时间：{{date}}
         </view>
         <view class="text" catchtap="openSingerInfo">
-        {{module.substrins(singerInfo,110)}}
+        {{module.substrins(alumbsinfo,80)}}
         </view>
       </view>
-      <view class="musicAndAlbums">
-        <view class="music {{type===1?'active':''}}" catch:tap="changeType" data-type="1">
-        <image src="{{type===1?'../../image/dq1.png':'../../image/dq.png'}}" mode=""/>
-        <text>单曲</text>
-        </view>
-        <view class="albums {{type===2?'active':''}}" catch:tap="changeType" data-type="2">
-        <image src="{{type===2?'../../image/album1.png':'../../image/album.png'}}" mode=""/>
-        <text>专辑</text>
-        </view>
-      </view>
+    
       </view>
    
     </view>
@@ -48,20 +42,7 @@
     </view>
     <popup song="{{song}}"  bind:close="popusShowChange" show="{{popusShow}}"  wx:if="{{popusShow}}" header="添加到歌单" >
  
-    </popup>
+</popup>
     </scroll-view>
-    <scroll-view  style="width:{{change?'0px':'100vw'}}" scroll-x="{{false}}"  scroll-y="{{popusShow?false:true}}" class="{{[popusShow?'popusShowopen':'',type===1?'active2':'']}} ul scroll-view" >
-     
-    <view class='li' wx:for="{{type===1?[]:albums}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" >
-      
-      <view data-item='{{item}}' class='alubmsList' bindtap='goAlubms'>
-        <view>
-          <image src="{{item.img}}" mode=""/>
-        </view>
-        <view class="title">{{item.name}}</view>
-              
-      </view>
-    </view>
-    </scroll-view>
- 
+   
 </view>
