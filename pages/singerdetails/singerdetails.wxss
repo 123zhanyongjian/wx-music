@@ -14,8 +14,15 @@
   filter: blur(40px);
   
 }
-.mains{
+.loop{
+  /* padding: -50px; */
+    width: 40rpx;
+    position: absolute;
+    top:4px;
+    right:40rpx;
+   height: 40rpx;
   
+    z-index:4
 }
 .headLog{
   position: absolute;

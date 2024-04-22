@@ -22,6 +22,8 @@ Page({
     song:{},
     playlist:[],
     albumPage:1,
+    loop: '../../image/sx.png',
+    loopstate: 0, //0代表顺序，1代表循环，2代表随机
     paydata:'',
     type:1,//1单曲，2专辑
     itemList: ['立即播放', '下一首播放','添加到歌单'],
@@ -33,6 +35,43 @@ Page({
      popusShow:e.detail
    })
    console.log(this.data.popusShow)
+  },
+   //切换播放模式
+   changloop() {
+    if (this.data.loopstate == 0) {
+      this.setData({
+        loopstate: 1,
+        loop: '../../image/xh.png'
+
+      })
+      wx.showToast({
+        title: '循环播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else if (this.data.loopstate == 1) {
+      this.setData({
+        loopstate: 2,
+        loop: '../../image/sj.png'
+
+      })
+      wx.showToast({
+        title: '随机播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else {
+      this.setData({
+        loopstate: 0,
+        loop: '../../image/sx.png'
+
+      })
+      wx.showToast({
+        title: '顺序播放',
+        icon: 'none',
+        duration: 1000
+      })
+    }
   },
   showActionSheet(ev) {
     let item = ev.currentTarget.dataset.item;
@@ -221,6 +260,7 @@ Page({
   },
 
   whole() {
+    const that=this
     if(!this.data.songs.length){
       return wx.showToast({
         title: '没有可播放的歌曲',
@@ -236,7 +276,9 @@ Page({
       url: "../../pages/play/play",
       success: function () {
         app.data.paythis.setData({
-          value: 0
+          value: 0,
+          loopstate:that.data.loopstate,
+          loop:that.data.loop,
         })
         wx.setStorage({
           key: 'songlist',

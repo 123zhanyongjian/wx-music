@@ -35,14 +35,19 @@
   <scroll-view  class="{{popusShow?'popusShowopen':''}} ul scroll-view" scroll-y="{{popusShow?false:true}}" >
   
     <view class="li">
-             <view class="logo listtop" style="width:100%;left: 20rpx;" bindtap='whole'>
-              <image    style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-              <text>播放全部({{total}})</text>
-             </view>
+           <view class="logo listtop flex just_betw" style="width:100%;left: 20rpx;height: 100%;" >
+       <view bindtap='whole'>
+        <image  style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
+        <text>播放全部({{list.length}})</text>
+       </view>
+       <view style="width:60rpx;height:60rpx; vertical-align: middle;">
+        <image class='loop' src="{{loop}}" bindtap="changloop"></image>
+       </view>
+      </view>
      </view>
     <view class='li' wx:for="{{list}}" wx:key="{{index}}" data-item='{{item}}' bindlongpress="showActionSheet">
   <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
-               <image class="logo"  wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx"  src="../../image/music.gif"></image>
+  <image class="logo"  wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx"  src="../../image/music.gif"></image>
       <view class='text' bindtap='pay'  data-item="{{item}}">
         <!-- <text class="{{index<3?'active':''}} serial">{{index+1}}</text> -->
         <view class="title">{{item.title}}</view>

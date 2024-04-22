@@ -17,14 +17,52 @@ Page({
     src: '',
     total:300,
     pageSize:68,
-    paydata:'',
     pageNum:1,
+    loop: '../../image/sx.png',
+    loopstate: 0, //0代表顺序，1代表循环，2代表随机
     time:'',
     synchronousLoading:false,
     loveId:'', // 喜欢的id
     id: '',
     itemList: ['立即播放', '下一首播放','添加到歌单'],
     itemList1: ['上传云端', '同步云端','拉取云端资源'],
+  },
+   //切换播放模式
+   changloop() {
+    if (this.data.loopstate == 0) {
+      this.setData({
+        loopstate: 1,
+        loop: '../../image/xh.png'
+
+      })
+      wx.showToast({
+        title: '循环播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else if (this.data.loopstate == 1) {
+      this.setData({
+        loopstate: 2,
+        loop: '../../image/sj.png'
+
+      })
+      wx.showToast({
+        title: '随机播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else {
+      this.setData({
+        loopstate: 0,
+        loop: '../../image/sx.png'
+
+      })
+      wx.showToast({
+        title: '顺序播放',
+        icon: 'none',
+        duration: 1000
+      })
+    }
   },
   popusShowChange(e){
     this.setData({
@@ -362,6 +400,7 @@ return
     })
   },
   whole() {
+    const that=this
     if (!this.data.list.length) {
       return wx.showToast({
         title: '没有可播放的歌曲',
@@ -377,7 +416,9 @@ return
         url: "../../pages/play/play",
         success: function () {
           app.data.paythis.setData({
-            value: 0
+            value: 0,
+            loopstate:that.data.loopstate,
+            loop:that.data.loop,
           })
           wx.setStorage({
             key: 'songlist',
@@ -598,7 +639,8 @@ return
           src:res.data.data?.img,
           singerInfo:res.data.data?.info,
           total:res.data.data?.total,
-          tag:res.data.data?.tag
+          tag:res.data.data?.tag,
+          paydata:app.data?.paythis?.data,
         })
         wx.setNavigationBarTitle({
           title: `${res.data.data.name}`,

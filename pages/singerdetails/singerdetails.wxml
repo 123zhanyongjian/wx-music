@@ -29,10 +29,15 @@
     </view>
     <scroll-view  scroll-y="{{popusShow?false:true}}" class="{{[popusShow?'popusShowopen':'',type===2?'active1':'']}} ul scroll-view" >
      <view class="li">
-             <view class="logo listtop" style="width:100%;left: 20rpx;" bindtap='whole'>
-              <image  bindtap='pay'  style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-              <text>播放全部</text>
-             </view>
+           <view class="logo listtop flex just_betw" style="width:100%;left: 20rpx;height: 100%;" >
+       <view bindtap='whole'>
+        <image  style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
+        <text>播放全部({{songs.length}})</text>
+       </view>
+       <view style="width:60rpx;height:60rpx; vertical-align: middle;">
+        <image class='loop' src="{{loop}}" bindtap="changloop"></image>
+       </view>
+      </view>
      </view>
     <view class='li' wx:for="{{songs}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" bindlongpress="showActionSheet">
        <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>

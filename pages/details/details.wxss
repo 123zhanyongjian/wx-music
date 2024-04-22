@@ -96,6 +96,16 @@
   border-bottom: 2rpx solid #f9f9f9;
  
 }
+.loop{
+  /* padding: -50px; */
+    width: 40rpx;
+    position: absolute;
+ top:4px;
+    right:40rpx;
+   height: 40rpx;
+
+    z-index:4
+}
 .li:nth-child(1){
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;

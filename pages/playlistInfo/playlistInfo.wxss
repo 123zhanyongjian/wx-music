@@ -4,7 +4,7 @@
   text-align: center;
   left: 0;right: 0;
 }
-.li:nth-child(1){
+.borderLi{
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   padding-bottom: 20rpx;
@@ -99,7 +99,7 @@
   left:33rpx;
   top: 34rpx;
 }
-.li:nth-of-type(2n-1){
+.li:nth-of-type(2n){
   background:rgb(250,250,250);
 }
 .scroll-view{
@@ -222,4 +222,14 @@
   border-left: 1px solid #ccc;
   /* box-shadow: ; */
   height: 60rpx;
+}
+.loop{
+  /* padding: -50px; */
+    width: 40rpx;
+    position: absolute;
+
+    right:40rpx;
+   height: 40rpx;
+    top:4px;
+    z-index:4
 }

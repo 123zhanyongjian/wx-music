@@ -44,8 +44,8 @@
 }
 #img{
   position:relative;
-  width: 320rpx;
-  height: 320rpx;
+  width: 380rpx;
+  height: 380rpx;
   border-radius: 50%;
   box-shadow:   
     inset 0 0 10px rgba(0,0,0,0.5), /* 内阴影，增加立体感 */  
@@ -55,34 +55,54 @@
 .control{
   z-index:4;
   position: absolute;
-    bottom:200rpx;
+  width: 100vw;
+  text-align: center;
+  /* line-height: ; */
+    bottom:12vh;
      left: 48%;
      transform: translate(-50%,-50%)
    
    
+}
+.ability{
+  position: absolute;
+  height: 80rpx;
+  bottom: 12vh;
+  z-index: 4;
 }
 .love{
   position: absolute;
   width: 60rpx;
   right:120rpx;
  height: 60rpx;
-  bottom:270rpx;
+ margin-top: 20rpx;
+   /* bottom:18vh; */
   z-index:4
 }
 .push{
+  margin-top: 20rpx;
   position: absolute;
   width: 60rpx;
   right:40rpx;
  height: 60rpx;
-  bottom:270rpx;
+  
   z-index:4
 }
 .loop{
+  margin-top: 20rpx;
    position: absolute;
     width: 60rpx;
-    left:120rpx;
+    left:160rpx;
    height: 60rpx;
-    bottom:270rpx;
+  
+    z-index:4
+}
+.down{
+  margin-top: 20rpx;
+ position: absolute;
+    width: 60rpx;
+    left:70rpx;
+   height: 60rpx;
     z-index:4
 }
 .last{
@@ -127,25 +147,28 @@ animation: rotation 20s linear infinite;
 .slider{
   width: 70%;
   text-align: center;
-  bottom: 360rpx;
-  left: 76rpx;
+  bottom: 25vh;
+ transform: translatex(-50%);
+ left:50%;
   position: absolute;
-  z-index:6
+  z-index:6;
+  margin-left:0 !important;
+  margin-right:0 !important;
 }
 .Conduct{
-   bottom: 364rpx;
+   bottom:25vh;
    color: white;
    font-size: 24rpx;
-   margin:20rpx;
+   margin:10px 20rpx;
 
    position: absolute;
    z-index:4
 }
 .Duration{
-   bottom: 364rpx;
+   bottom:25vh;
    color: white;
    font-size: 24rpx;
-   margin:20rpx;
+   margin:10px 20rpx;
   right: 0;
    position: absolute;
    z-index:4
@@ -234,11 +257,11 @@ animation: rotation 20s linear infinite;
   text-align: center;
 }
 .scroll-viewlist{
-   height:400rpx;
+   height:42vh;
  margin-top: 30rpx;
 }
 .scroll-view{
- height:400rpx;
+  height:42vh;
  padding:10px 0 ;
  /* margin-top:230rpx; */
   /* overflow: scroll; */

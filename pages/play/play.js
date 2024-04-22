@@ -10,16 +10,16 @@ Page({
    * 页面的初始数据
    */
   data: {
-    popusShow:false,
+    popusShow: false,
     logs: [],
     Mv: false,
     love: '../../image/love.png',
     Mvsrc: '',
     songList: [],
-    Crack: false,//false未开启 true开启破解
+    Crack: false, //false未开启 true开启破解
     ins: '', //列表选中
     showtime: false,
-    loopstate: 0,//0代表顺序，1代表循环，2代表随机
+    loopstate: 0, //0代表顺序，1代表循环，2代表随机
     loop: '../../image/sx.png',
     loveState: false,
     lrc: [{
@@ -32,7 +32,7 @@ Page({
     Duration: '', //总时长
     value: 0,
     toLineNum: 0, //滚动条位置
-    img: '',
+    img: api.host + '/homebg.jpg',
     author: '暂无',
     src: '',
     title: '暂无歌曲',
@@ -43,20 +43,20 @@ Page({
     close: false,
     song: {},
     id: '', // 当前播放的id
-    isScroll:false
+    isScroll: false
 
   },
-  binddragend(e){
+  binddragend(e) {
     const str = setTimeout(() => {
-        this.setData({
-          isScroll:false
-        })
-        clearTimeout(str)
+      this.setData({
+        isScroll: false
+      })
+      clearTimeout(str)
     }, 2000);
   },
-  binddragstart(e){
+  binddragstart(e) {
     this.setData({
-      isScroll:true
+      isScroll: true
     })
   },
 
@@ -79,20 +79,20 @@ Page({
       img: 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'
     })
   },
-  popusShowChange(){
+  popusShowChange() {
     this.setData({
-      popusShow:false
+      popusShow: false
     })
   },
-  pushplaylist(){
-    if(!this.data.song?.id){
+  pushplaylist() {
+    if (!this.data.song?.id) {
       return wx.showToast({
         title: '没有可添加的音乐',
-        icon:'none'
+        icon: 'none'
       })
     }
     this.setData({
-      popusShow:true
+      popusShow: true
     })
   },
   // 关闭mv
@@ -120,15 +120,25 @@ Page({
     }, 300)
 
   },
-  changeSeek(e){
+  bindchangeSwiper(){
     if(this.data.isScroll){
-      const obj={
-        detail:{
-          value:e.currentTarget?.dataset?.time
+      const str = setTimeout(() => {
+        this.setData({
+          isScroll:false
+        })
+        clearTimeout(str)
+    }, 2000);
+    }
+  },
+  changeSeek(e) {
+    if (this.data.isScroll) {
+      const obj = {
+        detail: {
+          value: e.currentTarget?.dataset?.time
         }
       }
       this.changeslider(obj);
-      if(this.data.state){
+      if (this.data.state) {
         // 如果暂停就播放
         app.innerAudioContext.play();
       }
@@ -136,7 +146,7 @@ Page({
     }
   },
   // mv播放异常
-  bindMvError(e){
+  bindMvError(e) {
     console.log(e)
   },
   //切换播放模式
@@ -177,16 +187,16 @@ Page({
     }
   },
   changlove() {
-    const that= this
+    const that = this
     if (!this.data.loveState) {
       // 设置为喜欢
       this.setData({
         loveState: true
       })
-      if (app.data.loveList.findIndex(i => i.id ===  this.data.song.id) === -1) {
+      if (app.data.loveList.findIndex(i => i.id === this.data.song.id) === -1) {
         const obj = {
           ...app.data.song,
-          love:true
+          love: true
         }
         delete obj.lrc
         app.data.loveList.push(obj)
@@ -220,7 +230,7 @@ Page({
     wx.getStorage({
       key: 'loveList',
       success: (res) => {
-      app.data.loveList = res.data
+        app.data.loveList = res.data
       },
       fail: () => {
         wx.showToast({
@@ -230,7 +240,7 @@ Page({
       }
     })
   },
-  returnloveList(){
+  returnloveList() {
     return app.data.loveList
   },
   //切换进度条
@@ -267,7 +277,7 @@ Page({
     })
 
   },
-  changeTitle(){
+  changeTitle() {
     wx.setNavigationBarTitle({
       title: app.data.song.title
     })
@@ -286,15 +296,15 @@ Page({
         app.data.songlist = song
         that.setData({
           songList: song,
-          ins:that.data.songList.findIndex(i=>i.id===app.data.song.id)
+          ins: that.data.songList.findIndex(i => i.id === app.data.song.id)
         })
-         if (that.data.ins===-1&&!that.data.state) {
-        that.setData({
-          value:0
-        })
-        app.data.song = arr[index+1]
-      tiem.pay(that, app.innerAudioContext, app.data.song, 1)
-    }
+        if (that.data.ins === -1 && !that.data.state) {
+          that.setData({
+            value: 0
+          })
+          app.data.song = arr[index + 1]
+          tiem.pay(that, app.innerAudioContext, app.data.song, 1)
+        }
       }
     })
   },
@@ -358,8 +368,7 @@ Page({
       this.setData({
         songList: song
       })
-      if (this.data.state) {
-      }
+      if (this.data.state) {}
     }, 500)
 
   },
@@ -376,7 +385,7 @@ Page({
     setTimeout(() => {
       const mv = wx.createVideoContext('myMv')
       mv.seek(20);
-      console.log(mv,333)
+      console.log(mv, 333)
     }, 5000);
   },
   //选择音乐
@@ -386,9 +395,11 @@ Page({
       value: 0
     })
 
-    app.data.song =this.data.songList[e.currentTarget.dataset.index];
-    console.log(app.data.song,222)
-    
+    app.data.song = this.data.songList[e.currentTarget.dataset.index];
+    if (!app.data.song.src) {
+      app.data.song.src = 'https://zhanyj.cn/api/src'
+    }
+
     if (app.data.song.mId === 3) {
       console.log(this.data.value, 444)
       tiem.pay(this, app.innerAudioContext, app.data.song, 1);
@@ -401,6 +412,63 @@ Page({
 
 
   },
+  // 下载
+  // download() {
+  //   const that = this
+  //   if (!this.data.song?.id) return wx.showToast({
+  //     title: '暂时没有可下载的资源',
+  //     icon: 'none'
+  //   })
+  //   wx.showModal({
+  //     title: '提示',
+  //     content: '下载资源到本地吗?',
+  //     success(res) {
+  //       if (res.confirm) {
+  //         const file = wx.downloadFile({
+  //           url: that.data.song?.src,
+  //           success: (data) => {
+  //             const fileNameWithExt = (data.tempFilePath).split('/').pop(); // 获取路径中的最后一部分，即文件名名  
+  //             // 构建目标路径，使用微信小程序的用户数据目录并加上文件名  
+  //             const destPath = wx.env.USER_DATA_PATH + '/' + fileNameWithExt;
+  //             wx.saveFile({
+  //               tempFilePath: data.tempFilePath, // 源文件路径  
+  //               destPath: destPath, // 目标文件路径  
+  //               success: function (res) {
+  //                 wx.showToast({
+  //                   title: '下载成功',
+  //                   icon:"success"
+  //                 })
+  //                 console.log(res)
+  //                 // 在这里，你可以使用 destPath 来访问和操作保存的文件  
+  //               },
+  //               fail: function (err) {
+  //                 console.error('文件保存失败', err);
+  //                 // 处理保存失败的情况  
+  //               }
+  //             });
+  //           },
+  //           fail: (err) => {
+  //             console.log(err)
+  //           }
+  //         })
+  //         file.onProgressUpdate((ret) => {
+  //           if (ret.progress < 100) {
+  //             wx.showToast({
+  //               title: `正在下载${ret.progress}%`,
+  //               icon: 'loading'
+  //             })
+  //           } else {
+  //             wx.hideLoading();
+  //             file.offProgressUpdate()
+  //           }
+  //         })
+  //       } else if (res.cancel) {
+  //         console.log('用户点击取消')
+  //       }
+  //     }
+  //   })
+
+  // },
   //上一曲
   last() {
     if (this.data.Mv || !this.data.songList.length) {

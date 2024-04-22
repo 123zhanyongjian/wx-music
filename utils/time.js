@@ -1,4 +1,4 @@
-var appInst = getApp();
+const appInst = getApp();
 var thats = this;
 const utils = require('./util')
 let InitialValue = true;
@@ -36,12 +36,17 @@ function Continuemusic() {
 
 //重头播放音乐
 async function pay(that, app, datas, restart) {
+  const {system}=wx.getDeviceInfo()
   datas.errorNum = 0
   //播之前清除一波定时器
   clearInterval(that.data.setInterval);
   if (that.data.value === 0 || restart) {
     // 新音乐才重新赋值
     const loveList = that.returnloveList()
+    that.changeTitle() /// 修改标题
+    datas.src = datas.src ?? 'https://zhanyj.cn/api/src'
+    console.log(loveList, 333, datas.src, 444)
+    app.src = datas.src;
     app.title = datas.title;
     app.coverImgUrl = datas.pic;
     app.autoplay = false;
@@ -64,11 +69,7 @@ async function pay(that, app, datas, restart) {
         lrc: '暂无歌词'
       }],
     });
-    that.changeTitle() /// 修改标题
-    if(!datas.src){
-      wx.showLoading({
-        title: '加载中',
-      })
+    if(system.indexOf('iOS ')===-1){
       utils.errorSong(datas.mId, datas, async(e) => {
         errorFlag = true;
         wx.hideLoading()
@@ -134,11 +135,7 @@ async function pay(that, app, datas, restart) {
     
       })
     }
-    else{
-    app.src = datas.src;
-   
   }
-}
   app.play();
   //苹果手机系统下一首
   app.onNext(() => {
@@ -164,9 +161,6 @@ async function pay(that, app, datas, restart) {
       Lastsong(that, app, appInst)
     }
   })
-
-
-
 
   // 播放音乐出错的情况自动下一首，并且删除播放列表这首歌；
   app.onError(() => {
@@ -295,10 +289,10 @@ async function pay(that, app, datas, restart) {
 
 
     });
-
+    
 
     //滚动歌词
-    if (that.data.lrc.length) {
+    if (that.data.lrc.length>1) {
       for (let i = 0; i < that.data.lrc.length; i++) {
 
         if (i < that.data.lrc.length - 1) {
@@ -308,7 +302,10 @@ async function pay(that, app, datas, restart) {
               that.setData({
                 toLineNum: i
               })
-              // app.singer = that.data.lrc[i].lrc; // 显示动态歌词在左面
+              if(wx.getAppBaseInfo().version>'8.0.47'){
+              app.title = that.data.lrc[i].lrc; // 显示动态歌词在左面
+              app.singer = `${datas.title} - ${datas.author}`
+              }
             }
           }
         }
@@ -334,7 +331,8 @@ async function pay(that, app, datas, restart) {
       url:appInst.host+'/songinfo',
       method:'post',
       data:{
-        id:datas.id
+        id:datas.id,
+        userId:appInst.data.openId
       }
     })
     that.setData({
@@ -407,7 +405,7 @@ function Readinfo(that, app, appInst) {
         t: datas.t,
         ins: datas.ins,
         state: datas.state,
-        // lrc: datas.lrc,
+        lrc: datas.lrc,
         value: datas.value,
         pay: datas.pay,
         id: datas.id,

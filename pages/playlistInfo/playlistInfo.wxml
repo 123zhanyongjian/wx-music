@@ -18,13 +18,20 @@
     </view>
   </view>
   <scroll-view scroll-y="{{popusShow?false:true}}" class="{{popusShow?'popusShowopen':''}} ul scroll-view">
-    <view class="li">
-      <view class="logo listtop" style="width:100%;left: 20rpx;" bindtap='whole'>
-        <image bindtap='pay' style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-        <text>播放全部</text>
+    <view class="li borderLi">
+      <view class="logo listtop flex just_betw" style="width:100%;left: 20rpx;height: 100%;" >
+       <view bindtap='whole'>
+        <image  style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
+        <text>播放全部({{songs.length}})</text>
+       </view>
+       <view style="width:60rpx;height:60rpx; vertical-align: middle;">
+        <image class='loop' src="{{loop}}" bindtap="changloop"></image>
+       </view>
       </view>
     </view>
-    <view class='li' wx:for="{{songs}}" wx:key="{{index}}" data-item='{{item}}' bindmyevent="childEvent" bindlongpress="showActionSheet">
+    <dragTOSort wx:if="{{songs.length}}" length="{{songs.length}}" drag-y bind:change="sortChange" bind:poschange="posChange">
+     <dragItem idx="{{index}}"  wx:for="{{songs}}" wx:key="{{index}}" data-item='{{item}}'>
+    <view class='li' slot="btn" style="background:{{index%2===0?'rgb(250,250,250)':'#fff'}}">
       <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
       <image class="logo" wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx" src="../../image/music.gif"></image>
 
@@ -36,6 +43,9 @@
       <image data-item='{{item}}' bindtap='pay' class="plays" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
       <image data-item='{{item}}' bindtap='more' class="more" src="../../image/more.png"></image>
     </view>
+    </dragItem>
+
+  </dragTOSort>
   </scroll-view>
 
 

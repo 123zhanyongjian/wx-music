@@ -9,6 +9,7 @@ Page({
    */
   data: {
     page:1,
+
     paegSize:10,
     addSongListFlag:false,
     userInfo:{
@@ -242,7 +243,7 @@ Page({
     if(app.data.userInfo){
      
       this.setData({
-        userInfo:app.data.userInfo,
+        // userInfo:app.data.userInfo,
         page:1,
         paegSize:10
       })
@@ -261,8 +262,8 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    this.getList(1,10)
-    if(app.data.openId&&!app.data.userInfo){
+    
+    if(app.data.openId&&this.data.userInfo?.username==='xxx'){
       wx.request({
         url:`${app.host}/userinfo?id=${app.data.openId}`,
         success:res1=>{
@@ -276,6 +277,7 @@ Page({
             this.setData({
               userInfo:app.data.userInfo
             })
+            this.getList(1,10)
           }else{
             // 没有用户 新增接口
             wx.request({
@@ -289,6 +291,8 @@ Page({
           }
         }
       })
+    }else{
+      this.getList(1,10)
     }
   },
 

@@ -10,6 +10,8 @@ Page({
    * 页面的初始数据
    */
   data: {
+    loop: '../../image/sx.png',
+    loopstate: 0, //0代表顺序，1代表循环，2代表随机
     image:'',
     paydata:{},
     songids:[],
@@ -27,6 +29,43 @@ Page({
    
     this.getdata(id)
     
+  },
+   //切换播放模式
+   changloop() {
+    if (this.data.loopstate == 0) {
+      this.setData({
+        loopstate: 1,
+        loop: '../../image/xh.png'
+
+      })
+      wx.showToast({
+        title: '循环播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else if (this.data.loopstate == 1) {
+      this.setData({
+        loopstate: 2,
+        loop: '../../image/sj.png'
+
+      })
+      wx.showToast({
+        title: '随机播放',
+        icon: 'none',
+        duration: 1000
+      })
+    } else {
+      this.setData({
+        loopstate: 0,
+        loop: '../../image/sx.png'
+
+      })
+      wx.showToast({
+        title: '顺序播放',
+        icon: 'none',
+        duration: 1000
+      })
+    }
   },
     //播放音乐
     async pay(e) {
@@ -74,6 +113,55 @@ Page({
   more(e){
     this.showActionSheet(e)
   },
+  sortChange(e){
+    const sortArr = e.detail?.sort;
+    const that=this;
+    const ids = this.data.songs.map(i=>i.id)
+    const arrStr = (sortArr.map(i=>ids[i])).join(',')
+    wx.request({
+      url:app.host+'/playlist/edit',
+      method:'post',
+      data:{
+  
+        id:this.data.id,
+        songIds:arrStr,
+        userId:app.data.openId,
+      },
+      success:res1=>{
+        wx.hideLoading()
+        if(res1.data.code===200){
+          setTimeout(() => {
+            wx.showToast({
+              title:res1.data.data,
+              icon:"success"
+            })
+            that.setData({
+              addSongListFlag:false
+             })
+            // setTimeout(() => {
+            //   that.getdata(that.data.id)
+            // }, 1000);
+          }, 200);
+          return
+        }
+        setTimeout(() => {
+          wx.showToast({
+            title:res1.data.data,
+            icon:"error"
+          })
+        }, 200);
+      },
+      fail:(err)=>{
+        wx.hideLoading()
+        setTimeout(() => {
+          wx.showToast({
+            title:err.errMsg,
+            icon:'error'
+          })
+        }, 200);
+      }
+    })
+  },
   async getdata(id){
     wx.showLoading({
       title: '加载中',
@@ -118,7 +206,8 @@ Page({
     try{
       const res = await request({url:app.host+`/playlist/delsong`, method:'post',data:{
         ids:[id],
-        id:this.data.id
+        id:this.data.id,
+        userId:app.data.openId,
        
       }})
       wx.hideLoading()
@@ -162,7 +251,8 @@ Page({
       data:{
   
         id:that.data.id,
-        playlist:datas.title
+        playlist:datas.title,
+        userId:app.data.openId,
       },
       success:res1=>{
         wx.hideLoading()
@@ -183,7 +273,8 @@ Page({
         }
         setTimeout(() => {
           wx.showToast({
-            title:res.data.message
+            title:res1.data.data,
+            icon:"error"
           })
         }, 200);
       },
@@ -191,7 +282,7 @@ Page({
         wx.hideLoading()
         setTimeout(() => {
           wx.showToast({
-            title:err.message,
+            title:err.errMsg,
             icon:'error'
           })
         }, 200);
@@ -218,6 +309,7 @@ Page({
           data:{
       
             id:that.data.id,
+            userId:app.data.openId,
             img:data.data,
             playlist:datas.title
           },
@@ -238,7 +330,8 @@ Page({
             }
             setTimeout(() => {
               wx.showToast({
-                title:res.data.message
+                title:res.data.data,
+                icon:'error'
               })
             }, 200);
           },
@@ -246,7 +339,7 @@ Page({
             wx.hideLoading()
             setTimeout(() => {
               wx.showToast({
-                title:err.message,
+                title:err.errMsg,
                 icon:'error'
               })
             }, 200);
@@ -305,6 +398,7 @@ Page({
     })
   },
   whole() {
+    const that = this
     if(!this.data.songs.length){
       return wx.showToast({
         title: '没有可播放的歌曲',
@@ -320,7 +414,9 @@ Page({
         url: "../../pages/play/play",
         success: function () {
           app.data.paythis.setData({
-            value: 0
+            value: 0,
+            loopstate:that.data.loopstate,
+            loop:that.data.loop,
           })
           wx.setStorage({
             key: 'songlist',
@@ -380,7 +476,8 @@ Page({
                       url:app.host+'/playlist/del',
                       method:'delete',
                       data:{
-                        id:that.data.id
+                        id:that.data.id,
+                        userId:app.data.openId,
                       }
                     })
                     wx.hideLoading()

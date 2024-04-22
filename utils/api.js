@@ -154,11 +154,13 @@ async function getjaySongSrc(id, callback) {
 
 // // 爱听音乐通过id查询信息
 async function atSong(id, callback) {
+const {data:userId} =   await wx.getStorage({key:'openId',encrypt:true})
   const res = await request({
     url: api + '/songinfo',
     method: 'post',
     data: {
-      id
+      id,
+      userId
     }
   })
   if (!res.data.url) {

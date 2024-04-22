@@ -6,7 +6,7 @@
   <image class='serachimg' src="{{logo}}"></image>
    </picker>
    <image class='serachimgs' src="../../image/down.png"></image>
-    <input type='text' class='input' placeholder='搜索歌曲、歌手' value="{{serach}}" bindinput ="serachs"></input>
+    <input confirm-type="search" type='text' class='input' placeholder='搜索歌曲、歌手' value="{{serach}}" bindinput ="serachs" bindconfirm="serachs"></input>
   </view>
   <view style='background:#fff'>
       <view class='singer' wx:key="{{idx}}" wx:for="{{singer}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>

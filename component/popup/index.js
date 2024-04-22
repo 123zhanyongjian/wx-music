@@ -67,7 +67,7 @@ Component({
             method:'post',
             data:{
         
-              userid:app.data.userInfo.userId,
+              userid:app.data.openId,
               img:data.data,
               name:datas.title
             },
@@ -133,7 +133,8 @@ Component({
       method:'post',
       data:{
         id:this.data.changeId+'',
-        ids:[this.data.song]
+        ids:[this.data.song],
+        userid:app.data.openId,
       }
     })
     wx.hideLoading()
@@ -180,7 +181,7 @@ Component({
         title: '加载中',
       })
       try{
-        const res = await request({url:app.host+'/playlist',data:{userid:app.data.userInfo.userId,page,paegSize}})
+        const res = await request({url:app.host+'/playlist',data:{userid:app.data.openId,page,paegSize}})
         wx.hideLoading()
         if(res.data.code===200){
           this.setData({
