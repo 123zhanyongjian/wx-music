@@ -3,8 +3,51 @@
 const host = require('./pages/api/index').host
 App({
   host,
+  eventBus: {
+    events: {}, // 存储事件回调：{ "事件名": [回调1, 回调2] }
+    // 监听事件
+    on: function (eventName, callback) {
+      if (!this.events[eventName]) {
+        this.events[eventName] = []; // 初始化事件数组
+      }
+      this.events[eventName].push(callback); // 添加回调
+    },
+    // 触发事件
+    emit: function (eventName, data) {
+      const callbacks = this.events[eventName];
+      if (callbacks && callbacks.length) {
+        callbacks.forEach(callback => {
+          callback(data); // 执行所有回调
+        });
+      }
+    },
+    // 移除事件监听（可选，用于清理）
+    off: function (eventName, callback) {
+      const callbacks = this.events[eventName];
+      if (callbacks && callbacks.length) {
+        this.events[eventName] = callbacks.filter(cb => cb !== callback);
+      }
+    }
+  },
+
   onLaunch:async function () {
     this.innerAudioContext = wx.getBackgroundAudioManager();
+    // console.log(this.innerAudioContext,'this.innerAudioContext')
+    // this.innerAudioContext.onPlay(() => {
+    //   console.log('onPlay event', this.data.paythis, this.innerAudioContext);
+    // });
+    // this.innerAudioContext.onPause(() => {
+    //   console.log('onPause event', this.data.paythis, this.innerAudioContext);
+    // });
+    // this.innerAudioContext.onStop(() => {
+    //   console.log('onStop event', this.data.paythis, this.innerAudioContext);
+    // });
+    // this.innerAudioContext.onError((e) => {
+    //   console.log('onError event', e, this.innerAudioContext);
+    // });
+
+
+
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
@@ -17,7 +60,7 @@ App({
     this.data.openId = openId.data
   }
   catch(err){
-    console.log(err)
+    // console.log(err)
   }
    
     if(!openId?.data){
@@ -50,7 +93,7 @@ App({
                       this.data.userInfo.avatarUrl = this.host+'/'+this.data.userInfo.headimg
                     }
   
-                    console.log(this.data.userInfo,333)
+                    // console.log(this.data.userInfo,333)
                   }else{
   
                     // 没有用户 新增接口
@@ -144,25 +187,12 @@ App({
         }
       }
     })
-    //监听暂停事件
-    this.innerAudioContext.onPause(()=>{
-      this.data.paythis.setData({
-        pay: '../../image/bf.png',
-        state: true
-      })
-      if(wx.getAppBaseInfo().version>'8.0.47'){
-        this.innerAudioContext.title = this.data.song?.title;
-          this.innerAudioContext.singer = this.data.song?.author  
-       }
-
+    this.innerAudioContext.onStop(() => {
+      // console.log('onStop event', this.data.paythis, this.innerAudioContext);
     })
-    //监听播放事件
-    this.innerAudioContext.onPlay(() => {
-      this.data.paythis.setData({
-        pay: '../../image/zt.png',
-        state: false
-      })
-    })
+    this.innerAudioContext.onError((e) => {
+      // console.log('onError event', e, this.innerAudioContext);
+    });
   },
   //创建歌曲实例
   createdpay() {
@@ -199,7 +229,7 @@ App({
       key: 'lastsong',
       data: obj,
       success: function (res) {
-        console.log('缓存成功', res,obj)
+        // console.log('缓存成功', res,obj)
       }
     })
 

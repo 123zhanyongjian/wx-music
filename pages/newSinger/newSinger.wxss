@@ -1,0 +1,91 @@
+.tabbar-safe-area, .page-root, .main-container, body {
+  padding-bottom: 120rpx;
+  box-sizing: border-box;
+}
+.footer, .bottom-bar, .newsinger-bottom, .newsinger-footer {
+  bottom: 120rpx !important;
+}
+.singer-tabs {
+  display: flex;
+  flex-direction: row;
+  padding: 24rpx 0 16rpx 0;
+  background: #fff;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+.singer-tab {
+  display: inline-block;
+  padding: 12rpx 32rpx;
+  margin-right: 18rpx;
+  border-radius: 32rpx;
+  font-size: 28rpx;
+  color: #222;
+  background: #fff;
+  transition: background 0.2s, color 0.2s;
+}
+.singer-tab.active {
+  background: #ffe066;
+  color: #222;
+  font-weight: bold;
+}
+.mains{
+  background: #fff;
+}
+.singerlist {
+  position: relative;
+}
+.singer-scroll {
+  position: absolute;
+  top: 120rpx;
+  bottom: 0rpx;
+  left: 0;
+  right: 0;
+}
+.sort {
+  height: 100rpx;
+  line-height: 100rpx;
+  font-size: 32rpx;
+  background: #eee;
+  padding: 0 20rpx;
+}
+.singer {
+  position: relative;
+  border-bottom: 2rpx solid #f1f1f1;
+  height: 80rpx;
+  background: #fff;
+  margin-top: 30rpx;
+}
+.haderimg{
+  width: 80rpx;
+  position: absolute;
+  top: -10rpx;
+  left: 20rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+.singername{
+  font-size: 28rpx;
+  position: absolute;
+  top:10rpx;
+  left: 120rpx;
+}
+.dw{
+  position: fixed;
+  right:0;
+  width: 100rpx;
+  float: right;
+  text-align: right;
+}
+.dw>.dw1{
+  position: relative;
+  z-index: 9999;
+  right: 20rpx;
+  height: 30rpx;
+  color: #aaa;
+  top: 100rpx;
+  font-size: 26rpx;
+  margin-top: 10rpx;
+}
+.dw>.dw1>view{
+  margin-top: 6rpx;
+} 

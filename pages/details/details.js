@@ -275,92 +275,28 @@ return
   pay(e) {
     var that = this;
     var song = e.currentTarget.dataset.item;
-    if(this.data.id==='jay'){
-      if (!song['author']) {
-        song['author'] = song.singer
-      }
-      api.getjaySongSrc(song.id,(e)=>{
-        app.data.song = song;
-        app.data.song.src = e.src
-        app.data.song.lrc = e.lrc
-       
-      wx.switchTab({
-        url: "../../pages/play/play",
-        success: function () {
-          app.data.paythis.setData({
-            value: 0
-          })
-          time.newAddSong(app.data);
-          time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
-        }
-      })
-      })
-        return
+    // 判断当前播放歌曲
+    if (app.data.song && app.data.song.id === song.id) {
+      wx.showToast({
+        title: '该歌曲正在播放中',
+        icon: 'none'
+      });
+      return;
     }
     if(this.data.id!=='my'){
       app.data.song = song;
       wx.switchTab({
-        url: "../../pages/play/play",
+        url: "../../pages/newPlay/newPlay",
         success: function () {
           app.data.paythis.setData({
             value: 0
           })
-          time.newAddSong(app.data);
-          time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-  
-  
-  
-        }
-      })
-  
-      return
-    }
-
-   
-    if (song.src) {
-      if (!song['author']) {
-        song['author'] = song.singer
-      }
-      app.data.song = song;
-      wx.switchTab({
-        url: "../../pages/play/play",
-        success: function () {
-          app.data.paythis.setData({
-            value: 0
-          })
-          time.newAddSong(app.data);
-          time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
+          // time.newAddSong(app.data);
+          time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
         }
       })
       return
     }
-    api.getSongSrc(song.id, ({ src, stauts }) => {
-      console.log(src, stauts)
-      if (stauts) {
-        song.src = src
-        song['author'] = song.singer;
-        app.data.song = song;
-        wx.switchTab({
-          url: "../../pages/play/play",
-          success: function () {
-            app.data.paythis.setData({
-              value: 0
-            })
-            time.newAddSong(app.data);
-            time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
-          }
-        })
-      }
-    })
 
   },
   getkwTop(page){
@@ -413,7 +349,7 @@ return
     if(this.data.id!=='my'){
       app.data.song = this.data.list[0];
       wx.switchTab({
-        url: "../../pages/play/play",
+        url: "../../pages/newPlay/newPlay",
         success: function () {
           app.data.paythis.setData({
             value: 0,
@@ -428,7 +364,7 @@ return
             }
           })
           time.newAddSong(app.data);
-          time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
+          time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
 
 
 
@@ -447,7 +383,7 @@ return
         app.data.song = song;
 
         wx.switchTab({
-          url: "../../pages/play/play",
+          url: "../../pages/newPlay/newPlay",
           success: function () {
             app.data.paythis.setData({
               value: 0
@@ -460,7 +396,7 @@ return
               }
             })
             time.newAddSong(app.data);
-            time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
+            time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
 
 
 

@@ -3,7 +3,15 @@ const request = time.Promisify(wx.request)
 const base = require('./base')
 const api = require('./api')
 const apiHost =getApp().host;
-
+// import pinyin from './pinyin.mjs'
+// console.log(pinyin, 555)
+// function getFirstLetter(name) {
+//   if (!name) return '#';
+//   const py = pinyin(name[0], { style: pinyin.STYLE_FIRST_LETTER });
+//   const letter = py[0][0].toUpperCase();
+//   if (/[A-Z]/.test(letter)) return letter;
+//   return '#';
+// }
 const formatTime = date => {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -145,17 +153,17 @@ const errorSong = async (type, datas, callback) => {
  
 }
 // 分页功能
-function changePage(getAthletesList,Array){
-  let pageTotal=Math.ceil((this.data.total/this.data.pageSize))
-  console.log(pageTotal,this.data.pageNum)
-  if(this.data.pageNum<pageTotal){
+function changePage(getAthletesList,Array,obj={total:'total', pageNum:'pageNum',pageSize:'pageSize'}){
+  let pageTotal=Math.ceil((this.data[obj.total]/this.data[obj.pageSize]))
+  console.log(pageTotal,this.data[obj.pageNum])
+  if(this.data[obj.pageNum]<pageTotal){
     this.setData({
-      pageNum:this.data.pageNum+1
+      [obj.pageNum]:this.data[obj.pageNum]+1
     })
     if(Array){
-    this[getAthletesList](this.data.pageNum,this.data.pageSize,...Array)}
+    this[getAthletesList](this.data[obj.pageNum],this.data[obj.pageSize],...Array)}
     else{
-      this[getAthletesList](this.data.pageNum,this.data.pageSize)
+      this[getAthletesList](this.data[obj.pageNum],this.data[obj.pageSize])
     }
   } else{
     wx.showToast({
@@ -171,5 +179,6 @@ module.exports = {
   formatTime: formatTime,
   GETlRC,
   errorSong,
-  changePage
+  changePage,
+  // getFirstLetter
 }

@@ -25,7 +25,7 @@ Page({
     this.setData({
       popusShow:e.detail
     })
-    console.log(this.data.popusShow)
+    // console.log(this.data.popusShow)
    },
   more(e){
     this.showActionSheet(e)
@@ -34,13 +34,13 @@ Page({
     let item = ev.currentTarget.dataset.item;
     let that = this;
   
-    console.log(item,app.data.song);
+    // console.log(item,app.data.song);
     wx.showActionSheet({
       itemList: this.data.itemList,
 
       success(e) {
-        console.log("success")
-        console.log(e)
+        // console.log("success")
+        // console.log(e)
         if (!e.camcle) {
           if (e.tapIndex===1) {
             app.data.song = item;
@@ -93,11 +93,11 @@ Page({
     }
     app.data.songlist = this.data.songs.map(it=>({...it,title:it.title,author:it.author}));
     const arr =  app.data.songlist.slice()
-    console.log(arr,7777)
+    // console.log(arr,7777)
     app.data.song = arr[0];
        
     wx.switchTab({
-      url: "../../pages/play/play",
+      url: "../../pages/newPlay/newPlay",
       success: function () {
         app.data.paythis.setData({
           value: 0
@@ -106,7 +106,7 @@ Page({
           key: 'songlist',
           data: app.data.songlist,
           success: function (res) {
-            console.log('异步保存成功')
+            // console.log('异步保存成功')
           }
         })
         time.newAddSong(app.data);
@@ -123,51 +123,45 @@ Page({
   //播放音乐
   async pay(e) {
     var song = e.currentTarget.dataset.item;
+    // 判断当前播放歌曲
+    if (app.data.song && app.data.song.id === song.id) {
+      wx.showToast({
+        title: '该歌曲正在播放中',
+        icon: 'none'
+      });
+      return;
+    }
     app.data.song = song;
     wx.switchTab({
-      url: "../../pages/play/play",
+      url: "../../pages/newPlay/newPlay",
       success: function () {
         app.data.paythis.setData({
           value: 0
         })
         time.newAddSong(app.data);
-        time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
+        time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
       }
     })
-
-
-
-
-
-
-    return 
+    return
     api.getSongSrc(song.id, ({src, stauts}) => {
-      console.log(src,stauts)
+      // console.log(src,stauts)
       if (stauts) {
         song.src = src
         song['title'] = song.name;
         song['author'] = song.singer;
         app.data.song = song;
         wx.switchTab({
-          url: "../../pages/play/play",
+          url: "../../pages/newPlay/newPlay",
           success: function () {
             app.data.paythis.setData({
               value: 0
             })
             time.newAddSong(app.data);
-            time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
+            time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
           }
         })
       }
     })
-
-
   },
   onLoad(options) {
 
@@ -184,7 +178,7 @@ Page({
       title: '加载中',
     })
     request({
-      url:app.host+`/album`,
+      url:app.host+`/albumInfo`,
       data:{
         id:options.id
       }
@@ -194,9 +188,9 @@ Page({
       if(res.data.code===200){
         wx.hideLoading()
         that.setData({
-          songs:this.data.songs.concat(res.data.data?.data?.map(i=>({...i,pic:this.data.image}))),
-          // total:res.data.data.total*1,
-          alumbsinfo:res.data.data.info,
+          songs:this.data.songs.concat(res.data.data?.arr?.map(i=>({...i,pic:this.data.image}))),
+          total:res.data.data.total*1,
+          alumbsinfo:res.data.data.description,
           paydata:app.data?.paythis?.data,
           date:res.data.data.date
         })

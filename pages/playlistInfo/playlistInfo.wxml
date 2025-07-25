@@ -29,23 +29,7 @@
        </view>
       </view>
     </view>
-    <dragTOSort wx:if="{{songs.length}}" length="{{songs.length}}" drag-y bind:change="sortChange" bind:poschange="posChange">
-     <dragItem idx="{{index}}"  wx:for="{{songs}}" wx:key="{{index}}" data-item='{{item}}'>
-    <view class='li' slot="btn" style="background:{{index%2===0?'rgb(250,250,250)':'#fff'}}">
-      <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
-      <image class="logo" wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx" src="../../image/music.gif"></image>
-
-      <view data-item='{{item}}' class='text' bindtap='pay'>
-        <!-- <text class="{{index<3?'active':''}} serial">{{index+1}}</text> -->
-        <view class="title">{{item.title}}</view>
-        <view class="author">{{module.substrins(item.singer,10)||module.substrins(item.author,10)}}</view>
-      </view>
-      <image data-item='{{item}}' bindtap='pay' class="plays" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-      <image data-item='{{item}}' bindtap='more' class="more" src="../../image/more.png"></image>
-    </view>
-    </dragItem>
-
-  </dragTOSort>
+    <song-list list="{{songs}}" bind:play="pay" bind:more="more" />
   </scroll-view>
 
 

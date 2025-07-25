@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "miniprogram-to-uniapp": "^2.2.6"
+    "miniprogram-to-uniapp": "^2.2.6",
+    "pinyin-pro": "^3.26.0"
   }
 }

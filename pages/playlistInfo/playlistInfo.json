@@ -1,7 +1,8 @@
 {
   "usingComponents": {
-    "addSongList":"../../component/AddSongList",
-    "dragItem":"../../component/drag-item",
-    "dragTOSort":"../../component/drag-to-sort"
+    "addSongList": "../../component/AddSongList",
+    "dragItem": "../../component/drag-item",
+    "dragTOSort": "../../component/drag-to-sort",
+    "song-list": "../../component/SongList/index"
   }
 }

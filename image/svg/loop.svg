@@ -1,0 +1,7 @@
+<svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- 循环箭头 -->
+  <path d="M15,20 C15,15 18,12 22,12 L30,12 L30,20 L24,20 C23,20 22,19 22,18 C22,16 24,15 26,15 L32,15 C32,10 28,7 23,7 C17,7 13,12 13,18 C13,24 17,29 23,29 L30,29" 
+        stroke="#aaaaaa" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M35,22 L30,27 L35,32" 
+        stroke="#aaaaaa" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

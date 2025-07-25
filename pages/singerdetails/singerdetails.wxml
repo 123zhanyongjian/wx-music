@@ -39,17 +39,16 @@
        </view>
       </view>
      </view>
-    <view class='li' wx:for="{{songs}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" bindlongpress="showActionSheet">
-       <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
-        <image class="logo"  wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx"  src="../../image/music.gif"></image>
-
-      <view data-item='{{item}}' class='text' bindtap='pay'>
-        <!-- <text class="{{index<3?'active':''}} serial">{{index+1}}</text> -->
-        <view class="title">{{item.title}}</view>
-        <view class="author">{{module.substrins(item.singer,10)||module.substrins(item.author,10)}}</view>          
+    <view wx:for="{{songs}}" wx:for-item="item" wx:for-index="idx" wx:key="{{item.id}}" class="netease-song-item {{idx % 2 === 0 ? 'netease-song-item-alt' : ''}}">
+      <view class="netease-song-cover"><image src="{{item.pic||item.image||item.cover}}" style="width:100%;height:100%;border-radius:12rpx;" /></view>
+      <view class="netease-song-info">
+        <view class="netease-song-title">{{item.title}}</view>
+        <view class="netease-song-artist">{{item.singer||item.author}}</view>
       </view>
-        <image data-item='{{item}}' bindtap='pay' class="plays" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-        <image data-item='{{item}}' bindtap='more' class="more" src="../../image/more.png"></image>
+      <button class="netease-song-play" bindtap='pay' data-item="{{item}}">
+        <image class="netease-song-play-icon" src="../../image/play.svg" />
+      </button>
+      <image class="more" src="../../image/more.png" bindtap="more" data-item="{{item}}" />
     </view>
     <popup song="{{song}}"  bind:close="popusShowChange" show="{{popusShow}}"  wx:if="{{popusShow}}" header="添加到歌单" >
  
@@ -58,13 +57,14 @@
     <scroll-view  style="width:{{change?'0px':'100vw'}}" scroll-x="{{false}}"  scroll-y="{{popusShow?false:true}}" class="{{[popusShow?'popusShowopen':'',type===1?'active2':'']}} ul scroll-view" >
      
     <view class='li' wx:for="{{type===1?[]:albums}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" >
-      
       <view data-item='{{item}}' class='alubmsList' bindtap='goAlubms'>
         <view>
-          <image src="{{item.img}}" mode=""/>
+          <image src="{{item.pic}}" mode=""/>
         </view>
-        <view class="title">{{item.name}}</view>
-              
+        <view class="album-info">
+          <view class="title">{{item.album}}</view>
+          <view class="release-date">发行时间：{{item.releaseDate}}</view>
+        </view>
       </view>
     </view>
     </scroll-view>

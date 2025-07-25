@@ -1,374 +1,184 @@
-/* pages/play/play.wxss */
-.mains{
-  position: absolute;
-  top: 0;
-  bottom: 0;left: 0;right: 0;
-
-  background-color: rgba(0, 0, 0, .6);
-  /* z-index:1; */
-}
-#myMv{
-  z-index: 4;
-}
-.bgimg{
-   position: absolute;
-  top: 0;
-  bottom: 0;left: 0;right: 0;
-  width: 100%;
-  height: 100%;
-  filter:blur(15px);
-}
-.title{
-  position: absolute;
-  top:50rpx;
-  
-  color: white;
-  left: 50%;
-  transform: translate(-50% ,0);
-  z-index:4
-}
-
-.titles{
-   text-align: center;
-}
-.author{
-  text-align: center;
-  font-size:24rpx;
-}
-.imgs{
-  position: absolute;
-  z-index:7;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%,-50%)
-}
-#img{
-  position:relative;
-  width: 380rpx;
-  height: 380rpx;
-  border-radius: 50%;
-  box-shadow:   
-    inset 0 0 10px rgba(0,0,0,0.5), /* 内阴影，增加立体感 */  
-    0 0 10px rgba(0,0,0,.5);
-}
-
-.control{
-  z-index:4;
-  position: absolute;
-  width: 100vw;
-  text-align: center;
-  /* line-height: ; */
-    bottom:12vh;
-     left: 48%;
-     transform: translate(-50%,-50%)
-   
-   
-}
-.ability{
-  position: absolute;
-  height: 80rpx;
-  bottom: 12vh;
-  z-index: 4;
-}
-.love{
-  position: absolute;
-  width: 60rpx;
-  right:120rpx;
- height: 60rpx;
- margin-top: 20rpx;
-   /* bottom:18vh; */
-  z-index:4
-}
-.push{
-  margin-top: 20rpx;
-  position: absolute;
-  width: 60rpx;
-  right:40rpx;
- height: 60rpx;
-  
-  z-index:4
-}
-.loop{
-  margin-top: 20rpx;
-   position: absolute;
-    width: 60rpx;
-    left:160rpx;
-   height: 60rpx;
-  
-    z-index:4
-}
-.down{
-  margin-top: 20rpx;
- position: absolute;
-    width: 60rpx;
-    left:70rpx;
-   height: 60rpx;
-    z-index:4
-}
-.last{
-  width: 90rpx;
-  height: 90rpx;
-  margin-left:40rpx; 
-
-}
-
-.last1{
-  width: 80rpx;
-  height: 80rpx;
-  margin-left:40rpx; 
-}
-@-webkit-keyframes rotation{
-from {-webkit-transform: rotate(0deg);
-transform-origin: center center
-
-}
-to {-webkit-transform: rotate(360deg);
-transform-origin: center center}
-}
- 
-.auto{
-
-     
--webkit-transform: rotate(360deg);
-animation-play-state:paused;
-animation: rotation 20s linear infinite;
-
-}
-.imgstates{
-  animation-play-state:paused;
-  -webkit-animation-play-state:paused;
-  -o-animation-play-state:paused;
-}
-.imgspay{
-   animation-play-state:running;
-   -webkit-animation-play-state:running;
-  -o-animation-play-state:running;
-}
-.slider{
-  width: 70%;
-  text-align: center;
-  bottom: 25vh;
- transform: translatex(-50%);
- left:50%;
-  position: absolute;
-  z-index:6;
-  margin-left:0 !important;
-  margin-right:0 !important;
-}
-.Conduct{
-   bottom:25vh;
-   color: white;
-   font-size: 24rpx;
-   margin:10px 20rpx;
-
-   position: absolute;
-   z-index:4
-}
-.Duration{
-   bottom:25vh;
-   color: white;
-   font-size: 24rpx;
-   margin:10px 20rpx;
-  right: 0;
-   position: absolute;
-   z-index:4
-}
-#songlist{
-  z-index:4;
-  position: absolute;
-  bottom: 0;
- width: 100%;
-  top: 50%;
-  color: white;
-  z-index: 1000;
-  background: rgba(0, 0, 0, .8)
-
-
-}
-.close{
-  position: absolute;
-  z-index:4;
-  top: 10rpx;
-  right: 0;
-  font-size:26rpx;
-  float: right;
-  margin-right: 10rpx;
-  color: white;
-  padding:10rpx; 
-  
-}
-.clear{
-   position: absolute;
-  top: 10rpx;
-  left: 0;
-  font-size:26rpx;
-  float: right;
-  margin-right: 10rpx;
-  color: white;
-  padding:10rpx; 
-  z-index:4;
-}
-@-webkit-keyframes close{
-  from{
-    top:50%;
-  }
-  to{
-    top: 100%;
-   
-  }
-}
-@-webkit-keyframes open{
-  from{
-    top:100%;
-  }
-  to{
-    top: 50%;
-   
-  }
-}
-.closes{
-  animation: close .3s linear infinite;
-  animation-iteration-count:1;
-  animation-fill-mode : forwards;/*保留动画最后的样子*/
-  
-}
-.opens{
-  animation: open .3s linear infinite;
-  animation-iteration-count:1;
-  animation-fill-mode : forwards;/*保留动画最后的样子*/
-}
-.order{
-  position: absolute;
-  bottom: 20rpx;
-  right: 20rpx;
-  z-index:4;
-}
-.order>image{
-    width: 60rpx;
-    height: 60rpx;
-}
-.titlelist{
-   padding:10rpx;
-  
-  color: white;
-  font-size: 32rpx;
-  width: 100%;
-  margin: 10rpx auto;
-  text-align: center;
-}
-.scroll-viewlist{
-   height:42vh;
- margin-top: 30rpx;
-}
-.scroll-view{
-  height:42vh;
- padding:10px 0 ;
- /* margin-top:230rpx; */
-  /* overflow: scroll; */
-}
-.abc{
-  position: absolute;
-  left: 0;
-  opacity: 0;
-  right: 0;
-  display: none;
-  bottom: 50rpx;
-  text-align: center;
-  z-index: -1;
-  z-index:4;
-
-}
-.lrcText{
-  transition:color .3s ease .3s;
-}
-::-webkit-scrollbar{
-width: 0;
-height: 0;
-color: transparent;
-}
-.song{
-  font-size: 28rpx;
-  border-bottom:4rpx solid  #d8d6d62d; 
- position: relative;
-  margin: 0 40rpx; 
- 
-  
-}
-.song image{
-  width: 20rpx;
-  height: 20rpx;
-  position: absolute; 
-  left:60rpx;
-  top: 32rpx;
-  z-index:4;
-}
-.song .text{
-    margin-left: 100rpx;
-  font-size: 28rpx;
-  width: 500rpx;
-  line-height: 80rpx;
+/* 全新网易云风格播放器 */
+.netease-pro-play-root {
+  min-height: 100vh;
+  background: #18171c;
+  position: relative;
+  padding-bottom: 120rpx;
+  box-sizing: border-box;
   overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
-.active{
-  color: rgb(20,180,187);
-}
-swiper{
+.netease-pro-bg-blur {
   position: absolute;
-  top: 200rpx;
-  left: 0;right: 0
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 0;
+  overflow: hidden;
 }
-.lrc{
+.netease-pro-bg-img {
+  width: 100vw;
+  height: 100vh;
+  filter: blur(48px) brightness(0.4);
+}
+.netease-pro-bg-mask {
   position: absolute;
-  
-  margin: auto;
-  text-align: center;
-  color: #fff;
-  left: 0;
-  right: 0;
-  z-index:4;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: linear-gradient(to bottom, rgba(24,23,28,0.92) 60%, #18171c 100%);
+  z-index: 1;
 }
-.lrcs{
-  margin-top: 20rpx;
+.netease-pro-disc-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60rpx;
+  z-index: 2;
+}
+.netease-pro-disc3d {
+  position: relative;
+  width: 360rpx;
+  height: 360rpx;
+  margin-bottom: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 32rpx 80rpx rgba(0,0,0,0.45);
+  background: transparent;
+}
+.netease-pro-disc3d-svg {
+  position: absolute;
+  left: 0; top: 0;
+  width: 360rpx;
+  height: 360rpx;
+  z-index: 1;
+  filter: drop-shadow(0 16rpx 40rpx #000a);
+}
+.netease-pro-cover3d {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 12rpx 40rpx rgba(233,59,61,0.38);
+  border: 18rpx solid #fff;
+  z-index: 2;
+}
+.rotating {
+  animation: rotate-disc 12s linear infinite;
+}
+@keyframes rotate-disc {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.netease-pro-artist {
+  color: #e0e0e0;
   font-size: 28rpx;
+  text-align: center;
+  margin-top: 12rpx;
+  margin-bottom: 12rpx;
+  max-width: 80vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.activelrc{
-  color: rgb(20,180,187);
-  font-size: 30rpx;
-  z-index: 100 !important;
-  display: block !important;
-  opacity: 1 !important;
+.netease-pro-lyric-area {
+  position: relative;
+  z-index: 2;
+  margin: 40rpx auto 0 auto;
+  width: 90vw;
+  max-width: 700rpx;
+  min-height: 80rpx;
+  height: 220rpx;
+  background: rgba(40,40,50,0.7);
+  border-radius: 36rpx;
+  box-shadow: 0 4rpx 24rpx rgba(233,59,61,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20rpx;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
 }
-.menb{
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index:5;
+.netease-pro-lyric-single {
+  font-size: 40rpx;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  line-height: 90rpx;
+  letter-spacing: 2rpx;
+  text-shadow: 0 2rpx 8rpx #e93b3d88, 0 0 2rpx #fff;
+  white-space: pre-line;
 }
-.viedos{
-  position: absolute;
-  left: 0;
-  /* bottom: 0; */
-  left: 0;
-  right: 0;
-  z-index:4;
-  /* z-index: 999; */
+.netease-pro-lyric-list {
+  width: 100%;
+  height: 220rpx;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
 }
-.cuo{
-position: absolute;
-top: 0;
-color: #fff;
-z-index: 3;
-right: 10rpx;
-font-size: 60rpx;
-z-index:4;
-
+.netease-pro-lyric-line {
+  font-size: 28rpx;
+  color: #bbb;
+  line-height: 48rpx;
+  text-align: center;
+  transition: color 0.2s;
 }
-.music{
-  width: 10px;
-  height: 10px;
-  
+.netease-pro-lyric-line.active {
+  color: #e93b3d;
+  font-weight: bold;
+  font-size: 34rpx;
+  text-shadow: 0 2rpx 8rpx #e93b3d88, 0 0 2rpx #fff;
+}
+.netease-pro-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90vw;
+  max-width: 700rpx;
+  margin: 24rpx auto 0 auto;
+  z-index: 2;
+}
+.netease-pro-slider {
+  flex: 1;
+  margin: 0 20rpx;
+}
+.netease-pro-controls {
+  position: fixed;
+  left: 0; right: 0; bottom: 120rpx;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40rpx;
+  background: rgba(24,23,28,0.98);
+  border-radius: 48rpx 48rpx 0 0;
+  box-shadow: 0 -4rpx 24rpx rgba(233,59,61,0.12);
+  padding: 32rpx 0 16rpx 0;
+}
+.netease-pro-btn {
+  width: 72rpx;
+  height: 72rpx;
+  opacity: 0.92;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.netease-pro-btn-main {
+  width: 130rpx;
+  height: 130rpx;
+  background: linear-gradient(135deg, #e93b3d 60%, #fff 100%);
+  border-radius: 50%;
+  box-shadow: 0 8rpx 32rpx rgba(233,59,61,0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 20rpx;
+  border: 8rpx solid #fff;
+  opacity: 1;
+}
+.netease-pro-btn-main svg {
+  width: 100rpx;
+  height: 100rpx;
 }

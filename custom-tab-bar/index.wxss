@@ -1,0 +1,100 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: #ffffff;
+  display: flex;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab-bar-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.tab-bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.tab-bar-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.tab-bar-text {
+  font-size: 10px;
+  color: #888888;
+  margin-top: 2px;
+}
+
+.tab-bar-text.selected {
+  color: #07c160;
+}
+
+.play-indicator {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 4px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.play-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bar {
+  width: 2px;
+  height: 12px;
+  background-color: #ffffff;
+  margin: 0 1px;
+  border-radius: 1px;
+  animation: equalize 1s infinite;
+}
+
+.bar1 {
+  animation-delay: -0.9s;
+}
+
+.bar2 {
+  animation-delay: -0.7s;
+}
+
+.bar3 {
+  animation-delay: -0.5s;
+}
+
+@keyframes equalize {
+  0%, 100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}

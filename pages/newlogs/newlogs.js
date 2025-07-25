@@ -63,7 +63,7 @@ Page({
         url: 'https://dataiqs.com/api/kgmusic/' + '?msg=' + serach,
         success: function (res) {
           wx.hideLoading();
-          console.log(res.data);
+          // console.log(res.data);
           //数据处理
           let arr=[];
           res.data.data.map((item,index,ite)=>{
@@ -174,7 +174,7 @@ Page({
             song: arr
 
           })
-          console.log(that.data.song,444)
+          // console.log(that.data.song,444)
         }, err => {
           setTimeout(() => {
             wx.hideLoading();
@@ -185,11 +185,11 @@ Page({
               icon: 'none'
             })
           }
-          console.log(err)
+          // console.log(err)
         })
     }
     else {
-      console.log(123456)
+      // console.log(123456)
       api.getSerachSongOrSinger(serach, undefined, arr => {
 
         that.setData({
@@ -235,7 +235,7 @@ Page({
             return
           }
           wx.switchTab({
-            url: "../../pages/play/play",
+            url: "../../pages/newPlay/newPlay",
             success: function () {
               app.data.paythis.setData({
                 value: 0
@@ -267,7 +267,7 @@ Page({
           item.lrc  =e.lrc
           app.data.song = item;
           wx.switchTab({
-            url: "../../pages/play/play",
+            url: "../../pages/newPlay/newPlay",
             success: function () {
               app.data.paythis.setData({
                 value: 0
@@ -293,7 +293,7 @@ Page({
             item.src = src
             app.data.song = item;
             wx.switchTab({
-              url: "../../pages/play/play",
+              url: "../../pages/newPlay/newPlay",
               success: function () {
                 app.data.paythis.setData({
                   value: 0
@@ -318,7 +318,7 @@ Page({
 
     app.data.song = item;
     wx.switchTab({
-      url: "../../pages/play/play",
+      url: "../../pages/newPlay/newPlay",
       success: function () {
         app.data.paythis.setData({
           value: 0

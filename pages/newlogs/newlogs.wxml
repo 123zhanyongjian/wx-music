@@ -1,29 +1,34 @@
-<view class='main'>
-  <view class='serach'>
-   <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
-   
- 
-  <image class='serachimg' src="{{logo}}"></image>
-   </picker>
-   <image class='serachimgs' src="../../image/down.png"></image>
-    <input confirm-type="search" type='text' class='input' placeholder='搜索歌曲、歌手' value="{{serach}}" bindinput ="serachs" bindconfirm="serachs"></input>
-  </view>
-  <view style='background:#fff'>
-      <view class='singer' wx:key="{{idx}}" wx:for="{{singer}}" wx:for-item="ite" wx:for-index="idx"  data-singer="{{ite}}" bindtap='details'>
+<view class="newlogs-root">
+  <view class='main'>
+    <view class='serach'>
+      <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+        <image class='serachimg' src="{{logo}}"></image>
+      </picker>
+      <image class='serachimgs' src="../../image/down.png"></image>
+      <input 
+        confirm-type="search" 
+        type='text' 
+        class='input' 
+        placeholder='搜索歌曲、歌手' 
+        value="{{serach}}" 
+        bindinput="serachs" 
+        bindconfirm="serachs"
+      ></input>
+    </view>
+    <view style='background:#fff'>
+      <!-- 歌手列表 -->
+      <view class='singer' wx:key="{{idx}}" wx:for="{{singer}}" wx:for-item="ite" wx:for-index="idx" data-singer="{{ite}}" bindtap='details'>
         <image src="{{ite.pic}}" class="haderimg"></image>
         <view class='singername'>{{ite.name}}</view>
       </view>
-      <!-- QQ音乐mv信息 -->
+      <!-- 歌曲列表 -->
       <view class='ul'>
-          <view>
-          <view class='li' wx:for="{{song}}" data-item="{{item}}" data-index="{{index}}" wx:key="{{index}}" bindtap='pay' bindlongpress="showActionSheet">
-            <image  src='../../image/mm.png'></image>
-            <text>{{item.title}}--{{item.author}}</text>
-            <text class="mv" wx:if="{{item.mvid||item.vid}}">MV</text>
-          </view>
+        <view class='li' wx:for="{{song}}" data-item="{{item}}" data-index="{{index}}" wx:key="{{index}}" bindtap='pay' bindlongpress="showActionSheet">
+          <image src='../../image/mm.png'></image>
+          <text>{{item.title}}--{{item.author}}</text>
+          <text class="mv" wx:if="{{item.mvid||item.vid}}">MV</text>
+        </view>
       </view>
+    </view>
   </view>
-  <!-- 弹出框 -->
-  
-</view>
 </view>

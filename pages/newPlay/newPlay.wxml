@@ -1,0 +1,147 @@
+<view class="player-container">
+  <!-- 顶部返回栏 -->
+  <view class="top-bar">
+    <image src="/image/svg/back.svg" class="back-btn" bindtap="onBack"></image>
+    <text class="title">{{showLyric ? '歌词' : '正在播放'}}</text>
+    <image src="/image/svg/more.svg" class="more-btn"></image>
+  </view>
+
+  <!-- 切换按钮 -->
+  <view class="toggle-btn" bindtap="toggleLyric">
+    <text class="toggle-text">
+      {{showLyric ? '收起歌词' : '查看歌词'}}
+    </text>
+  </view>
+
+  <!-- 播放器视图 -->
+  <view class="player-view {{showLyric ? 'fade-out' : 'fade-in'}}" 
+        style="display: {{showLyric ? 'none' : 'flex'}}">
+    <!-- 专辑封面区域 -->
+    <view class="cover-wrapper">
+      <view class="vinyl">
+        <image 
+          class="cover {{isPlaying ? 'rotate' : ''}}" 
+          src="{{img}}"
+        ></image>
+        <view class="cover-center"></view>
+      </view>
+    </view>
+    <!-- 歌曲信息 -->
+    <view class="song-info">
+      <view class="song-name">{{title}}</view>
+      
+      <view class="singer-name">{{author}}</view>
+    </view>
+
+    <!-- 进度条 -->
+    <view class="progress-area">
+      <text class="time current">{{conduct}}</text>
+      <view class="progress-bar" bindtap="onProgressTap">
+        <view 
+          class="played-progress" 
+          style="width: {{(value / max) * 100}}%"
+        ></view>
+        <view 
+          class="progress-dot" 
+          style="left: {{(value / max) * 100}}%"
+        ></view>
+      </view>
+      <text class="time total">{{Duration}}</text>
+    </view>
+
+    <!-- 控制按钮 -->
+    <view class="control-btns">
+      <image src="/image/svg/prev.svg" class="btn prev" bindtap="onPrev"></image>
+      <image 
+        src="{{isPlaying ? '/image/svg/pause.svg' : '/image/svg/play.svg'}}" 
+        class="btn play" 
+        bindtap="onPlayPause"
+      ></image>
+      <image src="/image/svg/next.svg" class="btn next" bindtap="onNext"></image>
+    </view>
+  </view>
+
+  <!-- 歌词视图 -->
+  <view class="lyric-view {{showLyric ? 'fade-in' : 'fade-out'}}"
+        style="display: {{showLyric ? 'flex' : 'none'}}">
+    <!-- 歌曲信息 -->
+    <view class="song-info">
+      <text class="song-name">{{currentSong.name}}</text>
+      <text class="singer-name">{{currentSong.singer}}</text>
+    </view>
+
+    <!-- 歌词滚动区 -->
+          <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum- 2}}" enhanced  binddragstart="binddragstart" binddragend="binddragend">
+
+        <view 
+        id="line{{index}}"
+          wx:for="{{lrc}}" 
+          wx:key="index"
+          class="lyric-item {{toLineNum === index ? 'active' : ''}}"
+        >
+          {{item.lrc}}
+        </view>
+      
+    </scroll-view>
+
+    <!-- 进度条 -->
+    
+    <view class="progress-area">
+      <text class="time current">{{conduct}}</text>
+      
+      <view class="progress-bar" bindtap="onProgressTap">
+        <view class="played-progress" style="width: {{(value / max) * 100}}%"></view>
+        <view class="progress-dot" style="left: {{(value / max) * 100}}%"></view>
+      </view>
+      <text class="time total">{{Duration}}</text>
+    </view>
+  </view>
+
+  <!-- 底部控制 -->
+  <view class="bottom-controls">
+    <image src="/image/svg/loop.svg" class="bottom-btn {{loopMode === 1 ? 'active' : ''}}" bindtap="onLoop"></image>
+    <image src="/image/svg/lyric.svg" class="bottom-btn" bindtap="toggleLyric"></image>
+     <image src="/image/svg/list.svg" class="bottom-btn" bindtap="showPlayList"></image>
+  </view>
+</view>
+<!-- 播放列表容器（默认隐藏，点击列表图标显示） -->
+<view class="playlist-container {{showPlayList ? 'show' : ''}}">
+  <!-- 遮罩层（点击关闭） -->
+  <view class="playlist-mask" bindtap="hidePlayList"></view>
+  
+  <!-- 列表内容 -->
+  <view class="playlist-content">
+    <!-- 列表标题栏 -->
+    <view class="playlist-header">
+      <text class="playlist-title">播放列表 ({{songList.length}})</text>
+      <text class="close-btn" bindtap="hidePlayList">关闭</text>
+    </view>
+    
+    <!-- 列表滚动区 -->
+    <scroll-view class="playlist-scroll" scroll-y>
+      <view class="playlist-list">
+        <!-- 循环渲染播放列表 -->
+        <view 
+          wx:for="{{songList}}" 
+          wx:key="index"
+          class="playlist-item {{currentIndex === index ? 'current' : ''}}"
+          bindtap="switchSong" 
+          data-index="{{index}}"
+        >
+          <!-- 歌曲信息 -->
+          <view class="item-info">
+            <text class="item-name">{{item.title}}</text>
+            <text class="item-singer">{{item.author}}</text>
+          </view>
+          
+          <!-- 当前播放标识（仅当前歌曲显示） -->
+          <image 
+            src="/image/svg/play.svg" 
+            class="item-playicon" 
+            hidden="{{currentIndex !== index}}"
+          ></image>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

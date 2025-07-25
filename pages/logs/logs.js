@@ -24,13 +24,13 @@ Page({
     let item = ev.currentTarget.dataset.item;
     let that=this;
     app.data.song = item;
-    console.log(item);
+    // console.log(item);
     wx.showActionSheet({
       itemList: this.data.itemList,
 
       success(e) {
-        console.log("success")
-        console.log(e)
+        // console.log("success")
+        // console.log(e)
         if (!e.camcle) {
           if (e.tapIndex){
             time.nextSongPay(app.data)
@@ -97,7 +97,7 @@ Page({
       url: api.default.host1 + '?msg=' + serach,
       success: function (res) {
         wx.hideLoading();
-        console.log(res.data);
+        // console.log(res.data);
         //数据处理
         let arr=[];
         res.data.data.map((item,index,ite)=>{
@@ -170,7 +170,7 @@ Page({
               return
             }
             wx.switchTab({
-              url: "../../pages/play/play",
+              url: "../../pages/newPlay/newPlay",
               success: function () {
                 app.data.paythis.setData({
                   value: 0
@@ -194,7 +194,7 @@ Page({
              success: (ret) => {
                item.Mvsrc = ret.data.data.brs['480'];
                wx.switchTab({
-                 url: "../../pages/play/play",
+                 url: "../../pages/newPlay/newPlay",
                  success: function () {
                    app.data.paythis.setData({
                      value: 0,
@@ -213,7 +213,7 @@ Page({
            })
          } else {
            wx.switchTab({
-             url: "../../pages/play/play",
+             url: "../../pages/newPlay/newPlay",
              success: function () {
                app.data.paythis.setData({
                  value: 0
@@ -230,7 +230,7 @@ Page({
          }
        }else{
         //  wx.switchTab({
-        //    url: "../../pages/play/play",
+        //    url: "../../pages/newPlay/newPlay",
         //    success: function () {
   
         //      console.log(11222)
@@ -249,7 +249,7 @@ Page({
     //     if (item.pic == undefined) {
          
     //       wx.switchTab({
-    //         url: "../../pages/play/play",
+    //         url: "../../pages/newPlay/newPlay",
     //         success: function () {
         
     //           console.log(11222)
@@ -276,6 +276,6 @@ Page({
 
   },
   onLoad: function () {
-    console.log(app)
+    // console.log(app)
   }
 })

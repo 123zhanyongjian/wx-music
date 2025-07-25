@@ -21,14 +21,14 @@
   position: absolute;
   z-index: 10;
   left:50rpx;
-  top: 50rpx;
+  top: 80rpx;
  
 }
 .singer{
   position: absolute;
   z-index: 10;
-  left:330rpx;
-  top: 50rpx;
+  left:400rpx;
+  top: 80rpx;
   color: rgb(255, 255, 255,.8);
 }
 .text{
@@ -38,9 +38,21 @@
   color: rgb(255, 255, 255,.6);
 }
 .headLog>image{
-   height: 260rpx;
-   width: 260rpx; 
-   border-radius: 15px;
+   height: 320rpx;
+   width: 320rpx; 
+   border-radius: 20rpx;
+   box-shadow: 0 8rpx 32rpx rgba(60,80,120,0.18);
+}
+.singer>view:first-child {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--main-color);
+  margin-bottom: 8rpx;
+}
+.singer .text {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 4rpx;
 }
 .btn{
   position: absolute;
@@ -77,11 +89,11 @@
   width: 100%;
   height: 300rpx;
 }
-.ul{
+.ul {
   width: 100%;
   border-radius: 16px;
-  /* background: red !important; */
- 
+  padding: 0 24rpx;
+  box-sizing: border-box;
 }
 .popusShowopen{
   height:calc(100vh - 525rpx);
@@ -92,7 +104,7 @@
   position: relative;
   /* background: white; */
   min-height:100rpx;
-  padding:0 50rpx; 
+  /* padding:0 50rpx;  */
   border-bottom: 2rpx solid #f9f9f9;
  
 }
@@ -121,7 +133,7 @@
 .li:nth-of-type(2n-1){
   background:rgb(250,250,250);
 }
-.scroll-view{
+.scroll-view {
   position: absolute;
  z-index: 0;
  width: 100%;
@@ -130,7 +142,7 @@
  transform:translateX(0%);  
  transition: transform 0.5s ease-in-out; /* 平滑过渡所有属性 */ 
  /* box-shadow: -3px -7px 8px 7px rgba(255, 255, 255); */
- padding-bottom: 20rpx;
+ padding-bottom: 44rpx;
 }
 .li>.text{
   font-size:32rpx;
@@ -293,4 +305,102 @@
 }
 .alubmsList .title{
   margin-left: 20px;
+}
+/* 网易云推荐歌曲卡片样式复用 */
+.netease-song-item {
+  display: flex;
+  align-items: center;
+  background: var(--white);
+  border-radius: 16rpx;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 18rpx;
+  padding: 0 20rpx;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 100rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.netease-song-item:active {
+  box-shadow: 0 8rpx 32rpx rgba(194,12,12,0.18);
+  background: #fff5f5;
+}
+.netease-song-item-alt {
+  background: #f7f7f7;
+}
+.netease-song-cover {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 12rpx;
+  margin-right: 18rpx;
+  background: #eee;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.netease-song-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  align-items: flex-start;
+}
+.netease-song-title {
+  font-size: 30rpx;
+  color: var(--main-color);
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.netease-song-artist {
+  font-size: 22rpx;
+  color: #888;
+  margin-top: 2rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.netease-song-play {
+  background: none;
+  border: none;
+  box-shadow: none;
+  width: 60rpx;
+  height: 60rpx;
+  padding: 0;
+  margin-left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 70rpx;
+  top: 50%;
+  bottom: auto;
+  margin-top: 0;
+  transform: translateY(-50%);
+  z-index: 2;
+  transition: background 0.15s;
+}
+.netease-song-play:active {
+  background: rgba(194,12,12,0.08);
+}
+.netease-song-play-icon {
+  width: 40rpx;
+  height: 40rpx;
+  display: block;
+}
+.more {
+  position: absolute;
+  right: 10rpx;
+  top: 50%;
+  bottom: auto;
+  width: 60rpx;
+  height: 60rpx;
+  border-left: 1px solid #eee;
+  margin-top: 0;
+  transform: translateY(-50%);
 }

@@ -17,7 +17,7 @@ Page({
     serach:''
   },
   onReachBottom() {
-    console.log('到底了')
+    // console.log('到底了')
   },
   getSingerList: function () {
     const _that = this
@@ -40,13 +40,13 @@ Page({
         jsonpCallback: "callback"
       },
       success: function (res) {
-        console.log(res);
+        // console.log(res);
         if (res.statusCode === 200) {
 
           var res1 = res.data.replace("callback(", "");
 
           var res2 = JSON.parse(res1.substring(0, res1.length - 1))
-          console.log(res2.data.list)
+          // console.log(res2.data.list)
           _that.setData({
             singer: _that._normallizeSinger(res2.data.list)
           })
@@ -69,7 +69,7 @@ Page({
         wx.hideLoading();
         let res1 = res.data.replace('SmartboxKeysCallbackmod_top_search3847(', '')
         let res2 = JSON.parse(res1.substring(0, res1.length - 1));
-        console.log(res2)
+        // console.log(res2)
         for (let i of res2.data.song.itemlist) {
           i.title = i.name;
           i.author = i.singer
@@ -135,7 +135,7 @@ Page({
       this.setData({
         singer: hot.concat(ret)
       })
-    console.log(this.data.singer)
+    // console.log(this.data.singer)
     return hot.concat(ret)
   },
   details(e) {
@@ -148,7 +148,7 @@ Page({
 
   onLoad() {
     this.getSingerList();
-    console.log(this.data.singer)
+    // console.log(this.data.singer)
   },
   onReachBottom() {
     wx.showModal({

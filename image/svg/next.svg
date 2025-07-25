@@ -1,0 +1,6 @@
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- 播放图标（小） -->
+  <polygon points="15,20 15,40 30,30" fill="#aaaaaa"/>
+  <!-- 右箭头（下一曲） -->
+  <polygon points="40,30 30,20 30,40" fill="#aaaaaa"/>
+</svg>

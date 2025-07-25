@@ -1,5 +1,5 @@
 <!-- index.wxml -->  
-<view class="containerse">  
+<view class="myinfo-root">  
     <view class="info">
         <view class="newListBtn" bindtap="newListBtn" hover-class="none" hover-stop-propagation="false">
            新建歌单

@@ -134,7 +134,7 @@
   .nodata{
     background-color: #eee;
     position: absolute;
-    bottom: 0;
+    bottom: 120rpx;
     left: 0;
     right: 0;
     top: 310rpx;
@@ -152,3 +152,10 @@
   .nodata text{
     color:rgb(0, 149, 255)
   }
+.tabbar-safe-area, .page-root, .main-container, body {
+  padding-bottom: 120rpx;
+  box-sizing: border-box;
+}
+.footer, .bottom-bar, .myinfo-bottom, .myinfo-footer {
+  bottom: 120rpx !important;
+}

@@ -28,7 +28,7 @@ Page({
     this.setData({
       ["userInfo.avatarUrl"]:userInfo.avatarUrl
     })
-    console.log(userInfo.avatarUrl)
+    // console.log(userInfo.avatarUrl)
   },
   newListBtn(){
   this.setData({
@@ -39,7 +39,7 @@ Page({
   newSongList(e){
     const datas = e.detail;
     const that = this
-    console.log(e)
+    // console.log(e)
     const uploadImg = time.Promisify(wx.uploadFile)
     uploadImg({
       url:app.host+'/upload',
@@ -98,7 +98,7 @@ Page({
     
   },
   close(){
-    console.log("???")
+    // console.log("???")
     this.setData({
       addSongListFlag:false
      })
@@ -109,7 +109,7 @@ Page({
     this.setData({
       ["userInfo.avatarUrl"]:avatarUrl
     })
-    console.log(app.host+'/upload',222)
+    // console.log(app.host+'/upload',222)
     uploadImg({
       url:app.host+'/upload',
       filePath:avatarUrl,
@@ -228,11 +228,11 @@ Page({
     wx.getUserProfile({
       desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
       success: (res) => {
-      console.log(res,5555555555555555555)
+      // console.log(res,5555555555555555555)
       },
       fail:err=>{
 
-        console.log(err)
+        // console.log(err)
       }
     })
   },

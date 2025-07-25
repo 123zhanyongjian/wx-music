@@ -1,4 +1,4 @@
-// pages/play/play.js
+// pages/newPlay/newPlay.js
 const util = require('../../utils/util.js')
 const tiem = require('../../utils/time.js')
 const app = getApp();
@@ -43,8 +43,8 @@ Page({
     close: false,
     song: {},
     id: '', // 当前播放的id
-    isScroll: false
-
+    isScroll: false,
+    showFullLyric: false,
   },
   binddragend(e) {
     const str = setTimeout(() => {
@@ -147,7 +147,7 @@ Page({
   },
   // mv播放异常
   bindMvError(e) {
-    console.log(e)
+    // console.log(e)
   },
   //切换播放模式
   changloop() {
@@ -271,7 +271,7 @@ Page({
           that.delSong(index)
 
         } else if (res.cancel) {
-          console.log('用户点击取消')
+          // console.log('用户点击取消')
         }
       }
     })
@@ -329,7 +329,7 @@ Page({
           })
 
         } else if (res.cancel) {
-          console.log('用户点击取消')
+          // console.log('用户点击取消')
         }
       }
     })
@@ -340,10 +340,10 @@ Page({
    */
   onLoad: function (options) {
     app.data.paythis = this;
+    // console.log('paythis set', this);
     // this.getLoveList()
     if (this.data.state) {
       tiem.Readinfo(this, app.innerAudioContext, app)
-
     }
   },
 
@@ -363,8 +363,7 @@ Page({
       const loveList = wx.getStorageSync('loveList') || []
       app.data.songlist = song
       app.data.loveList = loveList
-      console.log(app.data)
-      console.log(this, 555)
+      // console.log('paythis onShow', app.data.paythis);
       this.setData({
         songList: song
       })
@@ -385,32 +384,36 @@ Page({
     setTimeout(() => {
       const mv = wx.createVideoContext('myMv')
       mv.seek(20);
-      console.log(mv, 333)
+      // console.log(mv, 333)
     }, 5000);
   },
   //选择音乐
   pay(e) {
+    const idx = e.currentTarget.dataset.index;
+    // 判断当前播放歌曲
+    if (app.data.song && app.data.song.id === this.data.songList[idx].id) {
+      wx.showToast({
+        title: '该歌曲正在播放中',
+        icon: 'none'
+      });
+      return;
+    }
     this.setData({
-      ins: e.currentTarget.dataset.index,
+      ins: idx,
       value: 0
     })
-
-    app.data.song = this.data.songList[e.currentTarget.dataset.index];
+    app.data.song = this.data.songList[idx];
     if (!app.data.song.src) {
       app.data.song.src = 'https://zhanyj.cn/api/src'
     }
-
     if (app.data.song.mId === 3) {
-      console.log(this.data.value, 444)
-      tiem.pay(this, app.innerAudioContext, app.data.song, 1);
+      // console.log(this.data.value, 444)
+      tiem.playCore(this, app.innerAudioContext, app.data.song, 1);
     } else {
-      console.log('?3333??')
+      // console.log('?3333??')
       tiem.Lrcget(this, app.data.song)
-      tiem.pay(this, app.innerAudioContext, app.data.song, 1);
+      tiem.playCore(this, app.innerAudioContext, app.data.song, 1);
     }
-
-
-
   },
   // 下载
   // download() {
@@ -471,6 +474,9 @@ Page({
   // },
   //上一曲
   last() {
+    if(this.data.songList.length===1){
+      return
+    }
     if (this.data.Mv || !this.data.songList.length) {
       return
     }
@@ -487,19 +493,20 @@ Page({
 
   //下一曲
   next() {
-    console.log(this.data)
+    // console.log(this.data)
     if (this.data.Mv || !this.data.songList.length) {
       return
     }
-    if (this.data.songList.length - 1 > this.data.ins) {
-      tiem.Nextsong(this, app.innerAudioContext, app)
-    } else {
-      this.setData({
-        ins: 1
-      })
-      tiem.Lastsong(this, app.innerAudioContext, app)
+    if(this.data.songList.length===1){
+      if (this.data.songList.length - 1 > this.data.ins) {
+        tiem.Nextsong(this, app.innerAudioContext, app)
+      } else {
+        this.setData({
+          ins: 1
+        })
+        tiem.Lastsong(this, app.innerAudioContext, app)
+      }
     }
-
   },
   //播放暂停
   pays() {
@@ -516,7 +523,7 @@ Page({
     } else {
       if (this.data.state) {
         //播放音乐
-        tiem.pay(this, app.innerAudioContext, app.data.song);
+        tiem.playCore(this, app.innerAudioContext, app.data.song);
 
 
 
@@ -527,6 +534,9 @@ Page({
       }
     }
     // console.log(innerAudioContext, 123)
+  },
+  onLyricTap() {
+    this.setData({ showFullLyric: !this.data.showFullLyric });
   },
 
   /**

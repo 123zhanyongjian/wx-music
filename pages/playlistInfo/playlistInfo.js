@@ -70,18 +70,23 @@ Page({
     //播放音乐
     async pay(e) {
       var song = e.currentTarget.dataset.item;
+      // 判断当前播放歌曲
+      if (app.data.song && app.data.song.id === song.id) {
+        wx.showToast({
+          title: '该歌曲正在播放中',
+          icon: 'none'
+        });
+        return;
+      }
       app.data.song = song;
       wx.switchTab({
-        url: "../../pages/play/play",
+        url: "../../pages/newPlay/newPlay",
         success: function () {
           app.data.paythis.setData({
             value: 0
           })
           time.newAddSong(app.data);
-          time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
+          time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
         }
       })
       return
@@ -93,22 +98,17 @@ Page({
           song['author'] = song.singer;
           app.data.song = song;
           wx.switchTab({
-            url: "../../pages/play/play",
+            url: "../../pages/newPlay/newPlay",
             success: function () {
               app.data.paythis.setData({
                 value: 0
               })
               time.newAddSong(app.data);
-              time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-  
-  
-  
+              time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
             }
           })
         }
       })
-  
-  
     },
   more(e){
     this.showActionSheet(e)
@@ -411,7 +411,7 @@ Page({
       app.data.song = song;
      
       wx.switchTab({
-        url: "../../pages/play/play",
+        url: "../../pages/newPlay/newPlay",
         success: function () {
           app.data.paythis.setData({
             value: 0,

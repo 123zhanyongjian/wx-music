@@ -1,0 +1,6 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- 三个圆点（更多） -->
+  <circle cx="10" cy="20" r="3" fill="#ffffff"/>
+  <circle cx="20" cy="20" r="3" fill="#ffffff"/>
+  <circle cx="30" cy="20" r="3" fill="#ffffff"/>
+</svg>

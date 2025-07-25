@@ -15,7 +15,7 @@ Page({
     pageNum:1,
     change:true,
     lastPage:false,
-    pageSize:68,
+    pageSize:20,
     count:0,
     singerInfo:'',
     total:360,
@@ -28,13 +28,17 @@ Page({
     type:1,//1单曲，2专辑
     itemList: ['立即播放', '下一首播放','添加到歌单'],
     list: [],//临时列表
-    timer: ''//定时器
+    timer: '',//定时器
+    albumList:[],
+    albumTotal:0,
+    albumPage:1,
+    albumPageSize:20,
   },
   popusShowChange(e){
    this.setData({
      popusShow:e.detail
    })
-   console.log(this.data.popusShow)
+   // console.log(this.data.popusShow)
   },
    //切换播放模式
    changloop() {
@@ -77,13 +81,13 @@ Page({
     let item = ev.currentTarget.dataset.item;
     let that = this;
   
-    console.log(item,app.data.song);
+    // console.log(item,app.data.song);
     wx.showActionSheet({
       itemList: this.data.itemList,
 
       success(e) {
-        console.log("success")
-        console.log(e)
+        // console.log("success")
+        // console.log(e)
         if (!e.camcle) {
           if (e.tapIndex===1) {
             app.data.song = item;
@@ -141,11 +145,10 @@ Page({
       })
     }
   },
-  onLoad: function () {
+  onLoad: function (options) {
     wx.setNavigationBarTitle({
       title: app.data.singer.name
     })
-
     if (app.data.singer.avatar == undefined) {
       this.setData({
         title: app.data.singer.name,
@@ -154,6 +157,7 @@ Page({
     } else {
       this.setData({
         title: app.data.singer.name,
+        singerId:options.id,
         image: app.data.singer.avatar
       })
     }
@@ -173,7 +177,7 @@ Page({
     //   })
     // })
     this.getsongList()
-   
+   this.getAlbumList()
 
   },
   getsongList(page=this.data.pageNum){
@@ -193,37 +197,25 @@ Page({
         title: '加载中',
       })
       request({
-        url:app.host+`/musicList?name=${this.data.title}&singer=1&page=${page}`
+        method:'post',
+        data:{
+          id:this.data.singerId,
+          page,
+          size:this.data.pageSize
+        },
+        url:app.host+`/singerSongs`
       })
       .then(res=>{
-        
+        // console.log()
         if(res.data.code===200){
           that.setData({
-            songs:this.data.songs.concat(res.data.data?.data?.map(i=>({...i,pic:this.data.image}))),
-            // total:res.data.data.total*1,
-            singerId:res.data.data.singerId,
+            songs:this.data.songs.concat(res.data.data.singerList?.map(i=>({...i}))),
+            total:res.data.data.total*1,
+            // singerId:res.data.data.singerId,
+            singerInfo:res.data.data.singinfo?.info,
             paydata:app.data?.paythis?.data
           })
-          if(page===1){
-            wx.hideLoading()
-            request({
-              url:app.host+'/singerInfo',
-              method:'post',
-              data:{
-                id:res.data.data.singerId
-              }
-            })
-            .then(ret=>{
-             this.setData({
-              singerInfo:ret.data.data?.singerInfo,
-              albums:this.data.albums.concat(ret.data.data?.album),
-              lastPage:ret.data.data?.lastPage
-             })
-            })
-          }else{
-            wx.hideLoading()
-          }
-
+          wx.hideLoading()
           return
         }
       
@@ -254,6 +246,34 @@ Page({
     })
     return ret
   },
+  getAlbumList(){
+    wx.showLoading({
+      title: '加载中',
+    })
+    request({
+      url:app.host+'/album',
+      method:'post',
+      data:{
+        id:this.data.singerId,
+        page:this.data.albumPage,
+        size:this.data.albumPageSize
+      }
+    })
+    .then(ret=>{
+      if(ret.data.code===200){
+        this.setData({
+          albums:this.data.albums.concat(ret.data.data.data),
+          albumTotal:(ret.data.data.total*1)?ret.data.data.total*1:this.data.albumTotal,
+        })
+        // console.log(this.data.albumTotal,1117777)
+        wx.hideLoading()
+      } 
+    })  
+    .catch(err=>{
+      // console.log(err,7777)
+      wx.hideLoading()
+    })
+  },      
   //请求歌曲信息
   getDATA(song) {
 
@@ -269,11 +289,11 @@ Page({
     }
     app.data.songlist = this.data.songs.map(it=>({...it,title:it.title,author:it.author}));
     const arr =  app.data.songlist.slice()
-    console.log(arr,7777)
+    // console.log(arr,7777)
     app.data.song = arr[0];
        
     wx.switchTab({
-      url: "../../pages/play/play",
+      url: "../../pages/newPlay/newPlay",
       success: function () {
         app.data.paythis.setData({
           value: 0,
@@ -284,7 +304,7 @@ Page({
           key: 'songlist',
           data: app.data.songlist,
           success: function (res) {
-            console.log('异步保存成功')
+            // console.log('异步保存成功')
           }
         })
         time.newAddSong(app.data);
@@ -301,57 +321,51 @@ Page({
   //播放音乐
   async pay(e) {
     var song = e.currentTarget.dataset.item;
+    // 判断当前播放歌曲
+    if (app.data.song && app.data.song.id === song.id) {
+      wx.showToast({
+        title: '该歌曲正在播放中',
+        icon: 'none'
+      });
+      return;
+    }
     app.data.song = song;
     wx.switchTab({
-      url: "../../pages/play/play",
+      url: "../../pages/newPlay/newPlay",
       success: function () {
         app.data.paythis.setData({
           value: 0
         })
         time.newAddSong(app.data);
-        time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
+        time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
       }
     })
-
-
-
-
-
-
-    return 
+    return
     api.getSongSrc(song.id, ({src, stauts}) => {
-      console.log(src,stauts)
+      // console.log(src,stauts)
       if (stauts) {
         song.src = src
         song['title'] = song.name;
         song['author'] = song.singer;
         app.data.song = song;
         wx.switchTab({
-          url: "../../pages/play/play",
+          url: "../../pages/newPlay/newPlay",
           success: function () {
             app.data.paythis.setData({
               value: 0
             })
             time.newAddSong(app.data);
-            time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-
-
-
+            time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
           }
         })
       }
     })
-
-
   },
   // 进入专辑详情
   goAlubms(e){
-    const id = e.currentTarget.dataset.item.id;
-    const name =  e.currentTarget.dataset.item.name;
-    const img =  e.currentTarget.dataset.item.img;
+    const id = e.currentTarget.dataset.item.albumid;
+    const name =  e.currentTarget.dataset.item.album;
+    const img =  e.currentTarget.dataset.item.pic;
     app.data.albumImg = img
     wx.navigateTo({
       url: `../alubms/alubms?id=${id}&name=${name}&img=${img}`
@@ -362,32 +376,8 @@ Page({
    if(this.data.type===1){
     utils.changePage.call(this,'getsongList')
    }else if(this.data.type===2){
-    if(!this.data.lastPage){
-      wx.showLoading({
-        title: '加载中',
-      })
-      request({
-        url:app.host+'/singerInfo',
-        method:'post',
-        data:{
-          id:this.data.singerId,
-          page:++this.data.albumPage
-        }
-      })
-      .then(ret=>{
-        wx.hideLoading()
-       this.setData({
-        singerInfo:ret.data.data?.singerInfo,
-        albums:this.data.albums.concat(ret.data.data?.album),
-        lastPage:ret.data.data?.lastPage
-       })
-      })
-    }else{
-      wx.showToast({
-        title: '我已经到底了',
-        icon:'none'
-      })
-    }
+    utils.changePage.call(this,'getAlbumList',[],{pageNum:'albumPage',pageSize:'albumPageSize',total:'albumTotal'})
+    
    }
     // this.getSingerDetail(app.data.singer.id, this.data.songs.length)
     // console.log("sdsd")

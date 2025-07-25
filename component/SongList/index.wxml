@@ -1,0 +1,15 @@
+<block wx:for="{{list}}" wx:for-item="item" wx:for-index="idx" wx:key="{{item.id}}">
+  <view class="li netease-song-item {{idx % 2 === 0 ? 'netease-song-item-alt' : ''}}">
+    <view class="netease-song-cover" style="position:relative;">
+      <image src="{{item.pic||item.cover}}" style="width:100%;height:100%;border-radius:12rpx;" />
+    </view>
+    <view class="netease-song-info" bindtap='onPlay' data-item="{{item}}">
+      <view class="netease-song-title">{{item.title}}</view>
+      <view class="netease-song-artist">{{item.singer||item.author}}</view>
+    </view>
+    <button wx:if="{{showPlayBtn}}" class="netease-song-play" bindtap="onPlay" data-item="{{item}}">
+      <image class="netease-song-play-icon" src="../../image/play.svg" />
+    </button>
+    <image wx:if="{{showMoreBtn}}" data-item="{{item}}" bindtap="onMore" class="more" src="../../image/more.png" />
+  </view>
+</block> 

@@ -1,92 +1,122 @@
+/* 核心修改：去掉bottom:0，添加padding-bottom预留tabBar空间 */
 .main{
   position: absolute;
   right: 0;
   left: 0;
   top: 0;
-    bottom: 0;
-    background: #f1f1f1;
+  /* 去掉 bottom:0（避免覆盖tabBar） */
+  background: #f1f1f1;
+  /* 预留tabBar高度（tabBar通常高50px=100rpx，根据实际调整） */
+  padding-bottom: 100rpx; 
+  /* 避免内容超出时遮挡tabBar */
+  overflow-y: auto;
 }
+
+.footer, .bottom-bar, .newlogs-bottom, .newlogs-footer {
+  bottom: 120rpx !important;
+}
+
+.tabbar-safe-area, .page-root, .main-container, body {
+  padding-bottom: 120rpx;
+  box-sizing: border-box;
+}
+
 .serach{
   position: relative;
-
+  padding: 20rpx; /* 增加内边距，避免搜索框贴边 */
+  background: #f1f1f1; /* 与main背景一致，避免突兀 */
 }
-.serachimg,image{
+
+.serachimg{
+  /* 修正图片定位：原代码用了全局image样式，这里单独指定 */
   position: absolute;
   width: 40rpx;
   height: 40rpx;
-  left: 30rpx;
-  top: 12rpx;
+  left: 40rpx; /* 微调left，避免与输入框重叠 */
+  top: 32rpx;
 }
+
+.serachimgs{
+  width: 30rpx;
+  height: 30rpx;
+  position: absolute;
+  left: 90rpx; /* 调整位置，避免与搜索图标重叠 */
+  top: 36rpx;
+  z-index: 1; /* 确保在输入框上方显示 */
+}
+
 .input{
   background: white;
   margin: 25rpx;
   font-size: 26rpx;
   border-radius: 14rpx;
-  padding: 10rpx 80rpx;
-  
-
+  padding: 15rpx 80rpx; /* 增加上下内边距，让输入框更美观 */
+  width: calc(100% - 50rpx); /* 确保输入框不超出屏幕 */
 }
+
 .ul{
   width: 100%;
-  max-height: 80vh;
-  overflow-y: scroll;
+  /* 去掉max-height，改用内容自然撑开（配合main的overflow-y滚动） */
 }
+
 .li{
-  
   position: relative;
   background: white;
-  height:80rpx;
+  height: 80rpx;
   border-bottom: 2rpx solid #f9f9f9;
+  padding-left: 20rpx; /* 增加左内边距，避免内容贴边 */
 }
-.li>.serachimg{
+
+.li image{ /* 修正歌曲列表的图标定位（原代码用了全局image样式，导致继承错误定位） */
   width: 40rpx;
   height: 40rpx;
-  position: absolute; 
-  left:33rpx;
-  top: 18rpx;
-}
-.haderimg{
-  width: 80rpx;
   position: absolute;
-  top: 14rpx;
-  left: 20rpx;
-  height: 80rpx;
-  border-radius: 50%;
+  left: 33rpx;
+  top: 20rpx; /* 垂直居中 */
 }
-.singer{
- position: relative;
- border-bottom: 2rpx solid #f1f1f1;
-  height: 110rpx;
-  background: #fff;
-  /* margin-top: 30rpx; */
-  
-}
-.serachimgs{
-   width: 30rpx;
-  height: 30rpx;
-  position: absolute; 
-  left:71rpx;
-  top: 21rpx;
-}
-.singername{
-  font-size: 28rpx;
-  position: absolute;
-  top:31rpx;
-  left: 120rpx;
- 
-}
+
 .li>text{
   margin-left: 100rpx;
   font-size: 28rpx;
   line-height: 80rpx;
+  display: inline-block; /* 避免文字换行异常 */
+  max-width: 400rpx; /* 限制宽度，避免挤压MV标签 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 .mv{
-  text-align: center;
-  font-size: 24rpx;
-  margin:10rpx auto;
+  /* 修正MV标签定位，避免挤压文字 */
+  float: right;
+  margin-right: 20rpx;
+  margin-top: 25rpx;
   width: 80rpx;
   height: 30rpx;
-  /* display: inline-block; */
-  border :1rpx solid rgb(20,180,187);
+  line-height: 30rpx; /* 垂直居中 */
+  font-size: 24rpx;
+  border: 1rpx solid rgb(20,180,187);
   color: rgb(20,180,187);
+}
+
+.singer{
+  position: relative;
+  border-bottom: 2rpx solid #f1f1f1;
+  height: 110rpx;
+  background: #fff;
+  padding-left: 20rpx; /* 增加左内边距 */
+}
+
+.haderimg{
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-top: 15rpx; /* 垂直居中 */
+}
+
+.singername{
+  font-size: 28rpx;
+  position: absolute;
+  top: 35rpx; /* 微调垂直位置 */
+  left: 120rpx;
 }

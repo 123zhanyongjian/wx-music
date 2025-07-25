@@ -39,7 +39,7 @@ Component({
             this.parent.getScrollerRect()
         },
         updatePos({pos, updateIndex, oldPos, newPos}) {
-            console.log('updatePos', pos, updateIndex, oldPos, newPos)
+            // console.log('updatePos', pos, updateIndex, oldPos, newPos)
             let posList = this.parent.posList.map(item => {
                 if (item.originalIndex == pos.originalIndex) {
                     return pos
@@ -68,7 +68,7 @@ Component({
             }
         },
         log(data) {
-            console.log(data)
+            // console.log(data)
         },
         parentChange(data) {
             this.parent.change(data)

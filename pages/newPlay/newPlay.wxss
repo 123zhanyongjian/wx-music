@@ -1,0 +1,402 @@
+page {
+  background-color: #121212;
+  color: #fff;
+  height: 100%;
+  overflow: hidden;
+}
+.scroll-view{
+  height:70vh;
+  text-align: center;
+ padding:10px 0 ;
+ /* margin-top:230rpx; */
+  /* overflow: scroll; */
+}
+.player-container {
+  width: 100%;
+  height: 93vh;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部栏 */
+.top-bar {
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-btn, .more-btn {
+  width: 50rpx;
+  height: 50rpx;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: 500;
+}
+
+/* 切换按钮 */
+.toggle-btn {
+  text-align: center;
+  padding: 10rpx 0;
+  margin-bottom: 20rpx;
+}
+
+.toggle-text {
+  color: #999;
+  font-size: 24rpx;
+}
+
+/* 切换动画 */
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+}
+
+/* 播放器视图 */
+.player-view {
+  flex: 1;
+  width: 100%;
+  flex-direction: column;
+  transition: all 0.3s;
+}
+
+/* 专辑封面 */
+.cover-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.vinyl {
+  width: 500rpx;
+  height: 500rpx;
+  border-radius: 50%;
+  background-color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 30rpx rgba(0, 0, 0, 0.5);
+}
+
+.cover {
+  width: 380rpx;
+  height: 380rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 10rpx solid #333;
+}
+
+.cover-center {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background-color: #121212;
+  position: absolute;
+  z-index: 1;
+}
+
+.rotate {
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 歌曲信息 */
+.song-info {
+  text-align: center;
+  margin: 20rpx 0;
+}
+
+.song-name {
+  font-size: 34rpx;
+  font-weight: 500;
+  line-height: 60rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.singer-name {
+  font-size: 28rpx;
+  color: #aaa;
+  line-height: 40rpx;
+}
+
+/* 进度条区域 */
+.progress-area {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin: 20rpx 0;
+}
+
+.time {
+  font-size: 24rpx;
+  color: #aaa;
+  width: 100rpx;
+}
+
+.current { text-align: left; }
+.total { text-align: right; }
+
+.progress-bar {
+  flex: 1;
+  height: 6rpx;
+  background-color: #333;
+  border-radius: 3rpx;
+  position: relative;
+}
+
+.played-progress {
+  height: 100%;
+  background-color: #c62f2f;
+  border-radius: 3rpx;
+}
+
+.progress-dot {
+  width: 20rpx;
+  height: 20rpx;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10rpx rgba(198, 47, 47, 0.8);
+}
+
+/* 控制按钮 */
+.control-btns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 80rpx;
+  margin: 40rpx 0;
+}
+
+.btn {
+  object-fit: contain;
+}
+
+.prev, .next {
+  width: 80rpx;
+  height: 80rpx;
+  opacity: 0.8;
+}
+
+.play {
+  width: 120rpx;
+  height: 120rpx;
+  background-color: #c62f2f;
+  border-radius: 50%;
+  padding: 10rpx;
+}
+
+/* 歌词视图 */
+.lyric-view {
+  flex: 1;
+  width: 100%;
+  flex-direction: column;
+  transition: all 0.3s;
+}
+
+.lyric-scroll {
+  flex: 1;
+  width: 100%;
+}
+
+.lyric-list {
+  padding: 100rpx 0;
+  text-align: center;
+}
+
+.lyric-item {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 15rpx;
+  line-height: 40rpx;
+}
+
+.lyric-item.active {
+  color: #c62f2f;
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+/* 底部控制 */
+.bottom-controls {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20rpx 0;
+  border-top: 1px solid #333;
+  margin-top: 10rpx;
+}
+
+.bottom-btn {
+  width: 65rpx;
+  height: 65rpx;
+  opacity: 0.8;
+}
+
+.bottom-btn.active {
+  opacity: 1;
+  color: #c62f2f;
+}
+/* 播放列表容器 */
+.playlist-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 100; /* 确保在播放器上方显示 */
+  pointer-events: none; /* 默认不触发点击 */
+}
+
+/* 显示播放列表 */
+.playlist-container.show {
+  pointer-events: auto;
+}
+
+/* 遮罩层 */
+.playlist-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.playlist-container.show .playlist-mask {
+  opacity: 1;
+}
+
+/* 列表内容（从底部弹出） */
+.playlist-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70vh; /* 高度占屏幕70% */
+  background-color: #121212; /* 与播放器背景一致 */
+  border-top-left-radius: 20rpx;
+  border-top-right-radius: 20rpx;
+  transform: translateY(100%); /* 默认隐藏在底部 */
+  transition: transform 0.3s;
+}
+
+.playlist-container.show .playlist-content {
+  transform: translateY(0); /* 显示时上移 */
+}
+
+/* 列表标题栏 */
+.playlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  border-bottom: 1px solid #333;
+}
+
+.playlist-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #fff;
+}
+
+.close-btn {
+  font-size: 28rpx;
+  color: #aaa;
+  padding: 10rpx 20rpx;
+}
+
+/* 列表滚动区 */
+.playlist-scroll {
+  height: calc(70vh - 80rpx); /* 减去标题栏高度 */
+  width: 100%;
+}
+
+/* 列表项 */
+.playlist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  border-bottom: 1px solid #222;
+  background-color: #1a1a1a;
+}
+
+/* 当前播放的歌曲项 */
+.playlist-item.current {
+  background-color: #282828;
+}
+
+/* 歌曲信息 */
+.item-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.item-name {
+  display: block;
+  font-size: 28rpx;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5rpx;
+}
+
+.item-singer {
+  display: block;
+  font-size: 24rpx;
+  color: #aaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 当前播放图标 */
+.item-playicon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-left: 10rpx;
+}

@@ -3,7 +3,22 @@
   "projectname": "wx-music",
   "setting": {
     "compileHotReLoad": true,
-    "urlCheck": false
+    "urlCheck": true,
+    "coverView": true,
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "showShadowRootInWxmlPanel": true,
+    "useStaticServer": false,
+    "useLanDebug": false,
+    "showES6CompileOption": false,
+    "checkInvalidKey": true,
+    "ignoreDevUnusedFiles": true,
+    "bigPackageSizeSupport": false
   },
-  "libVersion": "3.3.5"
+  "libVersion": "3.3.5",
+  "condition": {}
 }

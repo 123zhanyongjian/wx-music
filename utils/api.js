@@ -123,7 +123,7 @@ async function getJaySongList(callback) {
     url: api + '/list'
 
   })
-  console.log(res, 22)
+  // console.log(res, 22)
   const data = [].concat((res.data.playlist.tracks).map(i => ({
     name: i.name,
     title: i.name,
@@ -133,7 +133,7 @@ async function getJaySongList(callback) {
     mId: 4 // 该资源下的搜索内容
 
   })))
-  console.log(data, 333)
+  // console.log(data, 333)
   callback(data)
 }
 async function getjaySongSrc(id, callback) {
@@ -234,7 +234,7 @@ const {data:userId} =   await wx.getStorage({key:'openId',encrypt:true})
 // }
 // 新gequbao 通过id查询信息
 async function gqbSong(id, callback) {
-  console.log(13333)
+  // console.log(13333)
   const res = await request({
     url: api + '/newSonginfo',
     method: 'post',

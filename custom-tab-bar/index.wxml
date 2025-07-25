@@ -1,0 +1,27 @@
+<view class="tab-bar">
+  <view class="tab-bar-border"></view>
+  <block wx:for="{{list}}" wx:key="index">
+    <view 
+      class="tab-bar-item {{selected === index ? 'selected' : ''}}" 
+      data-index="{{index}}" 
+      bindtap="onTabTap">
+      
+      <!-- 普通图标 -->
+      <image 
+        class="tab-bar-icon" 
+        src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
+      
+      <!-- 播放页图标特殊处理（显示封面+播放状态） -->
+      <view wx:if="{{index === 2 && isPlaying}}" class="play-indicator">
+        <image src="{{currentCover}}" class="play-cover"></image>
+        <view class="play-animation">
+          <view class="bar bar1"></view>
+          <view class="bar bar2"></view>
+          <view class="bar bar3"></view>
+        </view>
+      </view>
+      
+      <text class="tab-bar-text {{selected === index ? 'selected' : ''}}">{{item.text}}</text>
+    </view>
+  </block>
+</view>

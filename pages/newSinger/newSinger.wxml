@@ -1,0 +1,37 @@
+<view class="newsinger-root">
+  <!-- 顶部栏目 -->
+  <scroll-view class="singer-tabs" scroll-x="true">
+    <block wx:for="{{tabs}}" wx:key="name">
+      <view
+        class="singer-tab {{currentTab === index ? 'active' : ''}}"
+        data-index="{{index}}"
+        bindtap="onTabChange"
+      >
+        {{item}}
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 歌手列表分组 -->
+  <scroll-view scroll-y scroll-with-animation scroll-into-view="line{{title}}" class="singer-scroll">
+    <view wx:for="{{singer}}" wx:key="{{index}}" class='singerlist'>
+      <view class='sort' id="line{{item.title}}">{{item.title}}</view>
+      <view class='singer' wx:for="{{item.items}}" wx:for-item="ite" wx:key="{{idx}}" data-singer="{{ite}}" bindtap='details'>
+      <image class="haderimg" src="https://zhanyj.cn/api/resource?url=http://img2.kuwo.cn/star/starheads/300/s4s30/27/2202826756.png"></image>
+        <image binderror="onImageError" src="{{ite.img}}" class="haderimg"></image>
+        <view class='singername'>{{ite.name}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 右侧字母导航 -->
+  <view class='dw'>
+    <view class='dw1'>
+      <view data-id="热门" bindtap='Location'>热门</view>
+      <block wx:for="{{azList}}" wx:key="az">
+        <view data-id="{{item}}" bindtap='Location'>{{item}}</view>
+      </block>
+      <view data-id="其他" bindtap='Location'>其他</view>
+    </view>
+  </view>
+</view> 
