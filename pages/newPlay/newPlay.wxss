@@ -5,7 +5,7 @@ page {
   overflow: hidden;
 }
 .scroll-view{
-  height:70vh;
+  height:63vh;
   text-align: center;
  padding:10px 0 ;
  /* margin-top:230rpx; */
@@ -314,7 +314,7 @@ page {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom:160rpx;
   height: 70vh; /* 高度占屏幕70% */
   background-color: #121212; /* 与播放器背景一致 */
   border-top-left-radius: 20rpx;
@@ -399,4 +399,43 @@ page {
   width: 30rpx;
   height: 30rpx;
   margin-left: 10rpx;
+}
+/* 顶部栏 - 优化后的样式（替换原来的.top-bar相关样式） */
+.top-bar {
+  /* 关键：添加状态栏高度适配 */
+  padding-top: var(--status-bar-height);
+  height: calc(var(--status-bar-height) + 120rpx); /* 原有高度120rpx加上状态栏高度 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #121212; /* 与页面背景一致 */
+  box-sizing: border-box; /* 确保padding不会增加总高度 */
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+/* 调整图标位置，使其垂直居中 */
+.back-btn, .more-btn {
+  width: 50rpx;
+  height: 50rpx;
+  tint-color: #fff; /* 确保图标在深色背景上可见 */
+}
+
+/* 标题样式保持不变，确保垂直居中 */
+.title {
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #fff; /* 明确文字颜色 */
+}
+
+/* 可选：给顶部栏添加底部边框，区分内容区域 */
+.top-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1rpx;
+  background-color: rgba(255, 255, 255, 0.1); /* 浅色边框，与深色主题协调 */
 }

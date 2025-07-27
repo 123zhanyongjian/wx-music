@@ -1,37 +1,70 @@
-<!-- index.wxml -->  
-<view class="myinfo-root">  
-    <view class="info">
-        <view class="newListBtn" bindtap="newListBtn" hover-class="none" hover-stop-propagation="false">
-           新建歌单
-        </view>
-          <button style="padding:0" class="avatar"  open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-         <image class="avatar" style="margin:0" src="{{userInfo.avatarUrl}}" mode="aspectFit"></image>  
-         </button>
-         <input class="username" type="nickname" value="{{userInfo.userName}}" bindblur="changeName" bindconfirm="changeName">
-         </input>
-        
-        
-    </view>
-  
-  <view  class="playlist">  
-  <block wx:for="{{playlist}}" >
-    <view class="musicItem"  data-id="{{item.id}}"  bindtap="change">
-      <view style="background-image:url({{item.img}}); border-radius: 10px;" class="cover"></view>
-      <view class="musicMeta">
-        <view class="title">{{item.name}}</view>
+<view class="myinfo-root black-vinyl">  
+  <!-- 顶部背景纹理 -->
+  <view class="bg-texture"></view>
+
+  <!-- 固定的用户信息区 -->
+  <view class="fixed-info">
+    <!-- 用户信息 -->
+    <view class="user-info">
+      <view class="avatar-container">
+        <button class="avatar" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+          <image class="avatar-img" src="{{userInfo.avatarUrl || '../../image/default-avatar.png'}}" mode="aspectFill"></image>  
+          <view class="avatar-ring"></view>
+          <view class="avatar-dot"></view>
+        </button>
       </view>
-    </view>
-  </block>
-  <view wx:if="{{playlist.length===0}}" class="nodata">
-    <image class="" src="../../image/nodata.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload="">
-        
-    </image>
-    <view class="" hover-class="none" hover-stop-propagation="false">
-        歌单列表为空，去<text bindtap="newListBtn">新建</text>一个？
+      <input 
+        class="username" 
+        type="nickname" 
+        value="{{userInfo.userName || '点击设置昵称'}}" 
+        bindblur="changeName" 
+        bindconfirm="changeName"
+      ></input>
     </view>
   </view>
-  </view>  
 
+  <!-- 可滚动的歌单列表区 -->
+  <scroll-view class="scrollable-playlist" scroll-y="true">
+    <view class="playlist">  
+      <view class="playlist-title">
+        <view class="title-decor"></view>
+        <text>我的歌单</text>
+        <view class="title-line"></view>
+      </view>
+
+      <view class="music-grid">
+        <block wx:for="{{playlist}}" wx:key="item.id">
+          <view class="musicItem" data-id="{{item.id}}" bindtap="change">
+            <view class="cover-wrapper">
+              <view class="cover" style="background-image:url({{item.img || '../../image/default-cover.png'}})"></view>
+              <view class="cover-ring"></view>
+              <view class="cover-shine"></view>
+            </view>
+            <view class="musicMeta">
+              <view class="title">{{item.name}}</view>
+              <view class="count">{{item.songIds.length || 0}}首歌曲</view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <view wx:if="{{playlist.length===0}}" class="nodata">
+        <view class="empty-vinyl">
+          <image src="../../image/nodata-vinyl.png" mode="aspectFit"></image>
+          <view class="empty-dot"></view>
+        </view>
+        <view class="empty-text">
+          歌单列表为空，去<text bindtap="newListBtn" class="new-link">新建</text>一个？
+        </view>
+      </view>
+    </view>  
+  </scroll-view>
+
+  <!-- 底部固定悬浮的新建按钮 -->
+  <view class="newListBtn-fixed" bindtap="newListBtn">
+    <image src="../../image/svg/add.svg" class="add-icon-big" />
+  </view>
+
+  <!-- 新建歌单组件 -->
+  <addSongList bind:close="close" bind:newSongList="newSongList" wx:if="{{addSongListFlag}}"/>
 </view>
-
-<addSongList bind:close="close" bind:newSongList="newSongList" wx:if="{{addSongListFlag}}"/>

@@ -1,48 +1,121 @@
-<view class="index-root">
-  <view class="netease-bg">
-    <view class="netease-header">发现音乐</view>
-    <view class="netease-grid">
-      <view class="netease-grid-item" bindtap="onDailyRecommend">
-        <image class="netease-grid-icon" src="../../image/calendar.svg" mode="aspectFit" />
-        <view class="netease-grid-text">每日推荐</view>
+<view class="page ">
+  <!-- 顶部渐变背景（模拟唱片反光） -->
+  <view class="top-bg"></view>
+
+  <!-- 头部标题 -->
+  <view class="header">
+    <text class="header-title">发现音乐</text>
+    <view class="header-decor"></view>
+  </view>
+
+  <!-- 功能导航（黑胶按钮） -->
+  <view class="func-nav">
+    <view class="func-item" bindtap="onDailyRecommend">
+      <view class="func-vinyl" animation="{{vinylAnim1}}">
+        <image src="../../image/calendar.svg" class="func-icon" />
+        <view class="vinyl-ring"></view>
+        <view class="vinyl-dot"></view>
       </view>
-      <view class="netease-grid-item" bindtap="onPlaylist">
-        <image class="netease-grid-icon" src="../../image/playlist.svg" mode="aspectFit" />
-        <view class="netease-grid-text">歌单</view>
-      </view>
-      <view class="netease-grid-item" bindtap="onRank">
-        <image class="netease-grid-icon" src="../../image/trophy.svg" mode="aspectFit" />
-        <view class="netease-grid-text">排行榜</view>
-      </view>
+      <text class="func-text">每日推荐</text>
     </view>
-    <view class="netease-section-title">推荐歌单</view>
-    <scroll-view class="netease-recommend-scroll" scroll-x="true" bindscroll="onRecommendScroll">
+    
+    <view class="func-item" bindtap="onPlaylist">
+      <view class="func-vinyl" animation="{{vinylAnim2}}">
+        <image src="../../image/playlist.svg" class="func-icon" />
+        <view class="vinyl-ring"></view>
+        <view class="vinyl-dot"></view>
+      </view>
+      <text class="func-text">歌单</text>
+    </view>
+    
+    <view class="func-item" bindtap="onRank">
+      <view class="func-vinyl" animation="{{vinylAnim3}}">
+        <image src="../../image/trophy.svg" class="func-icon" />
+        <view class="vinyl-ring"></view>
+        <view class="vinyl-dot"></view>
+      </view>
+      <text class="func-text">排行榜</text>
+    </view>
+  </view>
+
+  <!-- 推荐歌单区（仅左右滑动） -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">推荐歌单</text>
+      <view class="section-line"></view>
+    </view>
+    
+    <!-- 歌单横向滚动容器 -->
+    <scroll-view 
+      class="playlist-scroll" 
+      scroll-x="true" 
+      show-scrollbar="false"
+      scroll-with-animation="true"
+    >
       <block wx:for="{{musicList}}" wx:key="id">
-        <view class="netease-recommend-card" data-data="{{item}}" bindtap="change">
-          <image class="netease-recommend-img" src="{{item.img}}" mode="aspectFill" />
-          <view class="netease-recommend-name">{{item.name}}</view>
-          <view class="netease-recommend-info">{{item.hot ? ('热度 ' + item.hot) : ''}}</view>
+        <view class="playlist-card" data-data="{{item}}" bindtap="change" hover-class="playlist-card-hover">
+          <view class="playlist-vinyl">
+            <image src="{{item.img}}" class="playlist-img" />
+            <view class="playlist-vinyl-ring"></view>
+            <view class="playlist-vinyl-dot"></view>
+          </view>
+          <text class="playlist-name">{{item.name}}</text>
+          <text class="playlist-hot">{{item.hot}}</text>
         </view>
       </block>
     </scroll-view>
-    <view class="netease-section-title">推荐歌曲</view>
-    <view class="netease-song-list">
-      <block wx:for="{{songList}}" wx:for-item="item" wx:for-index="idx" wx:key="id">
-        <view class="netease-song-item {{idx % 2 === 0 ? 'netease-song-item-alt' : ''}}">
-          <view class="netease-song-cover" style="position:relative;">
-            <image src="{{item.cover}}" style="width:100%;height:100%;border-radius:12rpx;" />
-          </view>
-          <view class="netease-song-info">
-            <view class="netease-song-title">{{item.title}}</view>
-            <view class="netease-song-artist">{{item.artist}}</view>
-          </view>
-          <button class="netease-song-play" bindtap="playSong" data-id="{{item.id}}">
-            <image class="netease-song-play-icon" src="../../image/play.svg" />
-          </button>
-          <image class="more" src="../../image/more.png" bindtap="onMore" data-id="{{item.id}}" />
-        </view>
-      </block>
-    </view>
-    <popup wx:if="{{popusShow}}" song="{{songToAdd}}" show="{{popusShow}}" header="添加到歌单" bind:close="onCloseAddSongList" />
   </view>
+
+  <!-- 推荐歌曲区（仅上下滑动） -->
+  <view class="section song-section">
+    <view class="section-header">
+      <text class="section-title">推荐歌曲</text>
+      <view class="section-line"></view>
+    </view>
+    
+    <!-- 歌曲纵向滚动容器 -->
+    <scroll-view 
+      class="song-scroll" 
+      scroll-y="true" 
+      show-scrollbar="false"
+      scroll-with-animation="true"
+    >
+      <view class="song-list">
+        <block wx:for="{{songList}}" wx:for-item="item" wx:for-index="idx" wx:key="id">
+          <view class="song-item" data-id="{{item.id}}" hover-class="song-item-hover">
+            <text class="song-index">{{idx + 1}}</text>
+            
+            <view class="song-vinyl">
+              <image src="{{item.img}}" class="song-img" />
+              <view class="song-vinyl-ring"></view>
+            </view>
+            
+            <view class="song-info">
+              <text class="song-title">{{item.title}}</text>
+              <text class="song-artist">{{item.author}}</text>
+            </view>
+            
+            <button class="song-play" bindtap="playSong" data-song="{{item}}">
+              <image src="../../image/play.svg" class="play-icon" />
+            </button>
+            
+            <image 
+              src="../../image/more.svg" 
+              class="song-more" 
+              bindtap="onMore" 
+              data-id="{{item.id}}"
+            />
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 添加到歌单弹窗 -->
+  <popup 
+    song="{{songToAdd}}" 
+    show="{{popusShow}}" 
+    bind:close="onCloseAddSongList" 
+    header="添加到歌单"
+  ></popup>
 </view>

@@ -1,122 +1,375 @@
-/* 核心修改：去掉bottom:0，添加padding-bottom预留tabBar空间 */
-.main{
-  position: absolute;
-  right: 0;
-  left: 0;
+/* 黑胶主题变量 */
+.black-vinyl {
+  --bg-color: #121212;
+  --card-color: #1a1a1a;
+  --text-primary: #fff;
+  --text-secondary: #888;
+  --accent-color: #9e2a2b;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+}
+
+/* 关键修改：添加全局背景色 */
+.search-root {
+  position: fixed;
   top: 0;
-  /* 去掉 bottom:0（避免覆盖tabBar） */
-  background: #f1f1f1;
-  /* 预留tabBar高度（tabBar通常高50px=100rpx，根据实际调整） */
-  padding-bottom: 100rpx; 
-  /* 避免内容超出时遮挡tabBar */
-  overflow-y: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-color);
+  overflow: hidden;
 }
 
-.footer, .bottom-bar, .newlogs-bottom, .newlogs-footer {
-  bottom: 120rpx !important;
-}
-
-.tabbar-safe-area, .page-root, .main-container, body {
-  padding-bottom: 120rpx;
-  box-sizing: border-box;
-}
-
-.serach{
-  position: relative;
-  padding: 20rpx; /* 增加内边距，避免搜索框贴边 */
-  background: #f1f1f1; /* 与main背景一致，避免突兀 */
-}
-
-.serachimg{
-  /* 修正图片定位：原代码用了全局image样式，这里单独指定 */
+/* 背景纹理 */
+.bg-texture {
   position: absolute;
-  width: 40rpx;
-  height: 40rpx;
-  left: 40rpx; /* 微调left，避免与输入框重叠 */
-  top: 32rpx;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 30rpx 30rpx;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.serachimgs{
+/* 搜索头部 */
+.search-header {
+  position: fixed;
+  top: 120rpx;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  padding: 20rpx 30rpx;
+  box-sizing: border-box;
+  background: linear-gradient(to bottom, rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.7));
+  backdrop-filter: blur(10rpx);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-right: 20rpx;
+}
+
+.back-icon {
   width: 30rpx;
   height: 30rpx;
-  position: absolute;
-  left: 90rpx; /* 调整位置，避免与搜索图标重叠 */
-  top: 36rpx;
-  z-index: 1; /* 确保在输入框上方显示 */
+  tint-color: #fff;
 }
 
-.input{
-  background: white;
-  margin: 25rpx;
-  font-size: 26rpx;
-  border-radius: 14rpx;
-  padding: 15rpx 80rpx; /* 增加上下内边距，让输入框更美观 */
-  width: calc(100% - 50rpx); /* 确保输入框不超出屏幕 */
-}
-
-.ul{
-  width: 100%;
-  /* 去掉max-height，改用内容自然撑开（配合main的overflow-y滚动） */
-}
-
-.li{
-  position: relative;
-  background: white;
+.search-box {
+  flex: 1;
   height: 80rpx;
-  border-bottom: 2rpx solid #f9f9f9;
-  padding-left: 20rpx; /* 增加左内边距，避免内容贴边 */
+  background-color: var(--card-color);
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  position: relative;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.2);
 }
 
-.li image{ /* 修正歌曲列表的图标定位（原代码用了全局image样式，导致继承错误定位） */
+.search-icon {
+  width: 36rpx;
+  height: 36rpx;
+  tint-color: var(--text-secondary);
+  margin-right: 15rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  background: none;
+}
+
+.clear-btn {
   width: 40rpx;
   height: 40rpx;
-  position: absolute;
-  left: 33rpx;
-  top: 20rpx; /* 垂直居中 */
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.li>text{
-  margin-left: 100rpx;
+.clear-icon {
+  width: 28rpx;
+  height: 28rpx;
+  tint-color: var(--text-secondary);
+}
+
+/* 搜索结果区域 */
+.search-result {
+  position: fixed;
+  top: 240rpx;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx 30rpx 160rpx 30rpx;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 1;
+}
+
+/* 搜索提示 */
+.search-tips {
+  margin-bottom: 40rpx;
+}
+
+.search-tips text {
   font-size: 28rpx;
-  line-height: 80rpx;
-  display: inline-block; /* 避免文字换行异常 */
-  max-width: 400rpx; /* 限制宽度，避免挤压MV标签 */
+  color: var(--text-secondary);
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.hot-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+}
+
+.hot-word {
+  padding: 10rpx 25rpx;
+  background-color: var(--card-color);
+  border-radius: 25rpx;
+  font-size: 26rpx;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.hot-word:active {
+  background-color: var(--accent-color);
+  transform: scale(0.95);
+}
+
+/* 通用区块样式 */
+.section {
+  margin-bottom: 40rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 25rpx;
+  text-shadow: var(--text-shadow);
+  display: flex;
+  align-items: center;
+}
+
+.section-title::before {
+  content: '';
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  margin-right: 15rpx;
+}
+
+/* 歌手列表 */
+.singer-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30rpx 20rpx;
+}
+
+.singer-card {
+  width: 160rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.singer-avatar {
+  position: relative;
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 15rpx;
+}
+
+.avatar-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3rpx solid #2d2d2d;
+  z-index: 2;
+}
+
+.avatar-ring {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #222, #1a1a1a);
+  box-shadow: 0 5rpx 15rpx rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.singer-name {
+  font-size: 26rpx;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+/* 歌曲列表 */
+.song-list {
+  background-color: var(--card-color);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.3);
+}
+
+.song-item {
+  display: flex;
+  align-items: center;
+  height: 120rpx;
+  padding: 0 25rpx;
+  border-bottom: 1rpx solid var(--border-color);
+  position: relative;
+  transition: all 0.2s;
+}
+
+.song-item:active {
+  background-color: rgba(158, 42, 43, 0.1);
+}
+
+.song-index {
+  width: 40rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-right: 15rpx;
+}
+
+.song-vinyl {
+  position: relative;
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+}
+
+.song-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3rpx solid #333;
+  z-index: 2;
+}
+
+.song-vinyl-ring {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #222, #1a1a1a);
+  box-shadow: 0 3rpx 8rpx rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.song-info {
+  flex: 1;
+  min-width: 0;
+  margin-right: 20rpx;
+}
+
+.song-title {
+  display: block;
+  font-size: 28rpx;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.mv{
-  /* 修正MV标签定位，避免挤压文字 */
-  float: right;
-  margin-right: 20rpx;
-  margin-top: 25rpx;
-  width: 80rpx;
+.song-artist {
+  display: block;
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  margin-top: 5rpx;
+}
+
+.mv-tag {
+  padding: 5rpx 15rpx;
+  border: 1rpx solid #4a90e2;
+  color: #4a90e2;
+  border-radius: 15rpx;
+  font-size: 22rpx;
+  margin-right: 15rpx;
+}
+
+.play-btn {
+  width: 50rpx;
+  height: 50rpx;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-icon {
+  width: 30rpx;
   height: 30rpx;
-  line-height: 30rpx; /* 垂直居中 */
-  font-size: 24rpx;
-  border: 1rpx solid rgb(20,180,187);
-  color: rgb(20,180,187);
+  tint-color: var(--text-secondary);
 }
 
-.singer{
-  position: relative;
-  border-bottom: 2rpx solid #f1f1f1;
-  height: 110rpx;
-  background: #fff;
-  padding-left: 20rpx; /* 增加左内边距 */
+/* 无结果提示 */
+.empty-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
 }
 
-.haderimg{
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  margin-top: 15rpx; /* 垂直居中 */
+.empty-img {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+  tint-color: var(--text-secondary);
 }
 
-.singername{
-  font-size: 28rpx;
-  position: absolute;
-  top: 35rpx; /* 微调垂直位置 */
-  left: 120rpx;
+.empty-text {
+  font-size: 32rpx;
+  color: var(--text-secondary);
+  margin-bottom: 15rpx;
+}
+.tab-content{
+  padding-top: 60rpx !important;
+}
+.empty-suggest {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  opacity: 0.7;
 }

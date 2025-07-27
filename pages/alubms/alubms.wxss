@@ -1,274 +1,150 @@
-.h3{
-  position: absolute;
-  top: 0;
-  text-align: center;
-  left: 0;right: 0;
+/* 黑胶风格基础变量 */
+.black-vinyl-page {
+  --vinyl-black: #121212; /* 主背景 */
+  --vinyl-darker: #1a1a1a; /* 卡片背景 */
+  --accent-color: #9e2a2b; /* 酒红色强调色 */
+  --text-primary: #fff; /* 主文本 */
+  --text-secondary: #888; /* 次要文本 */
+  --border-color: rgba(255,255,255,0.05); /* 深色边框 */
+  --status-bar-height: constant(safe-area-inset-top);
+  --status-bar-height: env(safe-area-inset-top);
+  --bottom-safe: calc(50px + env(safe-area-inset-bottom));
+  background-color: var(--vinyl-black); /* 整体深色背景 */
+  min-height: 100vh;
+  padding-bottom: var(--bottom-safe); /* 底部安全区 */
 }
-.imgs{
+
+/* 顶部背景（黑胶模糊效果） */
+.imgs {
   position: absolute;
   z-index: 0;
   width: 100%;
-  background-size:cover;
-  background-position: center center;
-  height: 525rpx;
-  filter: blur(40px);
-  
+  height: calc(525rpx + var(--status-bar-height)); /* 高度+状态栏 */
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px); /* 黑胶标志性模糊 */
+  opacity: 0.6; /* 降低亮度 */
 }
-.mains{
-  
+
+/* 半透明遮罩（增强文字可读性） */
+.ng {
+  position: absolute;
+  height: calc(525rpx + var(--status-bar-height)); /* 高度+状态栏 */
+  width: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.9)); /* 渐变遮罩 */
+  z-index: 1;
 }
-.headLog{
+
+/* 左侧专辑封面（黑胶风格） */
+.headLog {
   position: absolute;
   z-index: 10;
-  left:50rpx;
-  top: 50rpx;
- 
+  left: 50rpx;
+  top: calc(50rpx + var(--status-bar-height)); /* 适配状态栏 */
 }
-.singer{
+.headLog>image {
+  height: 260rpx;
+  width: 260rpx; 
+  border-radius: 15px;
+  border: 4rpx solid rgba(255,255,255,0.1); /* 黑胶边框 */
+  box-shadow: 0 8rpx 20rpx rgba(0,0,0,0.5); /* 立体阴影 */
+}
+
+/* 右侧专辑信息（黑胶配色） */
+.singer {
   position: absolute;
   z-index: 10;
-  left:330rpx;
-  top: 50rpx;
-  color: rgb(255, 255, 255,.8);
+  left: 330rpx;
+  top: calc(50rpx + var(--status-bar-height)); /* 适配状态栏 */
+  color: rgba(255,255,255,0.8);
+  max-width: 450rpx; /* 限制宽度，避免溢出 */
 }
-.text{
-  /* margin-top:5px; */
-  padding:10px 10px 10px 0;
-  font-size:24rpx;
-  color: rgb(255, 255, 255,.6);
+.singer>view:first-child {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text-primary); /* 白色专辑名 */
+  margin-bottom: 15rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* 标题过长显示省略号 */
 }
-.headLog>image{
-   height: 260rpx;
-   width: 260rpx; 
-   border-radius: 15px;
-}
-.btn{
-  position: absolute;
-  z-index: 2;
-  top: 300rpx;
-  left: 50%;
-  padding:10rpx;
-  font-size: 32rpx;
-  border-radius:10px; 
-  border:1px solid rgb(227, 187, 56);
-  transform: translate(-50%,-50%);
-  color: rgb(227, 187, 56)
-}
-.btn1{
-  position: absolute;
-  z-index: 2;
-  top: 200rpx;
-  left: 50%;
-  padding:10rpx;
-  font-size: 32rpx;
-  border-radius:10px; 
-  border:1px solid rgb(227, 187, 56);
-  transform: translate(-50%,-50%);
-  color: rgb(227, 187, 56)
-}
-.ng{
-  position: absolute;
- /* z-index: 1; */
-   height: 525rpx;
-  width: 100%;
-  background:rgba(0, 0, 0, .5);
-}
-.h3>image{
-  width: 100%;
-  height: 300rpx;
-}
-.ul{
-  width: 100%;
-  border-radius: 16px;
-  /* background: red !important; */
- 
-}
-.popusShowopen{
-  height:calc(100vh - 525rpx);
-  overflow: hidden
-}
-.li{
-  
-  position: relative;
-  /* background: white; */
-  min-height:100rpx;
-  padding:0 50rpx; 
-  border-bottom: 2rpx solid #f9f9f9;
- 
-}
-.li:nth-child(1){
-  border-radius: 16px;
-  padding-bottom: 20rpx;
-}
-.li>.logo{
-  width: 30rpx;
-  height: 30rpx;
-  position: absolute; 
-  left:33rpx;
-  top: 34rpx;
-}
-.li:nth-of-type(2n-1){
-  background:rgb(250,250,250);
-}
-.scroll-view{
-  position: absolute;
- z-index: 0;
- width: 100%;
- background-size:100% 100%;
- top: 490rpx;
- transform:translateX(0%);  
- transition: all 0.5s ease-in-out; /* 平滑过渡所有属性 */ 
- /* box-shadow: -3px -7px 8px 7px rgba(255, 255, 255); */
- padding-bottom: 20rpx;
-}
-.li>.text{
-  font-size:32rpx;
-  display: flex;
-  align-items: center;
-  padding:20rpx 0;
- height: 100%;
- flex-wrap: wrap;
- overflow: hidden;
-
- width: 70vw;
-  margin-left:20rpx;
-  color: #000 !important;
-  /* line-height: 100rpx; */
-
-  
-}
-.text>.title{
-  width:70vw;
-}
-.text >view{
-  padding-left: 10rpx;
-}
-.text>text{
-  margin-left: 10rpx;
- 
-}
-.active{
-  color: rgb(20,180,187);
-}
-.author{
-  color:#999;
+.release-date {
   font-size: 24rpx;
-  min-width: 20vw;
+  color: var(--text-secondary); /* 灰色发行时间 */
+  margin-bottom: 10rpx;
 }
-.serial{
-  position: absolute;
-}
-.mv{
-  text-align: center;
+.text {
+  padding: 10rpx 0;
   font-size: 24rpx;
-  margin:10rpx auto;
-  width: 80rpx;
-  height: 30rpx;
-  /* display: inline-block; */
-  border :1rpx solid rgb(20,180,187);
-  color: rgb(20,180,187);
+  color: var(--text-secondary);
+  line-height: 1.4;
 }
-.plays{
-  position: absolute;
-  right: 80rpx;
-  top: 15px;
+
+/* 播放全部栏（黑胶风格） */
+.play-all-bar {
+  background-color: var(--vinyl-darker); /* 深色卡片背景 */
+  border-radius: 16px;
+  padding: 20rpx 50rpx;
+  margin-bottom: 15rpx;
+  border-bottom: 1rpx solid var(--border-color);
+}
+.play-icon {
   width: 60rpx;
   height: 60rpx;
-}
-.more{
-  position: absolute;
-  right: 10rpx;
-  top: 15px;
-  width: 60rpx;
-  /* box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);   */
-  border-left: 1px solid #ccc;
-  /* box-shadow: ; */
-  height: 60rpx;
-}
-/* .popusShowopen{
-  bottom: 32vh;
-} */
-.radio{
-  height: 100rpx;
-  line-height: 100rpx;
-  font-size: 36rpx;
-  padding: 10px;
-  color:#333;
-  font-weight: 500;
-  padding: 10px;
-  text-align: center;
-  background-color: red;
-}
-.getData{
-  margin-top:20rpx;
-  text-align: center;
-  font-size: 32rpx;
-  color:#888;
-  font-weight: 400;
-
-}
-.nodata{
- 
-  text-align: center;
-  padding-top: 60rpx;
-}
-.nodata image{
-  width: 100rpx;
-  height: 100rpx;
-}
-.nodata view{
-  margin-top: 20rpx;
-  font-size: 32rpx;
-  color:#aaa
-}
-.nodata text{
- 
-  color:rgb(0, 149, 255)
-}
-.listtop{
-  /* margin-bottom: 10rpx; */
-}
-.musicAndAlbums{
-  display: flex;
-  position: absolute;
-  bottom: -10rpx;
-  left: 0;
-  /* background-color: red; */
-  height: 140rpx;
-  right: 0;
-  color: rgb(255, 255, 255,.8);
-  z-index: 10;
-  justify-content: space-around;
-  
-}
-.musicAndAlbums  image{
-  /* flex:1 */
-  width: 50rpx;
-  height: 50rpx;
+  tint-color: var(--accent-color); /* 酒红色播放图标 */
   vertical-align: middle;
 }
-.musicAndAlbums text{
-  margin-left: 15px;
+.play-text {
+  color: var(--text-primary); /* 白色文字 */
+  font-size: 30rpx;
+  margin-left: 10rpx;
+  vertical-align: middle;
 }
-.active1{
-  transform: translateX(-100%);
-  z-index:999;
-  height: 60vh;
+
+/* 滚动区样式（黑胶风格） */
+.scroll-view {
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  top: calc(490rpx + var(--status-bar-height)); /* 适配状态栏 */
+  background-color: var(--vinyl-black);
+  padding-bottom: var(--bottom-safe); /* 底部安全区（避开TabBar） */
 }
-.active2{
-  transform: translateX(100%);
-  z-index: 999;
-  height: 60vh;
+.ul {
+  width: 100%;
+  border-radius: 16px;
+  padding: 0 24rpx;
+  box-sizing: border-box;
 }
-.alubmsList{
-  display: flex;
-  padding:10px 20px;
+
+/* 歌曲列表项（黑胶风格适配） */
+.li {
+  background-color: var(--vinyl-darker);
+  border-bottom: 1rpx solid var(--border-color);
+  color: var(--text-primary);
 }
-.alubmsList image{
-  height: 180rpx;
-  width: 180rpx;
-  border-radius: 10px;
+.li:nth-of-type(2n-1) {
+  background-color: #1a1a1a; /* 取消浅色交替，统一深色 */
 }
-.alubmsList .title{
-  margin-left: 20px;
+
+/* 歌曲列表组件样式（黑胶适配） */
+.netease-song-item {
+  background-color: var(--vinyl-darker);
+  border-bottom: 1rpx solid var(--border-color);
+}
+.netease-song-title {
+  color: var(--text-primary);
+  max-width: calc(100% - 180rpx); /* 避免遮挡功能区 */
+}
+.netease-song-artist {
+  color: var(--text-secondary);
+}
+.netease-song-play-icon {
+  tint-color: var(--accent-color); /* 播放按钮用主题色 */
+}
+
+/* 滚动容器高度 */
+.popusShowopen {
+  height: calc(100vh - 525rpx - var(--status-bar-height) - var(--bottom-safe));
+  overflow: hidden;
 }

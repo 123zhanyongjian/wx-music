@@ -4,18 +4,11 @@
   left: 0;
   right: 0;
   height: 50px;
-  background-color: #ffffff;
+  background-color: #1a1a1a;
   display: flex;
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.tab-bar-border {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background-color: #e0e0e0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 999;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .tab-bar-item {
@@ -25,30 +18,43 @@
   align-items: center;
   justify-content: center;
   padding: 4px 0;
+  position: relative;
 }
 
+/* 普通图标（只显示默认样式） */
 .tab-bar-icon {
   width: 24px;
   height: 24px;
+  tint-color: #999; /* 固定灰色，不切换颜色 */
 }
 
+/* 文字（只显示默认样式） */
 .tab-bar-text {
   font-size: 10px;
-  color: #888888;
+  color: #999; /* 固定灰色，不切换颜色 */
   margin-top: 2px;
 }
 
-.tab-bar-text.selected {
-  color: #07c160;
-}
-
+/* 中间播放按钮（保留动画，去除选中效果） */
 .play-indicator {
   position: absolute;
-  width: 24px;
-  height: 24px;
-  top: 4px;
+  width: 50px;
+  height: 50px;
+  top: -25px;
   border-radius: 50%;
   overflow: hidden;
+  border: 4px solid #1a1a1a;
+  box-shadow: 0 2px 15px rgba(198, 47, 47, 0.5);
+  z-index: 10;
+}
+
+/* 播放状态动画（保留） */
+.playing {
+  animation: rotate 20s linear infinite;
+  box-shadow: 0 2px 20px rgba(198, 47, 47, 0.7);
+}
+ .paused {
+  animation-play-state: paused;
 }
 
 .play-cover {
@@ -63,10 +69,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  /* background-color: rgba(198, 47, 47, 0.7); */
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.bg{
+  background-color: rgba(198, 47, 47, 0.7)
 }
 
 .bar {
@@ -77,24 +86,40 @@
   border-radius: 1px;
   animation: equalize 1s infinite;
 }
+.bar1 { animation-delay: -0.9s; }
+.bar2 { animation-delay: -0.7s; }
+.bar3 { animation-delay: -0.5s; }
 
-.bar1 {
-  animation-delay: -0.9s;
+/* 中间项布局 */
+.music-tab {
+  justify-content: flex-end;
+  padding-bottom: 8px;
 }
 
-.bar2 {
-  animation-delay: -0.7s;
+/* 动画定义 */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
-
-.bar3 {
-  animation-delay: -0.5s;
-}
-
 @keyframes equalize {
-  0%, 100% {
-    transform: scaleY(0.3);
-  }
-  50% {
-    transform: scaleY(1);
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+/* 安全区适配 */
+@media (env(safe-area-inset-bottom)) {
+  .tab-bar {
+    height: calc(50px + env(safe-area-inset-bottom));
   }
 }
+/* 所有样式保持不变，重点确保封面图显示正确 */
+.play-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 确保图片填满圆形，不变形 */
+  border-radius: 50%; /* 强制圆形显示（避免图片本身不是正方形） */
+}
+.play-indicator.playing {
+  animation: rotate 20s linear infinite; /* 播放时持续旋转 */
+}
+/* 其他样式与上一版一致... */

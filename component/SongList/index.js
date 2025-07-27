@@ -6,10 +6,10 @@ Component({
   },
   methods: {
     onPlay(e) {
-      this.triggerEvent('play', e.currentTarget.dataset.item);
+      this.triggerEvent('play', {song:e.currentTarget.dataset.item});
     },
     onMore(e) {
-      this.triggerEvent('more', e.currentTarget.dataset.item);
+      this.triggerEvent('more', {song:e.currentTarget.dataset.item})
     }
   }
 }); 

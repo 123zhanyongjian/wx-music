@@ -18,10 +18,10 @@ Page({
     logo: '../../image/qqjt.png',
     state: '6',
     itemList: ['立即播放', '下一首播放'],
-    array: ['聚合', 'QQ', '网易云', '千千', '咪咕','酷狗','爱听'],
+    array: ['聚合', 'QQ', '网易云', '千千', '咪咕', '酷狗', '爱听'],
   },
   // 输入监听
-  serachs(e) {
+  onSearchInput(e) {
     const that = this
     wx.hideLoading()
     wx.hideToast()
@@ -32,22 +32,40 @@ Page({
     if (!serach.trim()) {
       that.setData({
         song: [],
-        singer: ''
+        singer: '',
+        singerList: []
       })
       return
     }
 
-    if (serach.length===1) {
+    if (serach.length === 1) {
       that.getData()
-    
-    }else if(serach.length>1){
-      debounce(that.getData, 1000)
+
+    } else if (serach.length > 1) {
+      debounce(that.getData.bind(this), 1000)
     }
 
 
   },
-  getData( serach = this.data.serach){
+  fillSearch(e) {
+    this.setData({
+      serach: e.currentTarget.dataset.word
+    })
+    this.getData()
+  },
+  goToSingerDetail(e) {
+    const singer = e.currentTarget.dataset.singer;
+    app.data.singer = { ...singer, avatar: singer.img };
+    app.data.avatar = singer.img
+    console.log(singer.id)
+    wx.navigateTo({
+      url: "/pages/singerdetails/singerdetails?id=" + singer.id
+    });
+  },
+  getData() {
     const that = this
+    console.log(that, 'that')
+    const serach = that.data.serach
     if (!serach.trim()) {
       that.setData({
         song: [],
@@ -55,7 +73,7 @@ Page({
       })
       return
     }
-    if(that.data.state==='3'){
+    if (that.data.state === '3') {
       wx.showLoading({
         title: '加载中',
       })
@@ -65,17 +83,17 @@ Page({
           wx.hideLoading();
           // console.log(res.data);
           //数据处理
-          let arr=[];
-          res.data.data.map((item,index,ite)=>{
-            if(ite.length>0){
-              let obj={}
-              obj.title=item.name,
-              obj.author = item.singername;
-              obj.pic ='http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
-              // obj.src = `https://music.163.com/song/media/outer/url?id=${item.id}.mp3`,
-              obj.mvid=item.mvid
-              obj.id=item.hash
-              obj.mId=2 // 表示 gaiId的资源
+          let arr = [];
+          res.data.data.map((item, index, ite) => {
+            if (ite.length > 0) {
+              let obj = {}
+              obj.title = item.name,
+                obj.author = item.singername;
+              obj.pic = 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
+                // obj.src = `https://music.163.com/song/media/outer/url?id=${item.id}.mp3`,
+                obj.mvid = item.mvid
+              obj.id = item.hash
+              obj.mId = 2 // 表示 gaiId的资源
               arr.push(obj)
             }
             return arr;
@@ -83,7 +101,7 @@ Page({
           // console.log(res.data.result.songs)
           that.setData({
             song: arr
-  
+
           })
         }
       })
@@ -92,39 +110,40 @@ Page({
       return
     }
 
-    if(that.data.state === '6'){
-        // 爱听音乐
-        wx.showLoading({
-          title: '加载中',
-        })
-        request({
-          url:app.host+`/musicList?name=${serach}`
-        })
-        .then(res=>{
+    if (that.data.state === '6') {
+      // 爱听音乐
+      wx.showLoading({
+        title: '加载中',
+      })
+      request({
+        url: app.host + `/serach?name=${serach}`
+      })
+        .then(res => {
           wx.hideLoading()
-          if(res.data.code===200){
+          if (res.data.code === 200) {
             that.setData({
-              song:res.data.data?.data
+              song: res.data.data?.data,
+              singerList: res.data.data?.singer
             })
             return
           }
-        
+
           setTimeout(() => {
             wx.showToast({
-              title:res.data.message,
-              icon:'error'
+              title: res.data.message,
+              icon: 'error'
             })
           }, 200);
-        },err=>{
+        }, err => {
           wx.hideLoading()
           setTimeout(() => {
             wx.showToast({
-              title:err.message,
-              icon:'error'
+              title: err.message,
+              icon: 'error'
             })
           }, 200);
-        }) 
-        return
+        })
+      return
     }
 
     if (that.data.state !== '0') {
@@ -132,7 +151,7 @@ Page({
         title: '加载中',
       })
       request({
-        url: app.host+'/getSongList',
+        url: app.host + '/getSongList',
         method: 'post',
         data: {
           input: serach,
@@ -141,16 +160,16 @@ Page({
           page: 1,
 
         },
-        
+
       })
         .then(res => {
           setTimeout(() => {
             wx.hideLoading();
           }, 300);
-          if(!res.data.data){
+          if (!res.data.data) {
             wx.showToast({
-              title:'查询失败',
-              icon:'error'
+              title: '查询失败',
+              icon: 'error'
             })
             return
           }
@@ -200,142 +219,28 @@ Page({
   },
   //播放音乐
   pay(e) {
-    var that = this;
-    var flag
-    var item = e.currentTarget.dataset.item;
-    const index = e.currentTarget.dataset.index
-    if(this.data.state==='3'){
-      app.data.song = item;
-      wx.showLoading({
-        title: '加载中',
-      })
-      wx.request({
-        url: 'https://dataiqs.com/api/kgmusic/' + '?msg=' + this.data.serach+'&type=song&n='+index,
-        success: function (res) {
-        
-          const {data} =  res.data
-          if((data.song_url&&data.song_url.indexOf('付费')!==-1)||!data.song_url){
-            
-            item.src = data.mv_url;
-            item.isMv = true
-            app.data.paythis.setData({
-              Mvsrc: data.mv_url
-            })
-          }else{
-            item.src = data.song_url
-          }
-          wx.hideLoading();
-         
-          if(!item.src){
-            wx.showToast({
-              title: '无法播放',
-              icon:'error'
-            })
-          
-            return
-          }
-          wx.switchTab({
-            url: "../../pages/newPlay/newPlay",
-            success: function () {
-              app.data.paythis.setData({
-                value: 0
-              })
-              time.newAddSong(app.data);
-              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-             
-
-              that.setData({
-                song: []
-              })
- 
-            }
- 
-          })
-        }})
-      return
+    var song = e.currentTarget.dataset.song;
+    // console.log(e)
+    // 判断当前播放歌曲
+    if (app.data.song && app.data.song.id === song.id) {
+      wx.showToast({
+        title: '该歌曲正在播放中',
+        icon: 'none'
+      });
+      return;
     }
-    if(this.data.state==='6'){
-      app.data.song = item;
-      wx.showLoading({
-        title: '加载中',
-      })
-      api.atSong(item.id,(e)=>{
-        wx.hideLoading()
-        if(e.stauts){
-          item.src = e.src
-          item.pic = e.pic
-          item.lrc  =e.lrc
-          app.data.song = item;
-          wx.switchTab({
-            url: "../../pages/newPlay/newPlay",
-            success: function () {
-              app.data.paythis.setData({
-                value: 0
-              })
-              time.newAddSong(app.data);
-              time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-              time.Lrcget(app.data.paythis, app.data.song)
-      
-              that.setData({
-                song: []
-              })
-      
-            }
-      
-          })
-        }
-    })
-      return
-    }
-    if(this.data.state==='0'){
-      api.getSongSrc(item.id,({src,stauts})=>{
-          if(stauts){
-            item.src = src
-            app.data.song = item;
-            wx.switchTab({
-              url: "../../pages/newPlay/newPlay",
-              success: function () {
-                app.data.paythis.setData({
-                  value: 0
-                })
-                time.newAddSong(app.data);
-                time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-                time.Lrcget(app.data.paythis, app.data.song)
-        
-                that.setData({
-                  song: []
-                })
-        
-              }
-        
-            })
-          }
-      })
-    }else{
-
-    
- 
-
-    app.data.song = item;
+    app.data.song = song;
     wx.switchTab({
       url: "../../pages/newPlay/newPlay",
       success: function () {
         app.data.paythis.setData({
           value: 0
         })
-        time.newAddSong(app.data);
-        time.pay(app.data.paythis, app.innerAudioContext, app.data.song);
-        time.Lrcget(app.data.paythis, app.data.song)
-
-        that.setData({
-          song: []
-        })
-
+        // time.newAddSong(app.data);
+        time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
       }
-
     })
-  }
-
+    return
   },
   //切换搜索模式
   bindPickerChange(e) {

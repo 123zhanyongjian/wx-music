@@ -1,52 +1,75 @@
-<!-- Popup.wxml -->  
 <wxs src="../../pages/singerdetails/singerdetails.wxs" module="module"></wxs>
 
-<view class="mains" catchtap="cancel" scroll-x="false">
+<!-- 遮罩层（始终存在，用hidden控制可见性） -->
+<view 
+  class="mains {{show ? 'mains-show' : 'mains-hide'}}" 
+  bindtap="cancel" 
+  
+>
+  <!-- 弹窗容器 -->
+  <view class="container {{show ? 'container-show' : 'container-hide'}}">
+    <!-- 头部标题区 -->
+    <view class="popup-header">
+      <text>{{header}}</text>
+      <view class="header-line"></view>
+    </view>
 
-  <view catchtap="stops" class="{{show?'opens1':'closes1'}}, container" >  
+    <!-- 操作按钮 -->
+    <view class="popup-btns">
+      <view bindtap="cancel" class="btn cancel-btn">取消</view>
+      <view bindtap="confirm" class="btn confirm-btn">确认</view>
+    </view>
 
-<animation animation="{{animationData}}">
-  <view class="popup-header">{{header}}</view>  
-  <view bindtap="confirm" class="confirm">确认</view>  
-      <view bindtap="cancel" class="cancel">取消</view>  
-<view class="popup-wrapper" >  
-  <view class="popup-content">  
-   
-    <view bindtap="stop" class="popup-body">
-      <addSongList bind:close="close" bind:newSongList="newSongList" wx:if="{{addSongListFlag}}"/>  
+    <!-- 内容区 -->
+    <view class="popup-wrapper">
+      <view class="popup-content">
+        <view class="popup-body">
+          <!-- 新增歌单组件 -->
+          <addSongList bind:close="close" bind:newSongList="newSongList" wx:if="{{addSongListFlag}}"/>  
 
-         <!-- 获取歌单列表 -->
-    <view  bindchange="">
-          <view class="" style="text-align:center;font-size:24rpx" hover-class="none" hover-stop-propagation="false">
-            {{song.title}}-{{module.substrins(song.singer,10)||module.substrins(song.author,10)}}
+          <!-- 当前歌曲信息 -->
+          <view class="current-song">
+            <text class="song-title">{{song.title}}</text>
+            <text class="song-artist">— {{module.substrins(song.singer,10)||module.substrins(song.author,10)}}</text>
           </view>
-        <scroll-view   scroll-y="{{popusShow?false:true}}" class="{{popusShow?'popusShowopen':''}} ul" >
 
-        <view wx:if="{{playlist.length}}" class="ui" hover-class="none" hover-stop-propagation="false">
-          <view style="background:{{changeId === item.id?'rgb(233,242,254)':''}};color:{{changeId === item.id?'#007aff':''}}" data-id = "{{item.id}}" catchtap="clickList" class="radio" wx:for="{{playlist}}" :key="item.id">
-        {{item.name}}
-          
+          <!-- 歌单列表滚动区 -->
+          <scroll-view scroll-y="true" class="ul">
+            <!-- 歌单列表 -->
+            <view wx:if="{{playlist.length}}" class="playlist-container">
+              <view 
+                class="playlist-item {{changeId === item.id ? 'playlist-item-selected' : ''}}"
+                data-id="{{item.id}}" 
+                catchtap="clickList" 
+                wx:for="{{playlist}}" 
+                wx:key="item.id"
+              >
+                <text class="item-name">{{item.name}}</text>
+                <view wx:if="{{changeId === item.id}}" class="selected-icon">
+                  <view class="icon-dot"></view>
+                </view>
+              </view>
+
+              <!-- 加载更多提示 -->
+              <view class="load-more">
+                {{playlist.length===count?'没有更多了':'加载更多'}}
+                <text bindtap="newListBtn" class="new-btn" wx:if="{{playlist.length===count}}">新建</text>
+                <text wx:if="{{playlist.length===count}}">一个？</text>
+              </view>
+            </view>
+
+            <!-- 空状态 -->
+            <view wx:if="{{playlist.length===0}}" class="empty-state">
+              <image src="../../image/nodata.svg" class="empty-img" />
+              <view class="empty-text">
+                歌单列表为空，去
+                <text bindtap="newListBtn" class="new-btn">新建</text>
+                一个？
+              </view>
+            </view>
+          </scroll-view>
         </view>
-        <view class="getData">
-          {{playlist.length===count?'没有更多了':'加载更多'}}(<text catchtap="newListBtn" style=" color:rgb(0, 149, 255)" wx:if="{{playlist.length===count}}">新建</text>一个？)
-        </view>
-        </view>
-        </scroll-view>
-        <view wx:if="{{playlist.length===0}}" class="nodata">
-    <image class="" src="../../image/nodata.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload="">
-        
-    </image>
-    <view class="" hover-class="none" hover-stop-propagation="false">
-        歌单列表为空，去<text bindtap="newListBtn">新建</text>一个？
+      </view>
     </view>
   </view>
-    </view>
-    
-    
-    </view>  
-     
-    </view>  
-  </view>  
-</animation>
-</view>
 </view>

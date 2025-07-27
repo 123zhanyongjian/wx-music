@@ -1,37 +1,89 @@
 <view class="newsinger-root">
-  <!-- 顶部栏目 -->
-  <scroll-view class="singer-tabs" scroll-x="true">
-    <block wx:for="{{tabs}}" wx:key="name">
-      <view
-        class="singer-tab {{currentTab === index ? 'active' : ''}}"
-        data-index="{{index}}"
-        bindtap="onTabChange"
-      >
-        {{item}}
-      </view>
-    </block>
-  </scroll-view>
+  <!-- 1. 状态栏占位 -->
+  <view class="status-bar-placeholder"></view>
 
-  <!-- 歌手列表分组 -->
-  <scroll-view scroll-y scroll-with-animation scroll-into-view="line{{title}}" class="singer-scroll">
+  <!-- 2. 胶囊区域占位（动态高度） -->
+  <view class="capsule-placeholder" style="height: {{capsuleHeight}}px;"></view>
+
+  <!-- 3. 歌手类型选择（可完全滑出屏幕） -->
+  <view class="singer-top-bar">
+    <scroll-view class="singer-tabs" scroll-x="true" show-scrollbar="false">
+      <block wx:for="{{tabs}}" wx:key="name">
+        <view
+          class="singer-tab {{currentTab === index ? 'active' : ''}}"
+          data-index="{{index}}"
+          bindtap="onTabChange"
+        >
+          {{item}}
+          <view class="tab-active-line" wx:if="{{currentTab === index}}"></view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- 4. 歌手列表分组（动态高度） -->
+  <scroll-view 
+    scroll-y 
+    scroll-with-animation 
+    scroll-into-view="{{scrollIntoView}}" 
+    class="singer-scroll"
+    style="height: {{singerScrollHeight}}px;"
+  >
+    <!-- 空状态 -->
+    <view wx:if="{{singer.length === 0}}" class="empty-placeholder">
+      <view class="empty-vinyl">
+        <view class="empty-vinyl-inner"></view>
+      </view>
+      <text class="empty-text">暂无歌手数据</text>
+    </view>
+
+    <!-- 歌手分组列表 -->
     <view wx:for="{{singer}}" wx:key="{{index}}" class='singerlist'>
-      <view class='sort' id="line{{item.title}}">{{item.title}}</view>
-      <view class='singer' wx:for="{{item.items}}" wx:for-item="ite" wx:key="{{idx}}" data-singer="{{ite}}" bindtap='details'>
-      <image class="haderimg" src="https://zhanyj.cn/api/resource?url=http://img2.kuwo.cn/star/starheads/300/s4s30/27/2202826756.png"></image>
-        <image binderror="onImageError" src="{{ite.img}}" class="haderimg"></image>
-        <view class='singername'>{{ite.name}}</view>
+      <view class='sort' id="line{{item.title}}">
+        <view class="sort-line"></view>
+        <text class="sort-text">{{item.title}}</text>
+        <view class="sort-line"></view>
+      </view>
+
+      <view 
+        class='singer' 
+        wx:for="{{item.items}}" 
+        wx:for-item="ite" 
+        wx:key="{{ite.id}}" 
+        data-singer="{{ite}}" 
+        bindtap='details'
+        hover-class="singer-hover"
+      >
+        <view class="avatar-vinyl">
+          <image 
+            binderror="onImageError" 
+            src="{{ite.img || '/images/default-avatar.png'}}" 
+            class="avatar"
+            mode="widthFix"
+          ></image>
+          <view class="avatar-vinyl-border"></view>
+          <view class="avatar-center"></view>
+        </view>
+        
+        <view class='singer-info'>
+          <view class='singername'>{{ite.name}}</view>
+          <view class='singer-work' wx:if="{{ite.work}}">{{ite.work}}</view>
+        </view>
       </view>
     </view>
   </scroll-view>
 
-  <!-- 右侧字母导航 -->
-  <view class='dw'>
+  <!-- 5. 右侧字母导航（动态位置） -->
+  <view 
+    class='dw'
+    style="top: {{dwTop}}px; bottom: 50rpx;"
+  >
     <view class='dw1'>
-      <view data-id="热门" bindtap='Location'>热门</view>
+      <view data-id="热门" bindtap='Location' class="nav-item {{currentNav === '热门' ? 'nav-active' : ''}}">热门</view>
       <block wx:for="{{azList}}" wx:key="az">
-        <view data-id="{{item}}" bindtap='Location'>{{item}}</view>
+        <view data-id="{{item}}" bindtap='Location' class="nav-item {{currentNav === item ? 'nav-active' : ''}}">{{item}}</view>
       </block>
-      <view data-id="其他" bindtap='Location'>其他</view>
+      <view data-id="其他" bindtap='Location' class="nav-item {{currentNav === '其他' ? 'nav-active' : ''}}">其他</view>
     </view>
   </view>
-</view> 
+</view>

@@ -1,48 +1,49 @@
 <wxs src="../singerdetails/singerdetails.wxs" module="module"></wxs>
-<view class='mains'>
-    <view >
-      <image class='imgs' style="background-image:url({{image}})"></image>
-      <view class='ng'>
-        <view class="headLog">
-      <image src="{{image}}" />
+<view class='mains black-vinyl-page'> <!-- 新增黑胶风格容器 -->
+  <view>
+    <!-- 顶部背景（黑胶模糊效果） -->
+    <image class='imgs' style="background-image:url({{image}})"></image>
+    
+    <!-- 专辑信息区 -->
+    <view class='ng'>
+      <view class="headLog">
+        <image src="{{image}}" />
       </view>
       <view class="singer">
-        <view  hover-class="none" hover-stop-propagation="false">
-          {{name}}
-        </view>
-        <view style="margin-top: 10px;font-size: 24rpx;" hover-class="none" hover-stop-propagation="false">
-          发行时间：{{date}}
-        </view>
-        <view class="text" catchtap="openSingerInfo">
-        {{module.substrins(alumbsinfo,80)}}
-        </view>
+        <view hover-class="none" hover-stop-propagation="false">{{name}}</view>
+        <view class="release-date">发行时间：{{date}}</view>
+        <view class="text" catchtap="openSingerInfo">{{module.substrins(alumbsinfo,80)}}</view>
       </view>
-    
-      </view>
-   
     </view>
-    <scroll-view  scroll-y="{{popusShow?false:true}}" class="{{[popusShow?'popusShowopen':'',type===2?'active1':'']}} ul scroll-view" >
-     <view class="li">
-             <view class="logo listtop" style="width:100%;left: 20rpx;" bindtap='whole'>
-              <image  bindtap='pay'  style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-              <text>播放全部</text>
-             </view>
-     </view>
-    <view class='li' wx:for="{{songs}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" bindlongpress="showActionSheet">
-       <image class="logo" wx:if="{{!(item.id===paydata.id&&!paydata.state)}}" src="../../image/mm.png"></image>
-        <image class="logo"  wx:else style="width:50rpx;height:50rpx;top:24rpx;left:24rpx"  src="../../image/music.gif"></image>
+  </view>
 
-      <view data-item='{{item}}' class='text' bindtap='pay'>
-        <!-- <text class="{{index<3?'active':''}} serial">{{index+1}}</text> -->
-        <view class="title">{{item.title}}</view>
-        <view class="author">{{module.substrins(item.singer,10)||module.substrins(item.author,10)}}</view>          
+  <!-- 歌曲列表滚动区 -->
+  <scroll-view  
+    scroll-y="{{popusShow?false:true}}" 
+    class="{{[popusShow?'popusShowopen':'',type===2?'active1':'']}} ul scroll-view"
+  >
+    <!-- 播放全部栏 -->
+    <view class="li play-all-bar">
+      <view class="logo listtop" bindtap='whole'>
+        <image 
+          bindtap='pay'  
+          src="../../image/plays.png" 
+          class="play-icon"
+        />
+        <text class="play-text">播放全部</text>
       </view>
-        <image data-item='{{item}}' bindtap='pay' class="plays" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-        <image data-item='{{item}}' bindtap='more' class="more" src="../../image/more.png"></image>
     </view>
-    <popup song="{{song}}"  bind:close="popusShowChange" show="{{popusShow}}"  wx:if="{{popusShow}}" header="添加到歌单" >
- 
-</popup>
-    </scroll-view>
-   
+    
+    <!-- 歌曲列表组件 -->
+    <song-list list="{{songs}}" bind:play="pay" bind:more="more" />
+    
+    <!-- 弹窗组件 -->
+    <popup 
+      song="{{song}}"  
+      bind:close="popusShowChange" 
+      show="{{popusShow}}"  
+      wx:if="{{popusShow}}" 
+      header="添加到歌单" 
+    ></popup>
+  </scroll-view>
 </view>

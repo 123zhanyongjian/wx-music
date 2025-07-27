@@ -2,8 +2,8 @@
 //获取应用实例
 const app = getApp();
 const api = require('../../utils/api')
-const time=require('../../utils/time.js')
-const {img} = require('../../utils/loveBg')
+const time = require('../../utils/time.js')
+const { img } = require('../../utils/loveBg')
 const request = time.Promisify(wx.request)
 const utils = require('../../utils/util.js')
 
@@ -14,55 +14,32 @@ function fixImgUrl(url) {
 
 Page({
   data: {
-    total:0,
-    pageSize:10,
+    total: 0,
+    pageSize: 10,
     imgUrl: '',
     title: '',
     name: '',
-    myLovesrc:img,
-    pageNum:1,
+    myLovesrc: img,
+    pageNum: 1,
     musicList: [
       {
-        src:app.host+'/kw.jpg',
-        name:'酷我热歌榜（每天更新）',
-        id:'kw',
-        img:app.host+'/kw.jpg',
-        noRefresh:true
+        src: app.host + '/kw.jpg',
+        name: '酷我热歌榜（每天更新）',
+        id: 'kw',
+        img: app.host + '/kw.jpg',
+        noRefresh: true
       },
       // {
       //   src: 'https://p1.music.126.net/sby9mSmSydldzT0fsEE6MQ==/109951167965618537.jpg',
       //   name: '周杰伦',
       //   id:'jay'
       // },
-      
-    
+
+
     ],
     currentTab: 0, // 当前tab索引
     songList: [
-      {
-        id: '1',
-        cover: '../../image/music.png',
-        title: '起风了',
-        artist: '买辣椒也用券'
-      },
-      {
-        id: '2',
-        cover: '../../image/music1).png',
-        title: '晴天',
-        artist: '周杰伦'
-      },
-      {
-        id: '3',
-        cover: '../../image/qqmusic.jpg',
-        title: '演员',
-        artist: '薛之谦'
-      },
-      {
-        id: '4',
-        cover: '../../image/wangyi.jpg',
-        title: '夜曲',
-        artist: '周杰伦'
-      }
+    
     ],
     moreActions: ['立即播放', '下一首播放', '添加到歌单'],
     moreSongId: null,
@@ -70,34 +47,53 @@ Page({
     songToAdd: null,
   },
   //事件处理函数
- //播放音乐
+  //播放音乐
 
   //跳转到详情
-  change(e){
+  change(e) {
     // console.log(e)
     var id = e.currentTarget.dataset.data.id;
     var src = e.currentTarget.dataset.data.img
     // console.log(e)
     wx.navigateTo({
-      url:"../../pages/details/details?id="+id+'&&src='+src
+      url: "../../pages/details/details?id=" + id + '&&src=' + src
     })
   },
-  change1(){
+  async getRecommend(id,page,size) {
+    const res = await request({
+      url: app.host + '/top', data: {
+        id,
+        page,
+        size
+      }
+    })
+    return res
+  },
+ async getRecommendSong(){
+  const res = await this.getRecommend('93',1,10)
+  console.log(res.data.data.arr.map(k=>({...k,img:app.host+'/resource?url='+k.image})))
+  this.setData({
+    songList:res.data.data.arr.map(k=>({...k,img:app.host+'/resource?url='+k.image}))
+  })
+  },
+
+
+  change1() {
     wx.navigateTo({
-      url:"../../pages/details/details?id=my&&src="+this.data.myLovesrc
+      url: "../../pages/details/details?id=my&&src=" + this.data.myLovesrc
     })
   },
-  async getRecommen(page=this.data.pageNum){
-    if(page===1){
+  async getRecommen(page = this.data.pageNum) {
+    if (page === 1) {
       this.setData({
-       musicList: [
+        musicList: [
           {
-            src:app.host+'/kw.jpg',
-            name:'酷我热歌榜（每天更新）',
-            id:'kw',
-            img:app.host+'/kw.jpg',
-            noRefresh:true
-          },  
+            src: app.host + '/kw.jpg',
+            name: '酷我热歌榜（每天更新）',
+            id: 'kw',
+            img: app.host + '/kw.jpg',
+            noRefresh: true
+          },
         ]
       })
     }
@@ -106,38 +102,39 @@ Page({
 
     })
     // console.log(4444)
-    try{
+    try {
       const res = await request({
-        url:app.host+'/recommen?page='+page,
+        url: app.host + '/recommen?page=' + page,
       })
       wx.hideLoading()
       // 处理图片url
       let list = res.data.data?.data.map(item => {
-        let img = '/'+fixImgUrl(item.img);
+        let img = '/' + fixImgUrl(item.img);
         return {
           ...item,
-          img: app.host +  img
+          img: app.host + img
         };
       });
       this.setData({
-        musicList:this.data.musicList.concat(list),
-        total:res.data.data?.total
+        musicList: this.data.musicList.concat(list),
+        total: res.data.data?.total
       })
-    }catch(err){
-          wx.hideLoading();
-      
-     
-    setTimeout(() => {
-      wx.showToast({
-        title: err.errMsg,
-        icon:'none'
-      })
-    }, 2000);
+    } catch (err) {
+      wx.hideLoading();
+
+
+      setTimeout(() => {
+        wx.showToast({
+          title: err.errMsg,
+          icon: 'none'
+        })
+      }, 2000);
     }
   },
   onLoad: function () {
     // console.log(this.getRecommen)
- this.getRecommen()
+    this.getRecommen()
+    this.getRecommendSong()
     // api.getJaySongList((res)=>{
     //   that.setData({
     //     [`musicList[1].img`]:res[0].pic||'https://p1.music.126.net/sby9mSmSydldzT0fsEE6MQ==/109951167965618537.jpg'
@@ -156,10 +153,10 @@ Page({
     //     wx.hideLoading();
     //   }
     // })
-    
+
   },
-  getUserInfo: function(e) {
-  
+  getUserInfo: function (e) {
+
   },
   /*
   onReachBottom(){
@@ -184,8 +181,27 @@ Page({
     wx.showToast({ title: '排行榜功能开发中', icon: 'none' });
   },
   playSong(e) {
-    const id = e.currentTarget.dataset.id;
-    wx.showToast({ title: '播放歌曲ID：' + id, icon: 'none' });
+    const song = e.currentTarget.dataset.song;
+
+    // wx.showToast({ title: '播放歌曲ID：' + id, icon: 'none' });
+          if (app.data.song && app.data.song.id === song.id) {
+            wx.showToast({
+              title: '该歌曲正在播放中',
+              icon: 'none'
+            });
+            return;
+          }
+          app.data.song = song;
+          wx.switchTab({
+            url: "../../pages/newPlay/newPlay",
+            success: function () {
+              app.data.paythis.setData({
+                value: 0
+              })
+              // time.newAddSong(app.data);
+              time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
+            }
+          })
   },
   onMore(e) {
     const id = e.currentTarget.dataset.id;
@@ -227,7 +243,7 @@ Page({
       if (rect) {
         const clientWidth = rect.width;
         if (scrollLeft + clientWidth >= scrollWidth - 10) {
-        utils.changePage.call(this,'getRecommen')
+          utils.changePage.call(this, 'getRecommen')
         }
       }
     }).exec();

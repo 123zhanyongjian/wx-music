@@ -1,5 +1,6 @@
 {
-  "navigationBarTitleText": "Modern播放器",
+  "navigationBarTitleText": "",
   "backgroundColor": "#18171c",
-  "usingComponents": {}
+  "usingComponents": {},
+  "navigationStyle": "custom" 
 } 

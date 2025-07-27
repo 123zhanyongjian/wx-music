@@ -1,91 +1,223 @@
-.tabbar-safe-area, .page-root, .main-container, body {
-  padding-bottom: 120rpx;
-  box-sizing: border-box;
+/* 基础样式 */
+.newsinger-root {
+  background-color: #121212;
+  color: #fff;
+  min-height: 100vh;
+  padding-bottom: 20rpx;
 }
-.footer, .bottom-bar, .newsinger-bottom, .newsinger-footer {
-  bottom: 120rpx !important;
+
+/* 状态栏占位（高度由系统变量控制） */
+.status-bar-placeholder {
+  height: var(--status-bar-height);
+  width: 100%;
+  background-color: #121212;
 }
+
+/* 胶囊区域占位（高度由JS动态控制，WXSS仅写固定样式） */
+.capsule-placeholder {
+  width: 100%;
+  background-color: #121212;
+}
+
+/* 歌手类型选择栏 */
+.singer-top-bar {
+  padding: 0;
+  background-color: #121212;
+  padding-bottom: 10rpx;
+}
+
+/* 标签栏（允许完全滑出屏幕） */
 .singer-tabs {
-  display: flex;
-  flex-direction: row;
-  padding: 24rpx 0 16rpx 0;
-  background: #fff;
+  height: 120rpx;
+  line-height: 120rpx;
   white-space: nowrap;
+  width: 77vw !important;
+  box-sizing: border-box;
   overflow-x: auto;
+  padding: 0; /* 移除内边距，允许标签滑出 */
+  margin: 0 30rpx; /* 用margin保留边距 */
 }
+
 .singer-tab {
   display: inline-block;
-  padding: 12rpx 32rpx;
-  margin-right: 18rpx;
-  border-radius: 32rpx;
-  font-size: 28rpx;
-  color: #222;
-  background: #fff;
-  transition: background 0.2s, color 0.2s;
+  margin: 0 25rpx;
+  font-size: 30rpx;
+  position: relative;
+  color: #aaa;
+  min-width: 80rpx; /* 确保标签宽度足够 */
+  text-align: center;
 }
+
 .singer-tab.active {
-  background: #ffe066;
-  color: #222;
-  font-weight: bold;
+  color: #fff;
 }
-.mains{
-  background: #fff;
+
+.tab-active-line {
+  width: 40rpx;
+  height: 6rpx;
+  background-color: #c62f2f;
+  border-radius: 3rpx;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
-.singerlist {
-  position: relative;
-}
+
+/* 歌手列表滚动区（高度由JS动态控制） */
 .singer-scroll {
-  position: absolute;
-  top: 120rpx;
-  bottom: 0rpx;
-  left: 0;
-  right: 0;
+  padding: 0 30rpx;
+  overflow: hidden;
+  box-sizing: border-box;
 }
-.sort {
-  height: 100rpx;
-  line-height: 100rpx;
-  font-size: 32rpx;
-  background: #eee;
-  padding: 0 20rpx;
+
+/* 空状态样式 */
+.empty-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400rpx;
 }
-.singer {
-  position: relative;
-  border-bottom: 2rpx solid #f1f1f1;
-  height: 80rpx;
-  background: #fff;
-  margin-top: 30rpx;
+
+.empty-vinyl {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background-color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30rpx;
 }
-.haderimg{
+
+.empty-vinyl-inner {
   width: 80rpx;
-  position: absolute;
-  top: -10rpx;
-  left: 20rpx;
   height: 80rpx;
   border-radius: 50%;
+  background-color: #333;
 }
-.singername{
+
+.empty-text {
+  color: #999;
   font-size: 28rpx;
-  position: absolute;
-  top:10rpx;
-  left: 120rpx;
 }
-.dw{
-  position: fixed;
-  right:0;
-  width: 100rpx;
-  float: right;
-  text-align: right;
+
+/* 分组标题样式 */
+.sort {
+  display: flex;
+  align-items: center;
+  margin: 40rpx 0 20rpx;
 }
-.dw>.dw1{
+
+.sort-line {
+  flex: 1;
+  height: 1rpx;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sort-text {
+  padding: 0 20rpx;
+  font-size: 30rpx;
+  color: #c62f2f;
+  font-weight: 500;
+}
+
+/* 歌手项样式 */
+.singer {
+  display: flex;
+  align-items: center;
+  padding: 25rpx 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.singer-hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 头像黑胶样式 */
+.avatar-vinyl {
   position: relative;
-  z-index: 9999;
-  right: 20rpx;
-  height: 30rpx;
-  color: #aaa;
-  top: 100rpx;
-  font-size: 26rpx;
-  margin-top: 10rpx;
+  width: 120rpx;
+  height: 120rpx;
 }
-.dw>.dw1>view{
-  margin-top: 6rpx;
-} 
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 5rpx solid #333;
+}
+
+.avatar-vinyl-border {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background-color: #222;
+  box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.5);
+}
+
+.avatar-center {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background-color: #121212;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* 歌手信息 */
+.singer-info {
+  margin-left: 30rpx;
+  flex: 1;
+}
+
+.singername {
+  font-size: 30rpx;
+  color: #fff;
+  line-height: 40rpx;
+}
+
+.singer-work {
+  font-size: 24rpx;
+  color: #aaa;
+  line-height: 30rpx;
+}
+
+/* 右侧字母导航（固定样式） */
+.dw {
+  position: fixed;
+  right: 10rpx;
+  z-index: 10;
+}
+
+.dw1 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.nav-item {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+  border-radius: 50%;
+}
+
+.nav-item.nav-active {
+  color: #c62f2f;
+  font-weight: 500;
+  background-color: rgba(198, 47, 47, 0.1);
+}

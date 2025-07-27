@@ -31,7 +31,7 @@ Page({
     this.showActionSheet(e)
   },
   showActionSheet(ev) {
-    let item = ev.currentTarget.dataset.item;
+    let item = ev.detail.song;
     let that = this;
   
     // console.log(item,app.data.song);
@@ -102,15 +102,8 @@ Page({
         app.data.paythis.setData({
           value: 0
         })
-        wx.setStorage({
-          key: 'songlist',
-          data: app.data.songlist,
-          success: function (res) {
-            // console.log('异步保存成功')
-          }
-        })
-        time.newAddSong(app.data);
-        time.pay(app.data.paythis, app.innerAudioContext, app.data.song, 1);
+         time.saveStoreSongList(arr)
+        time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
 
 
 
@@ -122,7 +115,7 @@ Page({
   },
   //播放音乐
   async pay(e) {
-    var song = e.currentTarget.dataset.item;
+    var song = e.detail.song;
     // 判断当前播放歌曲
     if (app.data.song && app.data.song.id === song.id) {
       wx.showToast({

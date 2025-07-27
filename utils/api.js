@@ -185,7 +185,7 @@ const {data:userId} =   await wx.getStorage({key:'openId',encrypt:true})
             }
           }
         })
-        callback({ src, lrc, stauts: true, newid: item.id })
+        callback({ src, lrc, stauts: true, newid: item.id,id })
       })
     }
     // console.log(res.data.data.data,1111)

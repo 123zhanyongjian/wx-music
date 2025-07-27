@@ -71,7 +71,7 @@ Page({
     console.log(this.data.popusShow)
    },
   showActionSheet(ev) {
-    let item = ev.currentTarget.dataset.item;
+    let item = ev.detail.song;
     let that = this;
   
     console.log(item,app.data.song);
@@ -274,7 +274,7 @@ return
   },
   pay(e) {
     var that = this;
-    var song = e.currentTarget.dataset.item;
+    var song = e.detail.song;
     // 判断当前播放歌曲
     if (app.data.song && app.data.song.id === song.id) {
       wx.showToast({
@@ -299,6 +299,18 @@ return
     }
 
   },
+  splitSongInfo(str) {
+   if(!str)return{}
+    // 检查字符串是否包含分隔符“ - ”（注意中间有空格）
+    if (str.includes(" - ")) {
+      // 按“ - ”分割为数组（最多分割1次，避免歌曲名中包含“ - ”）
+      const [author, title] = str.split(" - ", 2);
+    return {author,title}
+    } else {
+      // 没有分隔符时，默认整个字符串为歌曲名，歌手为空
+      return {author:'',title:str}
+    }
+  },
   getkwTop(page){
     wx.showLoading({
       title: '加载中...',
@@ -317,11 +329,15 @@ return
       success:(res)=>{
         wx.hideLoading();
         this.setData({
-          list:this.data.list.concat(res.data.data?.data),
+          list:this.data.list.concat(res.data.data?.data)
+          .map(k=>({...k})),
           time:res.data.data?.time
         })
         wx.setNavigationBarTitle({
           title: `酷我热歌榜:${res.data.data.time}`,
+        })
+        this.setData({
+          list:this.data.list.map(k=>({...k,...this.splitSongInfo(k?.author)}))
         })
       },
       fail:(err)=>{
@@ -356,14 +372,7 @@ return
             loopstate:that.data.loopstate,
             loop:that.data.loop,
           })
-          wx.setStorage({
-            key: 'songlist',
-            data: app.data.songlist,
-            success: function (res) {
-              console.log('异步保存成功')
-            }
-          })
-          time.newAddSong(app.data);
+          time.saveStoreSongList(arr)
           time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
 
 
@@ -570,7 +579,7 @@ return
       success:(res)=>{
         wx.hideLoading();
         this.setData({
-          list:this.data.list.concat(res.data.data?.list),
+          list:this.data.list.concat(res.data.data?.list.map(k=>({...k,pic:app.host+'/resource?url='+k.pic}))),
           time:res.data.data?.time,
           src:res.data.data?.img,
           singerInfo:res.data.data?.info,

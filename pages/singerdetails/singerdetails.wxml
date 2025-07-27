@@ -1,72 +1,99 @@
+<!-- singerdetails.wxml -->
 <wxs src="./singerdetails.wxs" module="module"></wxs>
-<view class='mains'>
-    <view >
-      <image class='imgs' style="background-image:url({{image}})"></image>
-      <view class='ng'>
-        <view class="headLog">
+<view class="black-vinyl-page">
+  <!-- 顶部背景图 -->
+  <image class='imgs' style="background-image:url({{image}})"></image>
+  
+  <!-- 歌手/专辑信息区 -->
+  <view class='ng'>
+    <view class="headLog">
       <image src="{{image}}" />
-      </view>
-      <view class="singer">
-        <view  hover-class="none" hover-stop-propagation="false">
-          {{title}}
-        </view>
-        <view class="text" catchtap="openSingerInfo">
-        {{module.substrins(singerInfo,110)}}
-        </view>
-      </view>
-      <view class="musicAndAlbums">
-        <view class="music {{type===1?'active':''}}" catch:tap="changeType" data-type="1">
+    </view>
+    <view class="singer">
+      <view hover-class="none" hover-stop-propagation="false">{{title}}</view>
+      <view class="text" catchtap="openSingerInfo">{{module.substrins(singerInfo,110)}}</view>
+    </view>
+    
+    <!-- 单曲/专辑切换栏 -->
+    <view class="musicAndAlbums">
+      <view class="music {{type===1?'active':''}}" catch:tap="changeType" data-type="1">
         <image src="{{type===1?'../../image/dq1.png':'../../image/dq.png'}}" mode=""/>
         <text>单曲</text>
-        </view>
-        <view class="albums {{type===2?'active':''}}" catch:tap="changeType" data-type="2">
+      </view>
+      <view class="albums {{type===2?'active':''}}" catch:tap="changeType" data-type="2">
         <image src="{{type===2?'../../image/album1.png':'../../image/album.png'}}" mode=""/>
         <text>专辑</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 单曲列表滚动区 -->
+  <scroll-view 
+    scroll-y="{{popusShow?false:true}}" 
+    class="{{[popusShow?'popusShowopen':'',type===2?'active1':'']}} ul scroll-view song-scroll"
+  >
+    <!-- 播放全部栏 -->
+    <view class="li play-all-bar">
+      <view class="logo listtop flex just_betw">
+        <view bindtap='whole'>
+          <image src="../../image/plays.png" class="play-icon" />
+          <text class="play-text">播放全部({{songs.length}})</text>
+        </view>
+        <view class="loop-container">
+          <image class='loop' src="{{loop}}" bindtap="changloop"></image>
         </view>
       </view>
-      </view>
-   
     </view>
-    <scroll-view  scroll-y="{{popusShow?false:true}}" class="{{[popusShow?'popusShowopen':'',type===2?'active1':'']}} ul scroll-view" >
-     <view class="li">
-           <view class="logo listtop flex just_betw" style="width:100%;left: 20rpx;height: 100%;" >
-       <view bindtap='whole'>
-        <image  style="width:60rpx;height:60rpx; vertical-align: middle;" src="../../image/plays.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload=""></image>
-        <text>播放全部({{songs.length}})</text>
-       </view>
-       <view style="width:60rpx;height:60rpx; vertical-align: middle;">
-        <image class='loop' src="{{loop}}" bindtap="changloop"></image>
-       </view>
-      </view>
-     </view>
-    <view wx:for="{{songs}}" wx:for-item="item" wx:for-index="idx" wx:key="{{item.id}}" class="netease-song-item {{idx % 2 === 0 ? 'netease-song-item-alt' : ''}}">
-      <view class="netease-song-cover"><image src="{{item.pic||item.image||item.cover}}" style="width:100%;height:100%;border-radius:12rpx;" /></view>
-      <view class="netease-song-info">
-        <view class="netease-song-title">{{item.title}}</view>
-        <view class="netease-song-artist">{{item.singer||item.author}}</view>
-      </view>
-      <button class="netease-song-play" bindtap='pay' data-item="{{item}}">
-        <image class="netease-song-play-icon" src="../../image/play.svg" />
-      </button>
-      <image class="more" src="../../image/more.png" bindtap="more" data-item="{{item}}" />
-    </view>
-    <popup song="{{song}}"  bind:close="popusShowChange" show="{{popusShow}}"  wx:if="{{popusShow}}" header="添加到歌单" >
- 
-    </popup>
-    </scroll-view>
-    <scroll-view  style="width:{{change?'0px':'100vw'}}" scroll-x="{{false}}"  scroll-y="{{popusShow?false:true}}" class="{{[popusShow?'popusShowopen':'',type===1?'active2':'']}} ul scroll-view" >
      
-    <view class='li' wx:for="{{type===1?[]:albums}}" wx:key="{{index}}"  data-item='{{item}}' bindmyevent="childEvent" >
+    <!-- 歌曲列表组件 -->
+    <song-list list="{{songs}}" bind:play="pay" bind:more="more" />
+    
+    <!-- 弹窗组件 -->
+    <popup 
+      song="{{song}}"  
+      bind:close="popusShowChange" 
+      show="{{popusShow}}"  
+      wx:if="{{popusShow}}" 
+      header="添加到歌单" 
+    ></popup>
+  </scroll-view>
+
+  <!-- 专辑列表滚动区 -->
+  <scroll-view  
+    style="width:{{change?'0px':'100vw'}}" 
+    scroll-x="{{false}}"  
+    scroll-y="{{popusShow?false:true}}" 
+    class="{{[popusShow?'popusShowopen':'',type===1?'active2':'']}} ul scroll-view album-scroll"
+  >
+    <!-- 专辑列表标题 -->
+    <view class="album-list-header" wx:if="{{type===2&&albums.length>0}}">
+      <text class="header-text">专辑列表 ({{albums.length}})</text>
+      <view class="header-line"></view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{type===2&&albums.length===0}}">
+      <image src="../../image/album-empty.svg" class="empty-img" />
+      <view class="empty-text">暂无专辑数据</view>
+    </view>
+
+    <!-- 专辑列表项 -->
+    <view class='li' wx:for="{{type===1?[]:albums}}" wx:key="{{item.id}}" data-item='{{item}}'>
       <view data-item='{{item}}' class='alubmsList' bindtap='goAlubms'>
-        <view>
-          <image src="{{item.pic}}" mode=""/>
+        <!-- 专辑封面（黑胶唱片样式） -->
+        <view class="album-vinyl">
+          <image src="{{item.pic}}" mode="aspectFill" class="album-cover" />
+          <view class="vinyl-ring"></view>
+          <view class="vinyl-dot"></view>
         </view>
+        
+        <!-- 专辑信息 -->
         <view class="album-info">
           <view class="title">{{item.album}}</view>
           <view class="release-date">发行时间：{{item.releaseDate}}</view>
+          <view class="song-count">歌曲数：{{item.songCount||0}}</view>
         </view>
       </view>
     </view>
-    </scroll-view>
- 
+  </scroll-view>
 </view>

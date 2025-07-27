@@ -1,4 +1,4 @@
-<view class="player-container">
+<view class="player-container tab-content">
   <!-- 顶部返回栏 -->
   <view class="top-bar">
     <image src="/image/svg/back.svg" class="back-btn" bindtap="onBack"></image>
@@ -9,7 +9,7 @@
   <!-- 切换按钮 -->
   <view class="toggle-btn" bindtap="toggleLyric">
     <text class="toggle-text">
-      {{showLyric ? '收起歌词' : '查看歌词'}}
+      {{lrc[toLineNum].lrc}}
     </text>
   </view>
 
@@ -74,6 +74,7 @@
           <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum- 2}}" enhanced  binddragstart="binddragstart" binddragend="binddragend">
 
         <view 
+        bind:tap=""
         id="line{{index}}"
           wx:for="{{lrc}}" 
           wx:key="index"
@@ -114,7 +115,7 @@
     <!-- 列表标题栏 -->
     <view class="playlist-header">
       <text class="playlist-title">播放列表 ({{songList.length}})</text>
-      <text class="close-btn" bindtap="hidePlayList">关闭</text>
+      <text class="close-btn" bindtap="closeList">清空</text>
     </view>
     
     <!-- 列表滚动区 -->
@@ -124,7 +125,7 @@
         <view 
           wx:for="{{songList}}" 
           wx:key="index"
-          class="playlist-item {{currentIndex === index ? 'current' : ''}}"
+          class="playlist-item {{ins === index ? 'current' : ''}}"
           bindtap="switchSong" 
           data-index="{{index}}"
         >
@@ -138,7 +139,7 @@
           <image 
             src="/image/svg/play.svg" 
             class="item-playicon" 
-            hidden="{{currentIndex !== index}}"
+            hidden="{{ins !== index}}"
           ></image>
         </view>
       </view>

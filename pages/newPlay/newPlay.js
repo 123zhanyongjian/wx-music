@@ -22,6 +22,7 @@ Page({
     currentTime: 0,
     stratTime: 0,
     endTime: 0,
+    loopstate:0,
     duration: 298,
     isPlaying: false,
     loopMode: 0,
@@ -39,13 +40,35 @@ Page({
   hidePlayList() {
     this.setData({ showPlayList: false });
   },
-
+  closeList(){
+    wx.showModal({
+      title: '提示',
+      content: '确定清空列表吗?',
+      complete: (res) => {
+        if (res.cancel) {
+          
+        }
+    
+        if (res.confirm) {
+          wx.setStorage({
+            key:'songlist',
+            data:[],
+            success:()=>{
+              this.setData({
+                songList:[]
+              })
+            }
+          })
+        }
+      }
+    })
+  },
    switchSong(e) {
     const index = e.currentTarget.dataset.index;
     if (index === this.data.currentIndex) return; // 点击当前歌曲不切换
 
     // 更新当前播放索引
-    this.setData({ currentIndex: index });
+    this.setData({ currentIndex: index,ins:index });
     // 获取选中的歌曲数据
     const song = this.data.songList[index];
     app.data.song=song
@@ -110,24 +133,54 @@ Page({
       tiem.playCore(this, app.innerAudioContext,app.data.song);
     }
   },
-
+  returnloveList() {
+    return app.data.loveList
+  },
   // 上一曲
   onPrev() {
-    tiem.Lastsong(this, app.innerAudioContext, app);
+    if(this.data.songList.length===1){
+      return
+    }
+    if (this.data.Mv || !this.data.songList.length) {
+      return
+    }
+    if (this.data.ins > 0) {
+      tiem.Lastsong(this, app.innerAudioContext, app)
+    } else {
+      this.setData({
+        ins: app.data.songlist.length
+      })
+      tiem.Lastsong(this, app.innerAudioContext, app)
+    }
   },
 
-  // 下一曲
+
+  //下一曲
   onNext() {
-    tiem.Nextsong(this, app.innerAudioContext, app);
+    if(this.data.songList.length===1){
+      return
+    }
+    if (this.data.Mv || !this.data.songList.length) {
+      return
+    }
+    if (this.data.songList.length - 1 > this.data.ins) {
+      tiem.Nextsong(this, app.innerAudioContext, app)
+    } else {
+      this.setData({
+        ins: 1
+      })
+      tiem.Lastsong(this, app.innerAudioContext, app)
+    }
   },
 
   // 切换循环模式
   onLoop() {
-    let loopMode = this.data.loopMode + 1;
+    let loopMode = this.data.loopstate + 1;
     if (loopMode > 2) loopMode = 0;
+    console.log(loopMode,'111111')
     const modeText = ["顺序播放", "单曲循环", "随机播放"][loopMode];
     wx.showToast({ title: modeText, icon: "none" });
-    this.setData({ loopMode });
+    this.setData({ loopstate:loopMode });
   },
 
   // 切换歌词显示
@@ -178,7 +231,7 @@ Page({
     // 计算目标时间
     const targetTime = (validPosition / this.data.progressBarWidth) * this.data.duration;
     // console.log(targetTime, '目标时间');
-    app.innerAudioContext.seek(targetTime);
+    this.onSeek(targetTime)
     // // 更新 UI 和播放进度
     // this.setData({ currentTime: targetTime });
     
@@ -187,6 +240,10 @@ Page({
     // bgAudio.seek(targetTime);
   },
 
+  onSeek(val){
+    app.innerAudioContext.seek(val);
+    app.innerAudioContext.play()
+  },
   // 歌曲播放结束
   handleSongEnd() {
     if (this.data.loopMode === 1) {

@@ -13,6 +13,11 @@ function Singer(name, id) {
 
 Page({
   data: {
+     // 其他数据保持不变...
+     statusBarHeight: 0, // 状态栏高度(px)
+     capsuleHeight: 0, // 胶囊占位高度(px)
+     singerScrollHeight: 0, // 歌手列表高度(px)
+     dwTop: 0, // 右侧导航顶部位置(px)
     tabs: ['全部', '华语男', '华语女', '华语组合', '日韩男', '日韩女', '日韩组合', '欧美男', '欧美女', '欧美组合', '其他'],
     currentTab: 0,
     singer: [],
@@ -25,6 +30,28 @@ Page({
   },
   onLoad() {
     this.getsingerList();
+    const systemInfo = wx.getSystemInfoSync();
+    const statusBarHeight = systemInfo.statusBarHeight; // 状态栏高度(px)
+    const screenHeight = systemInfo.screenHeight; // 屏幕总高度(px)
+
+    // 2. 获取胶囊按钮信息（计算胶囊占位高度）
+    const menuButton = wx.getMenuButtonBoundingClientRect();
+    // 胶囊占位高度 = 胶囊底部到状态栏底部的距离
+    const capsuleHeight = menuButton.bottom - statusBarHeight;
+
+    // 3. 计算歌手列表高度（屏幕高度 - 状态栏 - 胶囊占位 - 标签栏高度）
+    const singerScrollHeight = screenHeight - statusBarHeight - capsuleHeight - 60; // 120rpx ≈ 60px
+console.log(singerScrollHeight,'333333333')
+    // 4. 计算右侧导航顶部位置
+    const dwTop = statusBarHeight + capsuleHeight + 25; // 50rpx ≈ 25px
+
+    // 5. 更新数据
+    this.setData({
+      statusBarHeight,
+      capsuleHeight,
+      singerScrollHeight,
+      dwTop
+    });
   },
   onTabChange(e) {
     const index = e.currentTarget.dataset.index;
@@ -34,6 +61,7 @@ Page({
   // 侧边字母导航定位
   Location(e) {
     var title = e.currentTarget.dataset.id;
+    console.log("??????",title)
     this.setData({
       title: title
     });
@@ -74,14 +102,15 @@ Page({
   const singerList1 = Object.keys(singerMap)
     .sort((a, b) => a.localeCompare(b))
     .map(k => ({ title: k, items: singerMap[k].map(i=>({...i,img:app.host+'/resource?url='+i.img}))}));
-  // console.log(singerList1, 555)
+  // console.log(singerList1, singerList1.unshift({title:'热门',items:singerList.slice(0,10)}))
+  singerList1.unshift({title:'热门',items:singerList.slice(0,10).map(k=>({...k,img:app.host+'/resource?url='+k.img}))})
   this.setData({
-    singer: singerList1,
+    singer:singerList1 ,
     total: res.data.data.total
   })
 
   },
   onImageError(e) {
-    // console.log(e.detail.errMsg      , 555)
+    console.log(e.detail.errMsg      , 555)
   }
 }); 

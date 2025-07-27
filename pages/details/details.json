@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "详情",
   "usingComponents": {
-    "popup":"../../component/popup/index"
+    "popup":"../../component/popup/index",
+    "song-list": "../../component/SongList/index"
   }
 }

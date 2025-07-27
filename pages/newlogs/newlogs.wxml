@@ -1,34 +1,91 @@
-<view class="newlogs-root">
-  <view class='main'>
-    <view class='serach'>
-      <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
-        <image class='serachimg' src="{{logo}}"></image>
-      </picker>
-      <image class='serachimgs' src="../../image/down.png"></image>
+<view class="search-root black-vinyl tab-content">
+  <!-- 背景纹理 -->
+  <view class="bg-texture"></view>
+
+  <!-- 搜索框区域 -->
+  <view class="search-header">
+    <!-- 返回按钮 -->
+    <button class="back-btn" bindtap="goBack">
+      <image src="../../image/back.svg" class="back-icon"></image>
+    </button>
+    
+    <!-- 简化的搜索框 -->
+    <view class="search-box">
+      <image class="search-icon" src="../../image/search.svg"></image>
       <input 
         confirm-type="search" 
-        type='text' 
-        class='input' 
-        placeholder='搜索歌曲、歌手' 
-        value="{{serach}}" 
-        bindinput="serachs" 
-        bindconfirm="serachs"
-      ></input>
-    </view>
-    <view style='background:#fff'>
-      <!-- 歌手列表 -->
-      <view class='singer' wx:key="{{idx}}" wx:for="{{singer}}" wx:for-item="ite" wx:for-index="idx" data-singer="{{ite}}" bindtap='details'>
-        <image src="{{ite.pic}}" class="haderimg"></image>
-        <view class='singername'>{{ite.name}}</view>
-      </view>
-      <!-- 歌曲列表 -->
-      <view class='ul'>
-        <view class='li' wx:for="{{song}}" data-item="{{item}}" data-index="{{index}}" wx:key="{{index}}" bindtap='pay' bindlongpress="showActionSheet">
-          <image src='../../image/mm.png'></image>
-          <text>{{item.title}}--{{item.author}}</text>
-          <text class="mv" wx:if="{{item.mvid||item.vid}}">MV</text>
-        </view>
-      </view>
+        type="text" 
+        class="search-input" 
+        placeholder="搜索歌曲、歌手" 
+        value="{{searchValue}}" 
+        bindinput="onSearchInput" 
+        bindconfirm="onSearchConfirm"
+      />
+      <button class="clear-btn" wx:if="{{searchValue}}" bindtap="clearSearch">
+        <image src="../../image/clear.svg" class="clear-icon"></image>
+      </button>
     </view>
   </view>
+
+  <!-- 搜索结果区域 -->
+  <scroll-view class="search-result" scroll-y="true">
+    <!-- 搜索提示（无关键词时显示） -->
+    <view class="search-tips" wx:if="{{!searchValue}}">
+      <text>热门搜索</text>
+      <view class="hot-words">
+        <text class="hot-word" bindtap="fillSearch" data-word="孤勇者">孤勇者</text>
+        <text class="hot-word" bindtap="fillSearch" data-word="林俊杰">林俊杰</text>
+        <text class="hot-word" bindtap="fillSearch" data-word="周杰伦">周杰伦</text>
+        <text class="hot-word" bindtap="fillSearch" data-word="陈奕迅">陈奕迅</text>
+        <text class="hot-word" bindtap="fillSearch" data-word="五月天">五月天</text>
+      </view>
+    </view>
+
+    <!-- 歌手列表 -->
+    <view class="section" wx:if="{{singerList.length > 0}}">
+      <view class="section-title">热门歌手</view>
+      <view class="singer-list">
+        <block wx:for="{{singerList}}" wx:key="id" wx:for-item="singer">
+          <view class="singer-card" data-singer="{{singer}}" bindtap="goToSingerDetail">
+            <view class="singer-avatar">
+              <image src="{{singer.pic || '../../image/default-avatar.png'}}" class="avatar-img" />
+              <view class="avatar-ring"></view>
+            </view>
+            <text class="singer-name">{{singer.name}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 歌曲列表 -->
+    <view class="section" wx:if="{{song.length > 0}}">
+      <view class="section-title">搜索结果</view>
+      <view class="song-list">
+        <block wx:for="{{song}}" wx:key="id" wx:for-item="song">
+          <view class="song-item" data-song="{{song}}" bindtap="pay">
+            <view class="song-index">{{index + 1}}</view>
+            <view class="song-vinyl">
+              <image src="{{song.pic||song.image || '../../image/default-cover.png'}}" class="song-img" />
+              <view class="song-vinyl-ring"></view>
+            </view>
+            <view class="song-info">
+              <text class="song-title">{{song.title}}</text>
+              <text class="song-artist">{{song.author}}</text>
+            </view>
+            <text class="mv-tag" wx:if="{{song.mvid || song.vid}}">MV</text>
+            <button class="play-btn" bindtap="pay">
+              <image src="../../image/play.svg" class="play-icon" />
+            </button>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 无结果提示 -->
+    <view class="empty-result" wx:if="{{searchValue && songList.length === 0}}">
+      <image src="../../image/nodata.svg" class="empty-img" />
+      <text class="empty-text">暂无搜索结果</text>
+      <text class="empty-suggest">请尝试其他关键词</text>
+    </view>
+  </scroll-view>
 </view>

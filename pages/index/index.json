@@ -1,6 +1,7 @@
 {
 
   "navigationBarTitleText": "推荐",
+  "navigationStyle": "custom",
   "usingComponents": {
     "addSongList": "../../component/AddSongList/index",
     "popup": "../../component/popup/index"
