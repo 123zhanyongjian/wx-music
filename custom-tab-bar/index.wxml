@@ -10,12 +10,12 @@
       <image 
         class="tab-bar-icon" 
         src="{{item.iconPath}}"
-        wx:if="{{index !== 2}}"
+        wx:if="{{index !== 2&&isPlaying||!isPlaying}}"
       ></image>
       
       <!-- 中间播放按钮（核心：显示当前歌曲封面） -->
       <view 
-        wx:if="{{index === 2}}" 
+        wx:if="{{index === 2&&isPlaying}}" 
         class="play-indicator {{isPlaying ? 'playing' : 'paused bg'}} "
       >
         <!-- 实时绑定当前播放歌曲的封面图 -->
@@ -28,7 +28,7 @@
       </view>
       
       <!-- 文字 -->
-      <text class="tab-bar-text">{{item.text}}</text>
+      <text class="tab-bar-text"  wx:if="{{!(index === 2&&isPlaying)}}">{{item.text}}</text>
     </view>
   </block>
 </view>

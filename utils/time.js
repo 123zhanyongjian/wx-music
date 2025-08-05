@@ -3,7 +3,7 @@ var thats = this;
 const utils = require('./util')
 let InitialValue = true;
 let InitialValue1 = true
-let errorFlag = false
+// let errorFlag = fvar
 let loopFlag = false
 var request = Promisify(wx.request)
 //秒转分钟
@@ -348,7 +348,6 @@ function Continuemusic() {
 //   }
 
 // }
-//暂停音乐
 function suspend(that, app) {
   InitialValue = false
   app.pause();
@@ -357,6 +356,31 @@ function suspend(that, app) {
     state: true,
     pay: "../../image/bf.png"
   });
+  
+  // 重新绑定事件监听器
+  const appInst = getApp();
+  app.onPause(() => {
+    appInst.eventBus.emit('updatePlayStatus', false)
+    if (appInst.data.paythis) {
+      appInst.data.paythis.setData({
+        pay: '../../image/bf.png',
+        state: true,
+        isPlaying: false
+      })
+    }
+  })
+  
+  app.onPlay(() => {
+    console.log("播放")
+    if (appInst.data.paythis) {
+      appInst.data.paythis.setData({
+        pay: '../../image/zt.png',
+        state: false,
+        isPlaying: true
+      })
+      appInst.eventBus.emit('updatePlayStatus', true)
+    }
+  })
 }
 //小程序关闭后下次进入还是上一次关闭时所保留的状态
 function Closestate(that, datas) {
@@ -396,7 +420,10 @@ function Readinfo(that, app, appInst) {
   wx.getStorage({
     key: 'lastsong',
     success: function (res) {
-      const datas = res.data;
+      console.log('读取成功', res.data)
+      const datas = res.data.datas;
+      appInst.data.song = datas.song;
+      console.log('读取的歌曲信息', appInst.data.song)
       that.setData({
         max: datas.max,
         Crack: that.data.Crack,
@@ -404,36 +431,33 @@ function Readinfo(that, app, appInst) {
         title: datas.title,
         author: datas.author,
         Duration: MinuteConversion(datas.max),
-        src: datas.src,
+        src: datas.song.src,
         t: datas.t,
         ins: datas.ins,
         state: datas.state,
-        lrc: datas.lrc,
+        song: { ...datas.song, readStorage: true },
+        lrc: datas.song.lrc,
         value: datas.value,
         pay: datas.pay,
         id: datas.id,
-        img: datas.coverImgUrl
+        img: datas.coverImgUrl || datas.img
       });
-      if (datas.src == undefined) {
-        app.src = datas.url;
-      } else {
-        app.src = datas.src;
-      }
-      app.title = datas.title;
-      app.coverImgUrl = datas.coverImgUrl;
-      app.seek(datas.value);
-      appInst.data.song = datas;
-      app.onCanplay(() => {
-        if (InitialValue && InitialValue1) {
-          app.seek(datas.value);
-          InitialValue1 = false;
-        }
-      });
-      app.onSeeked(() => {
-        if (InitialValue) {
-          suspend(that, app);
-        }
-      });
+      // if (datas.src == undefined) {
+      //   app.src = datas.url;
+      // } else {
+      //   app.src = datas.src;
+      // }
+      // app.title = datas.title;
+      // app.src=datas
+      // app.coverImgUrl = datas.coverImgUrl;
+      // app.seek(datas.value);
+
+
+      // app.onSeeked(() => {
+      //   if (InitialValue) {
+      //     suspend(that, app);
+      //   }
+      // });
     }
   });
 }
@@ -799,19 +823,67 @@ function saveStoreSongList(arr) {
 }
 // 新核心播放方法，安全解绑/重绑事件，切歌时进度条立即归零，自动获取src、歌词、支持上下曲
 async function playCore(that, app, datas, restart) {
-  if(that.data.songList.length===1){
+  const appInst = getApp();
+  //监听暂停事件
+  app.onPause(() => {
+    appInst.eventBus.emit('updatePlayStatus', false)
+    // console.log('onPause event', appInst.data.paythis);
+    if (appInst.data.paythis) { // 避免 paythis 未定义时报错
+      appInst.data.paythis.setData({
+        pay: '../../image/bf.png',
+        state: true,
+        isPlaying: false
+      })
+    }
+    if (wx.getAppBaseInfo().version > '8.0.47') {
+      app.title = appInst.data.song?.title;
+      app.singer = appInst.data.song?.author
+    }
+  })
+
+  // 监听播放事件
+  app.onPlay(() => {
+    console.log("播放")
+    // console.log('onPlay event', appInst.data.paythis);
+    if (appInst.data.paythis) { // 避免 paythis 未定义时报错
+      appInst.data.paythis.setData({
+        pay: '../../image/zt.png',
+        state: false,
+        isPlaying: true
+      })
+      appInst.eventBus.emit('updatePlayStatus', true)
+    }
+  })
+  if (that.data.songList.length === 1) {
     that.setData({
-      loopstate:1
+      loopstate: 1
     })
   }
   // 0. 判断是否是同一首歌的暂停后播放
   if (that.data.song && that.data.song.id === datas.id) {
-    if(!loopFlag){
+    if (!loopFlag) {
       if (that.data.state) {
         // 只需继续播放，但要确保 onTimeUpdate/onEnded 事件已绑定
         if (!app._onTimeUpdateHandler || !app._onEndedHandler) {
+          if (that.data.song.readStorage) {
+            // 如果是读取缓存的歌曲，直接赋值
+            app.src = datas.src;
+            app.title = datas.title;
+            app.coverImgUrl = datas.pic;
+            app.singer = datas.author;
+            app.onCanplay(() => {
+              if (InitialValue && InitialValue1) {
+                app.seek(that.data.value);
+                InitialValue1 = false;
+              }
+            });
+            Lrcget(that, datas);
+            appInst.eventBus.emit("songChanged", datas);
+
+          }
           // 绑定 onTimeUpdate
           app._onTimeUpdateHandler = function () {
+            
             if (that.data.song && that.data.song.id !== datas.id) return;
             that.setData({
               Duration: MinuteConversion(app.duration),
@@ -829,7 +901,6 @@ async function playCore(that, app, datas, restart) {
                       that.setData({
                         toLineNum: i
                       })
-  
                       if (wx.getAppBaseInfo().version > '8.0.47') {
                         app.title = that.data.lrc[i].lrc;
                         app.singer = `${datas.title} - ${datas.author}`;
@@ -856,9 +927,9 @@ async function playCore(that, app, datas, restart) {
         });
         return;
       }
-    }else{
+    } else {
       // return console.log(appInst,datas)
-      const  m =datas 
+      const m = datas
       // datas.src = e.src;
       // if (e.lrc) datas.lrc = e.lrc;
       // if (e.pic) datas.pic = e.pic;
@@ -872,10 +943,10 @@ async function playCore(that, app, datas, restart) {
       app.play()
       return
     }
-    
+
   }
-  
-  const appInst = getApp();
+
+
   // 1. 立即归零进度条
   that.setData({
     value: 0,
@@ -891,8 +962,8 @@ async function playCore(that, app, datas, restart) {
     })
     utils.errorSong(datas.mId, datas, async (e) => {
       if (e.stauts) {
-      loopFlag=false
-      appInst.data.song = e
+        loopFlag = false
+        appInst.data.song = {...e,id: datas.id};
         datas.src = e.src;
         if (e.lrc) datas.lrc = e.lrc;
         if (e.pic) datas.pic = e.pic;
@@ -934,10 +1005,10 @@ async function playCore(that, app, datas, restart) {
   // 3. 解绑旧事件（如支持offTimeUpdate/offEnded）
   if (app._onTimeUpdateHandler && typeof app.offTimeUpdate === 'function') app.offTimeUpdate(app._onTimeUpdateHandler);
   if (app._onEndedHandler && typeof app.offEnded === 'function') app.offEnded(app._onEndedHandler);
- console.log(that)
+  console.log(that)
   // 4. 绑定新事件
   app._onTimeUpdateHandler = function () {
-   
+console.log("onTimeUpdate event",that.data.song , that.data.song.id ,datas);
     // 只处理当前歌曲
     if (that.data.song && that.data.song.id !== datas.id) return;
     that.setData({
@@ -974,7 +1045,7 @@ async function playCore(that, app, datas, restart) {
         that.onNext()
       } else if (that.data.loopstate == 1) {
 
-       loopFlag=true
+        loopFlag = true
         console.log("???成本")
         that.setData({
           value: 0
@@ -1023,33 +1094,7 @@ async function playCore(that, app, datas, restart) {
 
   // 6. 启动播放
   if (typeof app.play === 'function') app.play();
-  //监听暂停事件
-  app.onPause(() => {
-    appInst.eventBus.emit('updatePlayStatus',false)
-    // console.log('onPause event', appInst.data.paythis);
-    if (appInst.data.paythis) { // 避免 paythis 未定义时报错
-      appInst.data.paythis.setData({
-        pay: '../../image/bf.png',
-        state: true
-      })
-    }
-    if (wx.getAppBaseInfo().version > '8.0.47') {
-      app.title = appInst.data.song?.title;
-      app.singer = appInst.data.song?.author
-    }
-  })
 
-  // 监听播放事件
-  app.onPlay(() => {
-   console.log("播放")
-    // console.log('onPlay event', appInst.data.paythis);
-    if (appInst.data.paythis) { // 避免 paythis 未定义时报错
-      appInst.data.paythis.setData({
-        pay: '../../image/zt.png',
-        state: false
-      })
-      appInst.eventBus.emit('updatePlayStatus',true)
-    }
-  })
 }
+
 export { saveStoreSongList, debounce, MinuteConversion, suspend, Nextsong, Lastsong, Splitseconds, Lrcget, wholelist, Closestate, Readinfo, Promisify, newAddSong, nextSongPay, playCore };

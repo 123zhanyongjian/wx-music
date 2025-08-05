@@ -7,8 +7,8 @@ page {
 .scroll-view{
   height:63vh;
   text-align: center;
- padding:10px 0 ;
- /* margin-top:230rpx; */
+  padding:10px 0 ;
+  /* margin-top:230rpx; */
   /* overflow: scroll; */
 }
 .player-container {
@@ -199,6 +199,13 @@ page {
   box-shadow: 0 0 10rpx rgba(198, 47, 47, 0.8);
 }
 
+/* 自定义滑块样式 */
+.custom-slider {
+  flex: 1;
+  height: 40rpx; /* 增加点击区域 */
+  position: relative;
+}
+
 /* 控制按钮 */
 .control-btns {
   display: flex;
@@ -277,6 +284,7 @@ page {
   opacity: 1;
   color: #c62f2f;
 }
+
 /* 播放列表容器 */
 .playlist-container {
   position: fixed;
@@ -362,6 +370,7 @@ page {
   padding: 20rpx 30rpx;
   border-bottom: 1px solid #222;
   background-color: #1a1a1a;
+  position: relative;
 }
 
 /* 当前播放的歌曲项 */
@@ -400,6 +409,7 @@ page {
   height: 30rpx;
   margin-left: 10rpx;
 }
+
 /* 顶部栏 - 优化后的样式（替换原来的.top-bar相关样式） */
 .top-bar {
   /* 关键：添加状态栏高度适配 */
@@ -438,4 +448,4 @@ page {
   width: 100%;
   height: 1rpx;
   background-color: rgba(255, 255, 255, 0.1); /* 浅色边框，与深色主题协调 */
-}
+}  

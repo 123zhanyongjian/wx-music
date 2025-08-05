@@ -36,15 +36,17 @@
     <!-- 进度条 -->
     <view class="progress-area">
       <text class="time current">{{conduct}}</text>
-      <view class="progress-bar" bindtap="onProgressTap">
-        <view 
-          class="played-progress" 
-          style="width: {{(value / max) * 100}}%"
-        ></view>
-        <view 
-          class="progress-dot" 
-          style="left: {{(value / max) * 100}}%"
-        ></view>
+      <view class="custom-slider" bindtouchstart="onSliderTouchStart" bindtouchmove="onSliderTouchMove" bindtouchend="onSliderTouchEnd">
+        <view class="progress-bar">
+          <view 
+            class="played-progress" 
+            style="width: {{sliderProgress}}%"
+          ></view>
+          <view 
+            class="progress-dot" 
+            style="left: {{sliderProgress}}%"
+          ></view>
+        </view>
       </view>
       <text class="time total">{{Duration}}</text>
     </view>
@@ -71,28 +73,31 @@
     </view>
 
     <!-- 歌词滚动区 -->
-          <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum- 2}}" enhanced  binddragstart="binddragstart" binddragend="binddragend">
-
-        <view 
-        bind:tap=""
+    <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum- 2}}" enhanced  binddragstart="binddragstart" binddragend="binddragend">
+      <view 
         id="line{{index}}"
-          wx:for="{{lrc}}" 
-          wx:key="index"
-          class="lyric-item {{toLineNum === index ? 'active' : ''}}"
-        >
-          {{item.lrc}}
-        </view>
-      
+        wx:for="{{lrc}}" 
+        wx:key="index"
+        class="lyric-item {{toLineNum === index ? 'active' : ''}}"
+      >
+        {{item.lrc}}
+      </view>
     </scroll-view>
 
     <!-- 进度条 -->
-    
     <view class="progress-area">
       <text class="time current">{{conduct}}</text>
-      
-      <view class="progress-bar" bindtap="onProgressTap">
-        <view class="played-progress" style="width: {{(value / max) * 100}}%"></view>
-        <view class="progress-dot" style="left: {{(value / max) * 100}}%"></view>
+      <view class="custom-slider" bindtouchstart="onSliderTouchStart" bindtouchmove="onSliderTouchMove" bindtouchend="onSliderTouchEnd">
+        <view class="progress-bar">
+          <view 
+            class="played-progress" 
+            style="width: {{sliderProgress}}%"
+          ></view>
+          <view 
+            class="progress-dot" 
+            style="left: {{sliderProgress}}%"
+          ></view>
+        </view>
       </view>
       <text class="time total">{{Duration}}</text>
     </view>
@@ -102,9 +107,10 @@
   <view class="bottom-controls">
     <image src="/image/svg/loop.svg" class="bottom-btn {{loopMode === 1 ? 'active' : ''}}" bindtap="onLoop"></image>
     <image src="/image/svg/lyric.svg" class="bottom-btn" bindtap="toggleLyric"></image>
-     <image src="/image/svg/list.svg" class="bottom-btn" bindtap="showPlayList"></image>
+    <image src="/image/svg/list.svg" class="bottom-btn" bindtap="showPlayList"></image>
   </view>
 </view>
+
 <!-- 播放列表容器（默认隐藏，点击列表图标显示） -->
 <view class="playlist-container {{showPlayList ? 'show' : ''}}">
   <!-- 遮罩层（点击关闭） -->
@@ -128,6 +134,8 @@
           class="playlist-item {{ins === index ? 'current' : ''}}"
           bindtap="switchSong" 
           data-index="{{index}}"
+          bindlongpress="deleteSong"
+          data-songindex="{{index}}"
         >
           <!-- 歌曲信息 -->
           <view class="item-info">
@@ -145,4 +153,4 @@
       </view>
     </scroll-view>
   </view>
-</view>
+</view>  

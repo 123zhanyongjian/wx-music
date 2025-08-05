@@ -16,7 +16,7 @@ Component({
     attached() {
       if(app.data.paythis){
         this.syncCurrentSongCover();
-        this.updatePlayStatus(!app.data.paythis.data.state);
+        this.updatePlayStatus(app.data.paythis.data.isPlaying===true?true:false);
       
       }
       console.log("???attached?")
@@ -70,6 +70,7 @@ Component({
     // Tab点击跳转
     onTabTap(e) {
       const idx = e.currentTarget.dataset.index;
+      console.log(this.data.isPlaying)
       const { pagePath } = this.data.list[idx];
       wx.switchTab({ url: `/${pagePath}` });
     }

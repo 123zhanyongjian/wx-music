@@ -177,7 +177,7 @@ App({
               // 可以将 res 发送给后台解码出 unionId
               this.data.userInfo = res.userInfo
 
-              // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+              // 由于 getUserInfo 是网络请求，可能会在 Page.load 之后才返回
               // 所以此处加入 callback 以防止这种情况
               if (this.userInfoReadyCallback) {
                 this.userInfoReadyCallback(res)
@@ -199,7 +199,8 @@ App({
    
   },
   //小程序关闭后下次进入还是上一次关闭时所保留的状态
-   Closestate(that, datas){
+   Closestate(that){
+    const datas= that.data
   var obj1 = {
       max: that.data.max,
       InitialValue:true,
@@ -229,13 +230,13 @@ App({
       key: 'lastsong',
       data: obj,
       success: function (res) {
-        // console.log('缓存成功', res,obj)
+        console.log('缓存成功', res,obj,that)
       }
     })
 
   },
   onShow(){
-  
+    
   },
   onHide(){
    
