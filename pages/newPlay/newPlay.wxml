@@ -1,16 +1,14 @@
 <view class="player-container tab-content">
   <!-- 顶部返回栏 -->
   <view class="top-bar">
-    <image src="/image/svg/back.svg" class="back-btn" bindtap="onBack"></image>
+    <image src="/image/svg/back.svg" class="back-btn" bindtap="onBack" mode="widthFix"></image>
     <text class="title">{{showLyric ? '歌词' : '正在播放'}}</text>
-    <image src="/image/svg/more.svg" class="more-btn"></image>
+    <image src="/image/svg/more.svg" class="more-btn" mode="widthFix"></image>
   </view>
 
-  <!-- 切换按钮 -->
+  <!-- 切换按钮（歌词/播放视图） -->
   <view class="toggle-btn" bindtap="toggleLyric">
-    <text class="toggle-text">
-      {{lrc[toLineNum].lrc}}
-    </text>
+    <text class="toggle-text">{{lrc[toLineNum].lrc || ''}}</text>
   </view>
 
   <!-- 播放器视图 -->
@@ -22,30 +20,28 @@
         <image 
           class="cover {{isPlaying ? 'rotate' : ''}}" 
           src="{{img}}"
+          mode="widthFix"
         ></image>
         <view class="cover-center"></view>
       </view>
     </view>
+    
     <!-- 歌曲信息 -->
     <view class="song-info">
       <view class="song-name">{{title}}</view>
-      
       <view class="singer-name">{{author}}</view>
     </view>
 
     <!-- 进度条 -->
     <view class="progress-area">
       <text class="time current">{{conduct}}</text>
-      <view class="custom-slider" bindtouchstart="onSliderTouchStart" bindtouchmove="onSliderTouchMove" bindtouchend="onSliderTouchEnd">
+      <view class="custom-slider" 
+            bindtouchstart="onSliderTouchStart" 
+            bindtouchmove="onSliderTouchMove" 
+            bindtouchend="onSliderTouchEnd">
         <view class="progress-bar">
-          <view 
-            class="played-progress" 
-            style="width: {{sliderProgress}}%"
-          ></view>
-          <view 
-            class="progress-dot" 
-            style="left: {{sliderProgress}}%"
-          ></view>
+          <view class="played-progress" style="width: {{sliderProgress}}%"></view>
+          <view class="progress-dot" style="left: {{sliderProgress}}%"></view>
         </view>
       </view>
       <text class="time total">{{Duration}}</text>
@@ -53,13 +49,14 @@
 
     <!-- 控制按钮 -->
     <view class="control-btns">
-      <image src="/image/svg/prev.svg" class="btn prev" bindtap="onPrev"></image>
+      <image src="/image/svg/prev.svg" class="btn prev" bindtap="onPrev" mode="widthFix"></image>
       <image 
         src="{{isPlaying ? '/image/svg/pause.svg' : '/image/svg/play.svg'}}" 
         class="btn play" 
         bindtap="onPlayPause"
+        mode="widthFix"
       ></image>
-      <image src="/image/svg/next.svg" class="btn next" bindtap="onNext"></image>
+      <image src="/image/svg/next.svg" class="btn next" bindtap="onNext" mode="widthFix"></image>
     </view>
   </view>
 
@@ -68,12 +65,16 @@
         style="display: {{showLyric ? 'flex' : 'none'}}">
     <!-- 歌曲信息 -->
     <view class="song-info">
-      <text class="song-name">{{currentSong.name}}</text>
-      <text class="singer-name">{{currentSong.singer}}</text>
+      <text class="song-name">{{song.title}}</text>
+      <text class="singer-name">{{song.author}}</text>
     </view>
 
     <!-- 歌词滚动区 -->
-    <scroll-view class='scroll-view' scroll-into-view-alignment="center"  scroll-y scroll-with-animation scroll-into-view="line{{toLineNum- 2}}" enhanced  binddragstart="binddragstart" binddragend="binddragend">
+    <scroll-view class='scroll-view' 
+                 scroll-into-view-alignment="center"  
+                 scroll-y 
+                 scroll-with-animation 
+                 scroll-into-view="line{{toLineNum - 2}}">
       <view 
         id="line{{index}}"
         wx:for="{{lrc}}" 
@@ -87,16 +88,13 @@
     <!-- 进度条 -->
     <view class="progress-area">
       <text class="time current">{{conduct}}</text>
-      <view class="custom-slider" bindtouchstart="onSliderTouchStart" bindtouchmove="onSliderTouchMove" bindtouchend="onSliderTouchEnd">
+      <view class="custom-slider" 
+            bindtouchstart="onSliderTouchStart" 
+            bindtouchmove="onSliderTouchMove" 
+            bindtouchend="onSliderTouchEnd">
         <view class="progress-bar">
-          <view 
-            class="played-progress" 
-            style="width: {{sliderProgress}}%"
-          ></view>
-          <view 
-            class="progress-dot" 
-            style="left: {{sliderProgress}}%"
-          ></view>
+          <view class="played-progress" style="width: {{sliderProgress}}%"></view>
+          <view class="progress-dot" style="left: {{sliderProgress}}%"></view>
         </view>
       </view>
       <text class="time total">{{Duration}}</text>
@@ -105,29 +103,27 @@
 
   <!-- 底部控制 -->
   <view class="bottom-controls">
-    <image src="/image/svg/loop.svg" class="bottom-btn {{loopMode === 1 ? 'active' : ''}}" bindtap="onLoop"></image>
-    <image src="/image/svg/lyric.svg" class="bottom-btn" bindtap="toggleLyric"></image>
-    <image src="/image/svg/list.svg" class="bottom-btn" bindtap="showPlayList"></image>
+    <image src="/image/svg/loop.svg" class="bottom-btn {{loopMode === 1 ? 'active' : ''}}" bindtap="onLoop" mode="widthFix"></image>
+    <image src="/image/svg/lyric.svg" class="bottom-btn" bindtap="toggleLyric" mode="widthFix"></image>
+    <!-- 音质切换按钮 -->
+    <view class="quality-btn" bindtap="toggleQualityPopup">
+      <image src="/image/svg/quality.svg" class="quality-icon" mode="widthFix"></image>
+      <!-- <text class="quality-text">{{currentQuality.text}}</text> -->
+    </view>
+    <image src="/image/svg/list.svg" class="bottom-btn" bindtap="showPlayList" mode="widthFix"></image>
   </view>
 </view>
 
-<!-- 播放列表容器（默认隐藏，点击列表图标显示） -->
+<!-- 播放列表容器 -->
 <view class="playlist-container {{showPlayList ? 'show' : ''}}">
-  <!-- 遮罩层（点击关闭） -->
   <view class="playlist-mask" bindtap="hidePlayList"></view>
-  
-  <!-- 列表内容 -->
   <view class="playlist-content">
-    <!-- 列表标题栏 -->
     <view class="playlist-header">
       <text class="playlist-title">播放列表 ({{songList.length}})</text>
       <text class="close-btn" bindtap="closeList">清空</text>
     </view>
-    
-    <!-- 列表滚动区 -->
     <scroll-view class="playlist-scroll" scroll-y>
       <view class="playlist-list">
-        <!-- 循环渲染播放列表 -->
         <view 
           wx:for="{{songList}}" 
           wx:key="index"
@@ -137,20 +133,41 @@
           bindlongpress="deleteSong"
           data-songindex="{{index}}"
         >
-          <!-- 歌曲信息 -->
           <view class="item-info">
             <text class="item-name">{{item.title}}</text>
             <text class="item-singer">{{item.author}}</text>
           </view>
-          
-          <!-- 当前播放标识（仅当前歌曲显示） -->
           <image 
             src="/image/svg/play.svg" 
             class="item-playicon" 
             hidden="{{ins !== index}}"
+            mode="widthFix"
           ></image>
         </view>
       </view>
     </scroll-view>
   </view>
-</view>  
+</view>
+
+<!-- 音质选择弹窗（4个选项） -->
+<view class="quality-popup {{showQualityPopup ? 'show' : ''}}">
+  <view class="quality-popup-mask" bindtap="toggleQualityPopup"></view>
+  <view class="quality-popup-content">
+    <view class="quality-title">选择音源质量</view>
+    <view 
+      class="quality-item" 
+      wx:for="{{qualityList}}" 
+      wx:key="text"
+      bindtap="chooseQuality"
+      data-quality="{{item}}"
+    >
+      <text>{{item.text}}</text>
+      <image 
+        src="/image/svg/check.svg" 
+        class="quality-check" 
+        hidden="{{currentQuality.text !== item.text}}"
+        mode="widthFix"
+      ></image>
+    </view>
+  </view>
+</view>

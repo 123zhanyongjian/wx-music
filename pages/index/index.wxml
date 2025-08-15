@@ -82,7 +82,7 @@
     >
       <view class="song-list">
         <block wx:for="{{songList}}" wx:for-item="item" wx:for-index="idx" wx:key="id">
-          <view class="song-item" data-id="{{item.id}}" hover-class="song-item-hover">
+          <view class="song-item" data-id="{{item.id}}" hover-class="song-item-hover" bindtap="playSong" data-song="{{item}}">
             <text class="song-index">{{idx + 1}}</text>
             
             <view class="song-vinyl">

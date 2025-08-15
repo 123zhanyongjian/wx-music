@@ -101,9 +101,9 @@ console.log(singerScrollHeight,'333333333')
   // const singerList1 = Object.values(singerMap).sort((a, b) => a.name(b.name))
   const singerList1 = Object.keys(singerMap)
     .sort((a, b) => a.localeCompare(b))
-    .map(k => ({ title: k, items: singerMap[k].map(i=>({...i,img:app.host+'/resource?url='+i.img}))}));
+    .map(k => ({ title: k, items: singerMap[k].map(i=>({...i}))}));
   // console.log(singerList1, singerList1.unshift({title:'热门',items:singerList.slice(0,10)}))
-  singerList1.unshift({title:'热门',items:singerList.slice(0,10).map(k=>({...k,img:app.host+'/resource?url='+k.img}))})
+  singerList1.unshift({title:'热门',items:singerList.slice(0,10).map(k=>({...k}))})
   this.setData({
     singer:singerList1 ,
     total: res.data.data.total

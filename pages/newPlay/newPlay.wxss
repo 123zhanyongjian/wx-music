@@ -4,13 +4,8 @@ page {
   height: 100%;
   overflow: hidden;
 }
-.scroll-view{
-  height:63vh;
-  text-align: center;
-  padding:10px 0 ;
-  /* margin-top:230rpx; */
-  /* overflow: scroll; */
-}
+
+/* 播放器容器 */
 .player-container {
   width: 100%;
   height: 93vh;
@@ -22,20 +17,35 @@ page {
 
 /* 顶部栏 */
 .top-bar {
-  height: 120rpx;
+  padding-top: var(--status-bar-height);
+  height: calc(var(--status-bar-height) + 120rpx);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #121212;
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+  z-index: 10;
 }
-
 .back-btn, .more-btn {
   width: 50rpx;
   height: 50rpx;
+  tint-color: #fff;
 }
-
 .title {
   font-size: 34rpx;
   font-weight: 500;
+  color: #fff;
+}
+.top-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1rpx;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* 切换按钮 */
@@ -44,7 +54,6 @@ page {
   padding: 10rpx 0;
   margin-bottom: 20rpx;
 }
-
 .toggle-text {
   color: #999;
   font-size: 24rpx;
@@ -54,31 +63,16 @@ page {
 .fade-in {
   animation: fadeIn 0.5s ease-out forwards;
 }
-
 .fade-out {
   animation: fadeOut 0.5s ease-in forwards;
 }
-
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(30rpx);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30rpx); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(30rpx);
-  }
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(30rpx); }
 }
 
 /* 播放器视图 */
@@ -97,7 +91,6 @@ page {
   align-items: center;
   padding: 20rpx 0;
 }
-
 .vinyl {
   width: 500rpx;
   height: 500rpx;
@@ -108,7 +101,6 @@ page {
   align-items: center;
   box-shadow: 0 0 30rpx rgba(0, 0, 0, 0.5);
 }
-
 .cover {
   width: 380rpx;
   height: 380rpx;
@@ -116,7 +108,6 @@ page {
   object-fit: cover;
   border: 10rpx solid #333;
 }
-
 .cover-center {
   width: 60rpx;
   height: 60rpx;
@@ -125,11 +116,9 @@ page {
   position: absolute;
   z-index: 1;
 }
-
 .rotate {
   animation: rotate 20s linear infinite;
 }
-
 @keyframes rotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -140,7 +129,6 @@ page {
   text-align: center;
   margin: 20rpx 0;
 }
-
 .song-name {
   font-size: 34rpx;
   font-weight: 500;
@@ -149,7 +137,6 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .singer-name {
   font-size: 28rpx;
   color: #aaa;
@@ -164,16 +151,13 @@ page {
   gap: 20rpx;
   margin: 20rpx 0;
 }
-
 .time {
   font-size: 24rpx;
   color: #aaa;
   width: 100rpx;
 }
-
 .current { text-align: left; }
 .total { text-align: right; }
-
 .progress-bar {
   flex: 1;
   height: 6rpx;
@@ -181,13 +165,11 @@ page {
   border-radius: 3rpx;
   position: relative;
 }
-
 .played-progress {
   height: 100%;
   background-color: #c62f2f;
   border-radius: 3rpx;
 }
-
 .progress-dot {
   width: 20rpx;
   height: 20rpx;
@@ -198,11 +180,9 @@ page {
   transform: translate(-50%, -50%);
   box-shadow: 0 0 10rpx rgba(198, 47, 47, 0.8);
 }
-
-/* 自定义滑块样式 */
 .custom-slider {
   flex: 1;
-  height: 40rpx; /* 增加点击区域 */
+  height: 40rpx;
   position: relative;
 }
 
@@ -214,17 +194,14 @@ page {
   gap: 80rpx;
   margin: 40rpx 0;
 }
-
 .btn {
   object-fit: contain;
 }
-
 .prev, .next {
   width: 80rpx;
   height: 80rpx;
   opacity: 0.8;
 }
-
 .play {
   width: 120rpx;
   height: 120rpx;
@@ -240,24 +217,17 @@ page {
   flex-direction: column;
   transition: all 0.3s;
 }
-
-.lyric-scroll {
-  flex: 1;
-  width: 100%;
-}
-
-.lyric-list {
-  padding: 100rpx 0;
+.scroll-view {
+  height: 63vh;
   text-align: center;
+  padding: 10px 0;
 }
-
 .lyric-item {
   font-size: 28rpx;
   color: #999;
   margin-bottom: 15rpx;
   line-height: 40rpx;
 }
-
 .lyric-item.active {
   color: #c62f2f;
   font-size: 32rpx;
@@ -273,35 +243,46 @@ page {
   border-top: 1px solid #333;
   margin-top: 10rpx;
 }
-
 .bottom-btn {
   width: 65rpx;
   height: 65rpx;
   opacity: 0.8;
 }
-
 .bottom-btn.active {
   opacity: 1;
-  color: #c62f2f;
+  tint-color: #c62f2f;
 }
 
-/* 播放列表容器 */
+/* 音质切换按钮 */
+.quality-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.quality-icon {
+  width: 50rpx;
+  height: 50rpx;
+  margin-bottom: 5rpx;
+}
+.quality-text {
+  font-size: 20rpx;
+  color: #aaa;
+}
+
+/* 播放列表 */
 .playlist-container {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom:0rpx;
   top: 0;
-  z-index: 100; /* 确保在播放器上方显示 */
-  pointer-events: none; /* 默认不触发点击 */
+  z-index: 100;
+  pointer-events: none;
 }
-
-/* 显示播放列表 */
 .playlist-container.show {
   pointer-events: auto;
 }
-
-/* 遮罩层 */
 .playlist-mask {
   position: absolute;
   left: 0;
@@ -312,30 +293,24 @@ page {
   opacity: 0;
   transition: opacity 0.3s;
 }
-
 .playlist-container.show .playlist-mask {
   opacity: 1;
 }
-
-/* 列表内容（从底部弹出） */
 .playlist-content {
   position: absolute;
   left: 0;
   right: 0;
-  bottom:160rpx;
-  height: 70vh; /* 高度占屏幕70% */
-  background-color: #121212; /* 与播放器背景一致 */
+  bottom: 160rpx;
+  height: 70vh;
+  background-color: #121212;
   border-top-left-radius: 20rpx;
   border-top-right-radius: 20rpx;
-  transform: translateY(100%); /* 默认隐藏在底部 */
+  transform: translateY(100%);
   transition: transform 0.3s;
 }
-
 .playlist-container.show .playlist-content {
-  transform: translateY(0); /* 显示时上移 */
+  transform: translateY(0);
 }
-
-/* 列表标题栏 */
 .playlist-header {
   display: flex;
   justify-content: space-between;
@@ -343,26 +318,20 @@ page {
   padding: 20rpx 30rpx;
   border-bottom: 1px solid #333;
 }
-
 .playlist-title {
   font-size: 30rpx;
   font-weight: 500;
   color: #fff;
 }
-
 .close-btn {
   font-size: 28rpx;
   color: #aaa;
   padding: 10rpx 20rpx;
 }
-
-/* 列表滚动区 */
 .playlist-scroll {
-  height: calc(70vh - 80rpx); /* 减去标题栏高度 */
+  height: calc(70vh - 80rpx);
   width: 100%;
 }
-
-/* 列表项 */
 .playlist-item {
   display: flex;
   justify-content: space-between;
@@ -370,20 +339,14 @@ page {
   padding: 20rpx 30rpx;
   border-bottom: 1px solid #222;
   background-color: #1a1a1a;
-  position: relative;
 }
-
-/* 当前播放的歌曲项 */
 .playlist-item.current {
   background-color: #282828;
 }
-
-/* 歌曲信息 */
 .item-info {
   flex: 1;
   overflow: hidden;
 }
-
 .item-name {
   display: block;
   font-size: 28rpx;
@@ -393,7 +356,6 @@ page {
   text-overflow: ellipsis;
   margin-bottom: 5rpx;
 }
-
 .item-singer {
   display: block;
   font-size: 24rpx;
@@ -402,50 +364,73 @@ page {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-/* 当前播放图标 */
 .item-playicon {
   width: 30rpx;
   height: 30rpx;
   margin-left: 10rpx;
 }
 
-/* 顶部栏 - 优化后的样式（替换原来的.top-bar相关样式） */
-.top-bar {
-  /* 关键：添加状态栏高度适配 */
-  padding-top: var(--status-bar-height);
-  height: calc(var(--status-bar-height) + 120rpx); /* 原有高度120rpx加上状态栏高度 */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #121212; /* 与页面背景一致 */
-  box-sizing: border-box; /* 确保padding不会增加总高度 */
-  width: 100%;
-  position: relative;
-  z-index: 10;
+/* 音质弹窗（适配4个选项） */
+.quality-popup {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  pointer-events: none;
 }
-
-/* 调整图标位置，使其垂直居中 */
-.back-btn, .more-btn {
-  width: 50rpx;
-  height: 50rpx;
-  tint-color: #fff; /* 确保图标在深色背景上可见 */
+.quality-popup.show {
+  pointer-events: auto;
 }
-
-/* 标题样式保持不变，确保垂直居中 */
-.title {
-  font-size: 34rpx;
-  font-weight: 500;
-  color: #fff; /* 明确文字颜色 */
-}
-
-/* 可选：给顶部栏添加底部边框，区分内容区域 */
-.top-bar::after {
-  content: '';
+.quality-popup-mask {
   position: absolute;
   left: 0;
+  right: 0;
+  top: 0;
   bottom: 0;
-  width: 100%;
-  height: 1rpx;
-  background-color: rgba(255, 255, 255, 0.1); /* 浅色边框，与深色主题协调 */
-}  
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.quality-popup.show .quality-popup-mask {
+  opacity: 1;
+}
+.quality-popup-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom:160rpx;
+  background-color: #121212;
+  border-top-left-radius: 20rpx;
+  border-top-right-radius: 20rpx;
+  padding: 30rpx;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  min-height: 320rpx; /* 适配4个选项高度 */
+}
+.quality-popup.show .quality-popup-content {
+  transform: translateY(0);
+}
+.quality-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+.quality-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25rpx 0; /* 增加行高 */
+  border-bottom: 1px solid #222;
+}
+.quality-item text {
+  font-size: 28rpx;
+}
+.quality-check {
+  width: 30rpx;
+  height: 30rpx;
+  tint-color: #c62f2f;
+}
+    

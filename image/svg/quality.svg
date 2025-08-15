@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- 音符主体 -->
+  <path d="M12 5C8.13 5 5 8.13 5 12s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="#aaaaaa"/>
+  <!-- 音质波形线 -->
+  <path d="M8 12h1v2H8zM10 10h1v6h-1zm2-4h1v10h-1zm2 6h1v4h-1zm2-8h1v8h-1z" fill="#aaaaaa"/>
+  <!-- 装饰圆环 -->
+  <circle cx="12" cy="12" r="8" stroke="#aaaaaa" stroke-width="1" fill="none"/>
+</svg>

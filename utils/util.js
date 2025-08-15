@@ -1,183 +1,166 @@
-const time = require('./time')
-const request = time.Promisify(wx.request)
-const base = require('./base')
-const api = require('./api')
-const apiHost =getApp().host;
-// import pinyin from './pinyin.mjs'
-// console.log(pinyin, 555)
-// function getFirstLetter(name) {
-//   if (!name) return '#';
-//   const py = pinyin(name[0], { style: pinyin.STYLE_FIRST_LETTER });
-//   const letter = py[0][0].toUpperCase();
-//   if (/[A-Z]/.test(letter)) return letter;
-//   return '#';
-// }
+const time = require('./time');
+const request = time.Promisify(wx.request);
+const base = require('./base');
+const api = require('./api');
+const apiHost = getApp().host;
+
+// 格式化时间为年/月/日 时:分:秒
 const formatTime = date => {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  const second = date.getSeconds()
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
 
-  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
-}
+  return [year, month, day].map(formatNumber).join('/') + ' ' + 
+         [hour, minute, second].map(formatNumber).join(':');
+};
 
+// 数字补零格式化
 const formatNumber = n => {
-  n = n.toString()
-  return n[1] ? n : '0' + n
-}
+  n = n.toString();
+  return n[1] ? n : '0' + n;
+};
+
+// 获取歌词
 const GETlRC = async (id) => {
   if (id[0] === 'k') {
-    return ''
+    return '';
   }
-  const res = await request({
-    url: `https://music-api.tonzhon.com/lyrics/${id}`
-  })
-  if (id[0] === 'q') {
-    // base64解码
-    if(res.data?.data){
-      return decodeURIComponent(escape(base.weAtob(res.data.data)))
+  
+  try {
+    const res = await request({
+      url: `https://music-api.tonzhon.com/lyrics/${id}`
+    });
+    
+    if (id[0] === 'q' && res.data?.data) {
+      // 处理QQ音乐的base64编码歌词
+      return decodeURIComponent(escape(base.weAtob(res.data.data)));
     }
-    return ''
+    
+    return res.data?.data || '';
+  } catch (err) {
+    console.error('获取歌词失败:', err);
+    return '';
   }
-  return res.data?.data
-}
-const errorSong = async (type, datas, callback) => {
-  // mid=1 // 
-  // 判断该歌曲属于哪个分类
+};
 
+// 处理歌曲播放错误，获取可用播放源（支持音质参数）
+const errorSong = async (type, datas, resource = null, level = null, callback) => {
+  // 确保callback始终是函数
+  if (typeof callback !== 'function') {
+    callback = () => {};
+  }
+
+  // 处理不同类型的歌曲源
   if (type === 1) {
-    request({
-      url: apiHost+'/getSongList',
-      method: 'post',
-      data: {
+    try {
+      const requestData = {
         input: datas.id,
         filter: 'id',
         type: datas.type || 'baidu',
-        page: 1,
-
-      }
-    })
-      .then(res => {
+        page: 1
+      };
+      
+      // 添加音质参数（如果提供）
+      if (resource !== null) requestData.resource = resource;
+      if (level !== null) requestData.level = level;
+      
+      const res = await request({
+        url: `${apiHost}/getSongList`,
+        method: 'post',
+        data: requestData
+      });
+      
+      if (res.data?.data?.[0]?.url) {
         callback({
           src: res.data.data[0].url,
-          lrc:res.data.data[0].lrc,
-          stauts:true
-        })
-
-        // pay(that, app, datas1,1)
-
-      })
-    return
-  }
- else if(type===2){
-    return callback({
-      stauts:false
-    })
-  }
-  // if (type === 3) {
-  //   const reg = /[\u4e00-\u9fa5]/; //判断是否存在中文
-  //   const res = await request({
-  //     url: `https://music-api.tonzhon.com/song_file/${datas.id}`,
-  //   })
-   
-  //   if (!res.data.success) {
-  //     wx.showToast({
-  //       title: '无法播放',
-  //       icon: 'none'
-  //     })
-  //     callback({
-  //       stauts:false
-  //     })
-  //     return 
-  //   }
-  //   const urls = res.data?.data || ''
-  //   if (!urls?.startsWith('http') && urls?.startsWith('//')) {
-  //     const url = res.data?.data.substring(2, res.data?.data.indexOf('mp3') + 3)
-  //     // 截取域名
-  //     const doname = url.substring(0, url.indexOf('/') + 1)
-  //     const remaining = url.substring(url.indexOf('/') + 1)
-  //     callback({src :'https://' + doname + encodeURIComponent(remaining), stauts:true,mm:true})
-  //   }
-  //   else if (urls?.startsWith('http')) {
-  //     if (reg.test(urls)) {
-  //       // 存在中文
-  //       // 提取域名
-  //       const str1 = urls.substring(0, urls.indexOf('//') + 2)
-  //       const str = urls.substring(urls.indexOf('//') + 2)
-  //       const remaining = str.substring(str.indexOf('/') + 1)
-  //       const doname = str.substring(0, str.indexOf('/') + 1)
-  //       callback({
-  //         src: str1 + doname + encodeURIComponent(remaining),
-  //         stauts:true
-  //       })
-  //       return  
-  //     }
-  //     return callback({
-  //       src:urls,
-  //       stauts:true
-  //     })
-  //   }
-  //   return
-  // }
-  
-  else if(type===4){
-    api.getjaySongSrc(datas.id,({src,lrc})=>{
-      callback({src,stauts:true,lrc})
-    })
-  }
-  // if(type===5){
-  //   api.atSong(datas.id,({src,lrc,pic})=>{
-  //     callback({src,stauts:true,lrc,pic})
-  //   })
-  // } // 爱听音乐 
-  // gqb
-  else if(type===5||type === 3){
-   
-    api.atSong(datas.id,({src,lrc,pic,newid})=>{
-      callback({src,stauts:true,lrc,pic,newid})
-    })
-  }
-  else if(type===6){
-    api.gqbSong(datas.id,({src,lrc,pic})=>{
-      callback({src,stauts:true,lrc,pic})
-    })
-  }
-  else{
-    return callback({
-      stauts:false
-    })
-  }
- 
-}
-// 分页功能
-function changePage(getAthletesList,Array,obj={total:'total', pageNum:'pageNum',pageSize:'pageSize'}){
-  let pageTotal=Math.ceil((this.data[obj.total]/this.data[obj.pageSize]))
-  console.log(pageTotal,this.data[obj.pageNum])
-  if(this.data[obj.pageNum]<pageTotal){
-    this.setData({
-      [obj.pageNum]:this.data[obj.pageNum]+1
-    })
-    if(Array){
-    this[getAthletesList](this.data[obj.pageNum],this.data[obj.pageSize],...Array)}
-    else{
-      this[getAthletesList](this.data[obj.pageNum],this.data[obj.pageSize])
+          lrc: res.data.data[0].lrc || '',
+          stauts: true
+        });
+      } else {
+        callback({ stauts: false });
+      }
+    } catch (err) {
+      console.error('type=1 歌曲加载失败:', err);
+      callback({ stauts: false });
     }
-  } else{
+    return;
+  } 
+  else if (type === 2) {
+    // 类型2直接返回失败
+    callback({ stauts: false });
+    return;
+  }
+  else if (type === 4) {
+    // 获取周杰伦歌曲源
+    api.getjaySongSrc(datas.id, ({ src, lrc }) => {
+      callback({ src, lrc: lrc || '', stauts: src ? true : false });
+    });
+    return;
+  }
+  else if (type === 5 || type === 3) {
+    // 爱听音乐或其他类型
+    api.atSong(datas.id, resource, level, ({ src, lrc, pic, newid }) => {
+      callback({ 
+        src, 
+        lrc: lrc || '', 
+        pic: pic || datas.pic,
+        newid,
+        stauts: src ? true : false 
+      });
+    });
+    return;
+  }
+  else if (type === 6) {
+    // gqb歌曲源
+    api.gqbSong(datas.id, ({ src, lrc, pic }) => {
+      callback({ 
+        src, 
+        lrc: lrc || '', 
+        pic: pic || datas.pic,
+        stauts: src ? true : false 
+      });
+    });
+    return;
+  }
+  else {
+    // 未匹配的类型
+    callback({ stauts: false });
+  }
+};
+
+// 分页功能处理
+function changePage(getAthletesList, Array, obj = { 
+  total: 'total', 
+  pageNum: 'pageNum', 
+  pageSize: 'pageSize' 
+}) {
+  const pageTotal = Math.ceil(this.data[obj.total] / this.data[obj.pageSize]);
+  
+  if (this.data[obj.pageNum] < pageTotal) {
+    this.setData({
+      [obj.pageNum]: this.data[obj.pageNum] + 1
+    });
+    
+    if (Array && Array.length > 0) {
+      this[getAthletesList](this.data[obj.pageNum], this.data[obj.pageSize], ...Array);
+    } else {
+      this[getAthletesList](this.data[obj.pageNum], this.data[obj.pageSize]);
+    }
+  } else {
     wx.showToast({
       title: '我已经到底了',
-      icon:'none'
-    })
+      icon: 'none'
+    });
   }
- 
 }
-
 
 module.exports = {
-  formatTime: formatTime,
+  formatTime,
   GETlRC,
   errorSong,
-  changePage,
-  // getFirstLetter
-}
+  changePage
+};
+    
