@@ -1,9 +1,20 @@
-const appInst = getApp();
 const utils = require('./util');
 let InitialValue = true;
 let InitialValue1 = true;
 let loopFlag = false;
 let request = Promisify(wx.request);
+
+/**
+ * 获取 app 实例
+ * @returns {Object}
+ */
+function getAppInstance() {
+  try {
+    return getApp();
+  } catch (e) {
+    return null;
+  }
+}
 
 // 秒转分钟
 function MinuteConversion(second) {
@@ -27,9 +38,12 @@ function Nextsong(that, app, appInst) {
   if (that.data.songList.length === 1) return;
   const datas = that.data.songList[that.data.ins + 1];
   that.setData({ value: 0, Crack: false,lastPlayTime: 0 });
-  appInst.data.song = datas;
-  if (!appInst.data.song.pic) {
-    wholelist(appInst);
+  const appInstance = appInst || getAppInstance();
+  if (appInstance && appInstance.data) {
+    appInstance.data.song = datas;
+  }
+  if (!datas.pic) {
+    wholelist(appInstance || app);
   } else {
     playCore(that, app, datas, 1, that.data.currentQuality.resource, that.data.currentQuality.level);
   }
@@ -39,9 +53,12 @@ function Nextsong(that, app, appInst) {
 function Lastsong(that, app, appInst) {
   const datas = that.data.songList[that.data.ins - 1];
   that.setData({ value: 0, Crack: false,lastPlayTime:0 });
-  appInst.data.song = datas;
-  if (!appInst.data.song.pic) {
-    wholelist(appInst);
+  const appInstance = appInst || getAppInstance();
+  if (appInstance && appInstance.data) {
+    appInstance.data.song = datas;
+  }
+  if (!datas.pic) {
+    wholelist(appInstance || app);
   } else {
     playCore(that, app, datas, 0, that.data.currentQuality.resource, that.data.currentQuality.level);
   }
@@ -53,9 +70,12 @@ function Randomplay(that, app, appInst) {
   const inst = Math.floor(Math.random() * length);
   that.setData({ value: 0, Crack: false });
   const datas = that.data.songList[inst];
-  appInst.data.song = datas;
-  if (!appInst.data.song.pic) {
-    wholelist(appInst);
+  const appInstance = appInst || getAppInstance();
+  if (appInstance && appInstance.data) {
+    appInstance.data.song = datas;
+  }
+  if (!datas.pic) {
+    wholelist(appInstance || app);
   } else {
     playCore(that, app, datas, 0, that.data.currentQuality.resource, that.data.currentQuality.level);
   }
@@ -189,7 +209,10 @@ function newAddSong(data) {
       key: 'songlist',
       data: data.songlist,
       success: () => {
-        appInst.data.paythis.setData({ songList: data.songlist });
+        const appInst = getAppInstance();
+        if (appInst && appInst.data && appInst.data.paythis) {
+          appInst.data.paythis.setData({ songList: data.songlist });
+        }
       }
     });
   }
@@ -236,7 +259,10 @@ function saveStoreSongList(arr) {
         key: 'songlist',
         data: newSongList,
         success: () => {
-          appInst.data.paythis.setData({ songList: newSongList });
+          const appInst = getAppInstance();
+          if (appInst && appInst.data && appInst.data.paythis) {
+            appInst.data.paythis.setData({ songList: newSongList });
+          }
         }
       });
     },
@@ -245,7 +271,10 @@ function saveStoreSongList(arr) {
         key: 'songlist',
         data: arr,
         success: () => {
-          appInst.data.paythis.setData({ songList: arr });
+          const appInst = getAppInstance();
+          if (appInst && appInst.data && appInst.data.paythis) {
+            appInst.data.paythis.setData({ songList: arr });
+          }
         }
       });
     }
@@ -259,16 +288,22 @@ function suspend(that, app) {
   clearInterval(that.data.setInterval);
   that.setData({ state: true, pay: "../../image/bf.png" });
   
+  const appInst = getAppInstance();
+  
   app.onPause(() => {
-    appInst.eventBus.emit('updatePlayStatus', false);
-    if (appInst.data.paythis) {
+    if (appInst && appInst.eventBus) {
+      appInst.eventBus.emit('updatePlayStatus', false);
+    }
+    if (appInst && appInst.data && appInst.data.paythis) {
       appInst.data.paythis.setData({ pay: '../../image/bf.png', state: true, isPlaying: false });
     }
   });
   
   app.onPlay(() => {
-    if (appInst.data.paythis) {
+    if (appInst && appInst.data && appInst.data.paythis) {
       appInst.data.paythis.setData({ pay: '../../image/zt.png', state: false, isPlaying: true });
+    }
+    if (appInst && appInst.eventBus) {
       appInst.eventBus.emit('updatePlayStatus', true);
     }
   });
@@ -302,7 +337,10 @@ function Readinfo(that, app, appInst) {
     key: 'lastsong',
     success: (res) => {
       const datas = res.data.datas;
-      appInst.data.song = datas.song;
+      const appInstance = appInst || getAppInstance();
+      if (appInstance && appInstance.data) {
+        appInstance.data.song = datas.song;
+      }
       that.setData({
         max: datas.max,
         conduct: datas.conduct,
@@ -326,15 +364,17 @@ function Readinfo(that, app, appInst) {
 
 // 核心播放方法（支持音质切换）
 async function playCore(that, app, datas, restart, resource = null, level = null) {
-  const appInst = getApp();
+  const appInst = getAppInstance();
   
   // 暂停事件
   app.onPause(() => {
-    appInst.eventBus.emit('updatePlayStatus', false);
-    if (appInst.data.paythis) {
+    if (appInst && appInst.eventBus) {
+      appInst.eventBus.emit('updatePlayStatus', false);
+    }
+    if (appInst && appInst.data && appInst.data.paythis) {
       appInst.data.paythis.setData({ pay: '../../image/bf.png', state: true, isPlaying: false });
     }
-    if (wx.getAppBaseInfo().version > '8.0.47') {
+    if (wx.getAppBaseInfo().version > '8.0.47' && appInst && appInst.data && appInst.data.song) {
       app.title = appInst.data.song?.title;
       app.singer = appInst.data.song?.author;
     }
@@ -342,8 +382,10 @@ async function playCore(that, app, datas, restart, resource = null, level = null
 
   // 播放事件
   app.onPlay(() => {
-    if (appInst.data.paythis) {
+    if (appInst && appInst.data && appInst.data.paythis) {
       appInst.data.paythis.setData({ pay: '../../image/zt.png', state: false, isPlaying: true });
+    }
+    if (appInst && appInst.eventBus) {
       appInst.eventBus.emit('updatePlayStatus', true);
     }
   });
@@ -368,7 +410,9 @@ async function playCore(that, app, datas, restart, resource = null, level = null
             }
           });
           Lrcget(that, datas);
-          appInst.eventBus.emit("songChanged", datas);
+          if (appInst && appInst.eventBus) {
+            appInst.eventBus.emit("songChanged", datas);
+          }
         }
 
         // 绑定进度更新
@@ -426,10 +470,14 @@ async function playCore(that, app, datas, restart, resource = null, level = null
   // 获取音频资源（带音质参数）
   await new Promise((resolve) => {
     wx.showLoading({ title: '加载中' });
+    console.log(datas, resource, level,'333')
     utils.errorSong(5, datas, resource, level, async (e) => { // 传递音质参数
+      console.log(e,'444')
       if (e.stauts) {
         loopFlag = false;
-        appInst.data.song = { ...e, id: datas.id };
+        if (appInst && appInst.data) {
+          appInst.data.song = { ...e, id: datas.id };
+        }
         datas.src = e.src;
         if (e.lrc) datas.lrc = e.lrc;
         if (e.pic) datas.pic = e.pic;
@@ -443,7 +491,9 @@ async function playCore(that, app, datas, restart, resource = null, level = null
 
         // 保存到播放列表
         saveStoreSongList([datas]);
-        appInst.eventBus.emit("songChanged", datas);
+        if (appInst && appInst.eventBus) {
+          appInst.eventBus.emit("songChanged", datas);
+        }
         if(that.data.paythis&&app&&that.data.beforeCurrentQuality.level !== level){
            app.onCanplay(() => {
             console.log('onCanplay event', that.data.paythis, app);
@@ -538,7 +588,8 @@ async function playCore(that, app, datas, restart, resource = null, level = null
     if (that.data.ins > 0) {
       Lastsong(that, app, appInst);
     } else {
-      that.setData({ ins: appInst.data.songlist.length });
+      const songlistLength = (appInst && appInst.data && appInst.data.songlist) ? appInst.data.songlist.length : 0;
+      that.setData({ ins: songlistLength });
       Lastsong(that, app, appInst);
     }
   });

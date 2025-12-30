@@ -4,8 +4,10 @@ const app = getApp();
 const api = require('../../utils/api')
 const time = require('../../utils/time.js')
 const { img } = require('../../utils/loveBg')
-const request = time.Promisify(wx.request)
+const request = require('../../utils/request')
 const utils = require('../../utils/util.js')
+const errorHandler = require('../../utils/errorHandler')
+const playHistory = require('../../utils/playHistory')
 
 // 工具函数：去除/api前缀
 function fixImgUrl(url) {
@@ -59,22 +61,38 @@ Page({
       url: "../../pages/details/details?id=" + id + '&&src=' + src
     })
   },
-  async getRecommend(id,page,size) {
-    const res = await request({
-      url: app.host + '/top', data: {
+  /**
+   * 获取推荐歌单
+   */
+  async getRecommend(id, page, size) {
+    try {
+      const res = await request.get('/top', {
         id,
         page,
         size
-      }
-    })
-    return res
+      });
+      return res;
+    } catch (error) {
+      console.error('获取推荐失败:', error);
+      return { success: false };
+    }
   },
- async getRecommendSong(){
-  const res = await this.getRecommend('93',1,10)
-  console.log(res.data.data.arr.map(k=>({...k,img:app.host+'/resource?url='+k.image})))
-  this.setData({
-    songList:res.data.data.arr.map(k=>({...k,img:app.host+'/resource?url='+k.image}))
-  })
+  /**
+   * 获取推荐歌曲
+   */
+  async getRecommendSong() {
+    try {
+      const res = await this.getRecommend('93', 1, 10);
+      if (res.success && res.data && res.data.arr) {
+        const songList = res.data.arr.map(k => ({
+          ...k,
+          img: app.host + '/resource?url=' + k.image
+        }));
+        this.setData({ songList });
+      }
+    } catch (error) {
+      console.error('获取推荐歌曲失败:', error);
+    }
   },
 
 
@@ -83,6 +101,9 @@ Page({
       url: "../../pages/details/details?id=my&&src=" + this.data.myLovesrc
     })
   },
+  /**
+   * 获取推荐歌单列表
+   */
   async getRecommen(page = this.data.pageNum) {
     if (page === 1) {
       this.setData({
@@ -95,40 +116,30 @@ Page({
             noRefresh: true
           },
         ]
-      })
-    }
-    wx.showLoading({
-      title: '加载中',
-
-    })
-    // console.log(4444)
-    try {
-      const res = await request({
-        url: app.host + '/recommen?page=' + page,
-      })
-      wx.hideLoading()
-      // 处理图片url
-      let list = res.data.data?.data.map(item => {
-        let img = '/' + fixImgUrl(item.img);
-        return {
-          ...item,
-          img: app.host + img
-        };
       });
-      this.setData({
-        musicList: this.data.musicList.concat(list),
-        total: res.data.data?.total
-      })
-    } catch (err) {
-      wx.hideLoading();
+    }
 
-
-      setTimeout(() => {
-        wx.showToast({
-          title: err.errMsg,
-          icon: 'none'
-        })
-      }, 2000);
+    try {
+      const res = await request.get('/recommen', { page });
+      
+      if (res.success && res.data && res.data.data) {
+        // 处理图片url
+        const list = res.data.data.map(item => {
+          const imgUrl = '/' + fixImgUrl(item.img);
+          return {
+            ...item,
+            img: app.host + imgUrl
+          };
+        });
+        
+        this.setData({
+          musicList: this.data.musicList.concat(list),
+          total: res.data.total || 0,
+          pageNum: page
+        });
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
     }
   },
   onLoad: function () {
@@ -180,28 +191,38 @@ Page({
   onRank() {
     wx.showToast({ title: '排行榜功能开发中', icon: 'none' });
   },
-  playSong(e) {
+  /**
+   * 播放歌曲
+   */
+  async playSong(e) {
     const song = e.currentTarget.dataset.song;
 
-    // wx.showToast({ title: '播放歌曲ID：' + id, icon: 'none' });
-          if (app.data.song && app.data.song.id === song.id) {
-            wx.showToast({
-              title: '该歌曲正在播放中',
-              icon: 'none'
-            });
-            return;
-          }
-          app.data.song = song;
-          wx.switchTab({
-            url: "../../pages/newPlay/newPlay",
-            success: function () {
-              app.data.paythis.setData({
-                value: 0
-              })
-              // time.newAddSong(app.data);
-              time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
-            }
-          })
+    if (app.data.song && app.data.song.id === song.id) {
+      wx.showToast({
+        title: '该歌曲正在播放中',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 添加播放历史
+    await playHistory.add({
+      id: song.id,
+      title: song.title || song.name,
+      singer: song.author || song.singer,
+      pic: song.pic || song.img || song.cover
+    });
+
+    app.data.song = song;
+    wx.switchTab({
+      url: "../../pages/newPlay/newPlay",
+      success: () => {
+        app.data.paythis.setData({
+          value: 0
+        });
+        time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
+      }
+    });
   },
   onMore(e) {
     const id = e.currentTarget.dataset.id;

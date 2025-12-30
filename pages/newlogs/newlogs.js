@@ -2,56 +2,117 @@
 const time = require('../../utils/time.js')
 const app = getApp();
 const api = require('../../utils/api')
-const request = time.Promisify(wx.request)
+const API = require('../../services/api');
+const searchHistory = require('../../utils/searchHistory');
+const errorHandler = require('../../utils/errorHandler');
 const debounce = time.debounce()
-Page({
 
+Page({
   /**
    * 页面的初始数据
    */
   data: {
-    song: [
-
-    ],
+    song: [],
     key: 'netease',
     singer: '', //歌手
     logo: '../../image/qqjt.png',
     state: '6',
     itemList: ['立即播放', '下一首播放'],
     array: ['聚合', 'QQ', '网易云', '千千', '咪咕', '酷狗', '爱听'],
+    serach: '', // 搜索关键词
+    searchHistory: [], // 搜索历史
+    showHistory: false, // 是否显示搜索历史
+    hotKeywords: [], // 热门搜索词
+    loading: false
   },
-  // 输入监听
+  /**
+   * 输入监听
+   */
   onSearchInput(e) {
-    const that = this
-    wx.hideLoading()
-    wx.hideToast()
-    var serach = e.detail.value;
-    that.setData({
-      serach
-    })
+    const serach = e.detail.value;
+    this.setData({
+      serach,
+      showHistory: !serach.trim() // 没有输入时显示历史记录
+    });
+
     if (!serach.trim()) {
-      that.setData({
+      this.setData({
         song: [],
         singer: '',
         singerList: []
-      })
-      return
+      });
+      this.loadSearchHistory();
+      return;
     }
 
+    // 防抖搜索
     if (serach.length === 1) {
-      that.getData()
-
+      this.getData();
     } else if (serach.length > 1) {
-      debounce(that.getData.bind(this), 1000)
+      debounce(this.getData.bind(this), 1000);
     }
-
-
   },
+
+  /**
+   * 填充搜索关键词
+   */
   fillSearch(e) {
+    const keyword = e.currentTarget.dataset.word;
     this.setData({
-      serach: e.currentTarget.dataset.word
-    })
-    this.getData()
+      serach: keyword,
+      showHistory: false
+    });
+    this.getData();
+  },
+
+  /**
+   * 清空搜索
+   */
+  clearSearch() {
+    this.setData({
+      serach: '',
+      song: [],
+      singer: '',
+      singerList: [],
+      showHistory: true
+    });
+    this.loadSearchHistory();
+  },
+
+  /**
+   * 删除搜索历史项
+   */
+  async deleteHistoryItem(e) {
+    const keyword = e.currentTarget.dataset.word;
+    await searchHistory.remove(keyword);
+    await this.loadSearchHistory();
+  },
+
+  /**
+   * 清空搜索历史
+   */
+  async clearSearchHistory() {
+    const confirmed = await errorHandler.showConfirm({
+      title: '提示',
+      content: '确定要清空搜索历史吗？'
+    });
+    
+    if (confirmed) {
+      await searchHistory.clear();
+      await this.loadSearchHistory();
+    }
+  },
+
+  /**
+   * 加载搜索历史
+   */
+  async loadSearchHistory() {
+    const history = await searchHistory.getHistory(10);
+    const hotKeywords = searchHistory.getHotKeywords();
+    this.setData({
+      searchHistory: history,
+      hotKeywords: hotKeywords
+    });
   },
   goToSingerDetail(e) {
     const singer = e.currentTarget.dataset.singer;
@@ -62,165 +123,141 @@ Page({
       url: "/pages/singerdetails/singerdetails?id=" + singer.id
     });
   },
-  getData() {
-    const that = this
-    console.log(that, 'that')
-    const serach = that.data.serach
-    if (!serach.trim()) {
-      that.setData({
+  /**
+   * 搜索数据
+   */
+  async getData() {
+    const serach = this.data.serach.trim();
+    if (!serach) {
+      this.setData({
         song: [],
-        singer: ''
-      })
-      return
-    }
-    if (that.data.state === '3') {
-      wx.showLoading({
-        title: '加载中',
-      })
-      wx.request({
-        url: 'https://dataiqs.com/api/kgmusic/' + '?msg=' + serach,
-        success: function (res) {
-          wx.hideLoading();
-          // console.log(res.data);
-          //数据处理
-          let arr = [];
-          res.data.data.map((item, index, ite) => {
-            if (ite.length > 0) {
-              let obj = {}
-              obj.title = item.name,
-                obj.author = item.singername;
-              obj.pic = 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
-                // obj.src = `https://music.163.com/song/media/outer/url?id=${item.id}.mp3`,
-                obj.mvid = item.mvid
-              obj.id = item.hash
-              obj.mId = 2 // 表示 gaiId的资源
-              arr.push(obj)
-            }
-            return arr;
-          })
-          // console.log(res.data.result.songs)
-          that.setData({
-            song: arr
-
-          })
-        }
-      })
-
-
-      return
+        singer: '',
+        singerList: []
+      });
+      return;
     }
 
-    if (that.data.state === '6') {
-      // 爱听音乐
-      wx.showLoading({
-        title: '加载中',
-      })
-      request({
-        url: app.host + `/serach?name=${serach}`
-      })
-        .then(res => {
-          wx.hideLoading()
-          if (res.data.code === 200) {
-            that.setData({
-              song: res.data.data?.data,
-              singerList: res.data.data?.singer
-            })
-            return
-          }
+    // 保存搜索历史
+    await searchHistory.add(serach);
+    this.setData({
+      showHistory: false,
+      loading: true
+    });
 
-          setTimeout(() => {
-            wx.showToast({
-              title: res.data.message,
-              icon: 'error'
-            })
-          }, 200);
-        }, err => {
-          wx.hideLoading()
-          setTimeout(() => {
-            wx.showToast({
-              title: err.message,
-              icon: 'error'
-            })
-          }, 200);
-        })
-      return
-    }
-
-    if (that.data.state !== '0') {
-      wx.showLoading({
-        title: '加载中',
-      })
-      request({
-        url: app.host + '/getSongList',
-        method: 'post',
-        data: {
-          input: serach,
-          filter: 'name',
-          type: that.data.key,
-          page: 1,
-
-        },
-
-      })
-        .then(res => {
-          setTimeout(() => {
-            wx.hideLoading();
-          }, 300);
-          if (!res.data.data) {
-            wx.showToast({
-              title: '查询失败',
-              icon: 'error'
-            })
-            return
-          }
-          const arr = res.data.data.map((item, index, ite) => {
-            let obj = { ...item }
-            if (ite.length > 0) {
-
-              obj.title = item.title,
-                obj.author = item.author;
-              obj.pic = item.pic || 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
-                obj.src = item.url,
-                obj.id = item.songid
-              obj.lrc = item.lrc;
-              obj.type = item.type
-              obj.mId = 1 // 表示/getSongList下的资源
-
-            }
-            return obj;
-          })
-          that.setData({
-            song: arr
-
-          })
-          // console.log(that.data.song,444)
-        }, err => {
-          setTimeout(() => {
-            wx.hideLoading();
-          }, 300);
-          if (err.errMsg === 'request:fail url not in domain list') {
-            wx.showToast({
-              title: '请打开开发者模式',
-              icon: 'none'
-            })
-          }
-          // console.log(err)
-        })
-    }
-    else {
-      // console.log(123456)
-      api.getSerachSongOrSinger(serach, undefined, arr => {
-
-        that.setData({
-          song: arr.map(i => ({ ...i, title: i.name, author: i.singer }))
-        })
-      })
+    try {
+      if (this.data.state === '6') {
+        // 爱听音乐搜索
+        await this.searchAiTing(serach);
+      } else if (this.data.state === '3') {
+        // 酷狗音乐搜索（外部API）
+        await this.searchKuGou(serach);
+      } else if (this.data.state !== '0') {
+        // 使用后端搜索接口
+        await this.searchBackend(serach);
+      } else {
+        // 聚合搜索
+        await this.searchAggregate(serach);
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    } finally {
+      this.setData({ loading: false });
     }
   },
-  //播放音乐
+
+  /**
+   * 爱听音乐搜索
+   */
+  async searchAiTing(serach) {
+    const res = await API.song.searchSong({
+      input: serach,
+      filter: 'name',
+      type: 'aiting',
+      page: 1
+    });
+
+    if (res.success) {
+      this.setData({
+        song: res.data?.data || [],
+        singerList: res.data?.singer || []
+      });
+    }
+  },
+
+  /**
+   * 酷狗音乐搜索（外部API）
+   */
+  async searchKuGou(serach) {
+    // 使用外部API，保持原有逻辑
+    const request = require('../../utils/time').Promisify(wx.request);
+    const res = await request({
+      url: 'https://dataiqs.com/api/kgmusic/?msg=' + serach
+    });
+
+    if (res.data && res.data.data) {
+      const arr = res.data.data.map((item) => {
+        return {
+          title: item.name,
+          author: item.singername,
+          pic: 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
+          mvid: item.mvid,
+          id: item.hash,
+          mId: 2 // 表示 gaiId的资源
+        };
+      });
+      this.setData({ song: arr });
+    }
+  },
+
+  /**
+   * 后端搜索
+   */
+  async searchBackend(serach) {
+    const res = await API.song.searchSong({
+      input: serach,
+      filter: 'name',
+      type: this.data.key,
+      page: 1
+    });
+
+    if (res.success && res.data) {
+      const arr = res.data.map((item) => {
+        return {
+          ...item,
+          title: item.title || item.name,
+          author: item.author || item.singer,
+          pic: item.pic || 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
+          src: item.url,
+          id: item.songid || item.id,
+          lrc: item.lrc,
+          type: item.type,
+          mId: 1 // 表示/getSongList下的资源
+        };
+      });
+      this.setData({ song: arr });
+    }
+  },
+
+  /**
+   * 聚合搜索
+   */
+  async searchAggregate(serach) {
+    api.getSerachSongOrSinger(serach, undefined, (arr) => {
+      this.setData({
+        song: arr.map(i => ({
+          ...i,
+          title: i.name || i.title,
+          author: i.singer || i.author
+        }))
+      });
+    });
+  },
+  /**
+   * 播放音乐
+   */
   pay(e) {
-    var song = e.currentTarget.dataset.song;
-    // console.log(e)
+    const song = e.currentTarget.dataset.song;
+    
     // 判断当前播放歌曲
     if (app.data.song && app.data.song.id === song.id) {
       wx.showToast({
@@ -229,18 +266,17 @@ Page({
       });
       return;
     }
+    
     app.data.song = song;
     wx.switchTab({
       url: "../../pages/newPlay/newPlay",
-      success: function () {
+      success: () => {
         app.data.paythis.setData({
           value: 0
-        })
-        // time.newAddSong(app.data);
+        });
         time.playCore(app.data.paythis, app.innerAudioContext, app.data.song, 1);
       }
-    })
-    return
+    });
   },
   //切换搜索模式
   bindPickerChange(e) {
@@ -294,8 +330,8 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
-
+  async onLoad(options) {
+    await this.loadSearchHistory();
   },
 
   /**
@@ -308,8 +344,12 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {
-
+  async onShow() {
+    // 如果搜索框为空，显示搜索历史
+    if (!this.data.serach) {
+      await this.loadSearchHistory();
+      this.setData({ showHistory: true });
+    }
   },
 
   /**
@@ -329,8 +369,13 @@ Page({
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {
-
+  async onPullDownRefresh() {
+    if (this.data.serach) {
+      await this.getData();
+    } else {
+      await this.loadSearchHistory();
+    }
+    wx.stopPullDownRefresh();
   },
 
   /**

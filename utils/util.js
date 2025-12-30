@@ -2,7 +2,19 @@ const time = require('./time');
 const request = time.Promisify(wx.request);
 const base = require('./base');
 const api = require('./api');
-const apiHost = getApp().host;
+
+/**
+ * 获取 API Host
+ * @returns {string}
+ */
+function getApiHost() {
+  try {
+    const app = getApp();
+    return app?.host || '';
+  } catch (e) {
+    return '';
+  }
+}
 
 // 格式化时间为年/月/日 时:分:秒
 const formatTime = date => {
@@ -48,6 +60,7 @@ const GETlRC = async (id) => {
 
 // 处理歌曲播放错误，获取可用播放源（支持音质参数）
 const errorSong = async (type, datas, resource = null, level = null, callback) => {
+  console.log(type, datas, resource, level,'55555555555');
   // 确保callback始终是函数
   if (typeof callback !== 'function') {
     callback = () => {};
@@ -68,7 +81,7 @@ const errorSong = async (type, datas, resource = null, level = null, callback) =
       if (level !== null) requestData.level = level;
       
       const res = await request({
-        url: `${apiHost}/getSongList`,
+        url: `${getApiHost()}/getSongList`,
         method: 'post',
         data: requestData
       });
@@ -101,8 +114,10 @@ const errorSong = async (type, datas, resource = null, level = null, callback) =
     return;
   }
   else if (type === 5 || type === 3) {
+   
     // 爱听音乐或其他类型
     api.atSong(datas.id, resource, level, ({ src, lrc, pic, newid }) => {
+
       callback({ 
         src, 
         lrc: lrc || '', 

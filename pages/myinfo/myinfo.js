@@ -1,26 +1,25 @@
 // pages/myinfo/myinfo.js
 const app = getApp();
-const time = require('../../utils/time')
-const request  = time.Promisify(wx.request)
-Page({
+const API = require('../../services/api');
+const authService = require('../../utils/auth');
+const errorHandler = require('../../utils/errorHandler');
+const CONSTANTS = require('../../utils/constants');
 
+Page({
   /**
    * 页面的初始数据
    */
   data: {
-    page:1,
-
-    paegSize:10,
-    addSongListFlag:false,
-    userInfo:{
-      username:"xxx",
-      avatarUrl:"",
-      gender:"男",
-    
+    page: 1,
+    pageSize: CONSTANTS.PAGINATION.DEFAULT_PAGE_SIZE,
+    addSongListFlag: false,
+    userInfo: {
+      username: "xxx",
+      avatarUrl: "",
+      gender: "男"
     },
-    playlist:[
-    
-    ]
+    playlist: [],
+    loading: false
   },
   //
   bindgetuserinfo(e){
@@ -36,66 +35,47 @@ Page({
   })
 
   },
-  newSongList(e){
+  /**
+   * 创建新歌单
+   */
+  async newSongList(e) {
     const datas = e.detail;
-    const that = this
-    // console.log(e)
-    const uploadImg = time.Promisify(wx.uploadFile)
-    uploadImg({
-      url:app.host+'/upload',
-      filePath:datas.image,
-      name:'file'
-    })
-    .then(res=>{
-      const data = JSON.parse(res.data)
-      if(data.code===200){
-        // 更新接口
-        wx.showLoading({
-          title: '加载中',
-        })
-        wx.request({
-          url:app.host+'/playlist/Add',
-          method:'post',
-          data:{
-      
-            userid:that.data.userInfo.userId,
-            img:data.data,
-            name:datas.title
-          },
-          success:res1=>{
-            wx.hideLoading()
-            if(res1.data.code===200){
-              setTimeout(() => {
-                wx.showToast({
-                  title:res1.data.message,
-                  icon:"success"
-                })
-                that.setData({
-                  addSongListFlag:false
-                 })
-                 this.getList(1,10)
-              }, 200);
-              return
-            }
-            setTimeout(() => {
-              wx.showToast({
-                title:res.data.message
-              })
-            }, 200);
-          },
-          fail:(err)=>{
-            wx.hideLoading()
-            setTimeout(() => {
-              wx.showToast({
-                title:err.message,
-                icon:'error'
-              })
-            }, 200);
-          }
-        })
+    if (!datas.title || !datas.title.trim()) {
+      wx.showToast({
+        title: '请输入歌单名称',
+        icon: 'none'
+      });
+      return;
+    }
+
+    try {
+      // 1. 上传封面图片
+      const uploadRes = await API.upload.uploadFile(datas.image);
+      if (!uploadRes.success) {
+        return;
       }
-    })
-    
+
+      // 2. 创建歌单
+      const res = await API.playlist.createPlaylist({
+        userid: this.data.userInfo.userId,
+        img: uploadRes.data,
+        name: datas.title.trim()
+      });
+
+      if (res.success) {
+        wx.showToast({
+          title: res.message || '创建成功',
+          icon: 'success'
+        });
+        this.setData({
+          addSongListFlag: false
+        });
+        // 刷新列表
+        await this.getList(1, this.data.pageSize);
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },
   close(){
     // console.log("???")
@@ -103,49 +83,51 @@ Page({
       addSongListFlag:false
      })
   },
-  onChooseAvatar(e){
+  /**
+   * 选择头像
+   */
+  async onChooseAvatar(e) {
     const { avatarUrl } = e.detail;
-    const uploadImg = time.Promisify(wx.uploadFile)
+    
+    // 先更新本地显示
     this.setData({
-      ["userInfo.avatarUrl"]:avatarUrl
-    })
-    // console.log(app.host+'/upload',222)
-    uploadImg({
-      url:app.host+'/upload',
-      filePath:avatarUrl,
-      name:'file'
-    })
-    .then(res=>{
-      const data = JSON.parse(res.data)
-      if(data.code===200){
-        // 更新接口
-        wx.showLoading({
-          title: '加载中',
-        })
-        wx.request({
-          url:app.host+'/userEdit',
-          method:'post',
-          data:{
-            headimg:data.data,
-            userId:this.data.userInfo.userId
-          },
-          success:(res1)=>{
-            wx.hideLoading();
-            if(res1.data.code===200){
-              setTimeout(() => {
-                wx.showToast({
-                  title: '更新成功',
-                  icon: 'none'
-                })
-              }, 0);
-            }
-          },
-          fail:()=>{
-            wx.hideLoading();
-          }
-        })
+      ["userInfo.avatarUrl"]: avatarUrl
+    });
+
+    try {
+      // 1. 上传头像
+      const uploadRes = await API.upload.uploadFile(avatarUrl);
+      if (!uploadRes.success) {
+        // 恢复原头像
+        this.setData({
+          ["userInfo.avatarUrl"]: this.data.userInfo.avatarUrl
+        });
+        return;
       }
-    })
+
+      // 2. 更新用户信息
+      const res = await API.user.updateUserInfo({
+        headimg: uploadRes.data,
+        userId: this.data.userInfo.userId
+      });
+
+      if (res.success) {
+        wx.showToast({
+          title: '更新成功',
+          icon: 'success'
+        });
+        // 更新全局用户信息
+        if (app.globalData) {
+          app.globalData.userInfo = { ...app.globalData.userInfo, headimg: uploadRes.data };
+        }
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+      // 恢复原头像
+      this.setData({
+        ["userInfo.avatarUrl"]: this.data.userInfo.avatarUrl
+      });
+    }
   },
   change(e){
     const id = e.currentTarget?.dataset?.id
@@ -153,76 +135,87 @@ Page({
       url: `../playlistInfo/playlistInfo?id=${id}`,
     })
   },
-  changeName(e){
-    const value  = e.detail.value
-    wx.showModal({
-      title:"昵称修改",
-      content:"确认修改昵称吗？",
-      success:(res)=>{
-        if(res.cancel){
-          this.setData({
-            ['userInfo.userName']:app.data.userInfo.userName
-          })
-          return
-        }
-        if(res.confirm){
-           // 更新接口
-        wx.showLoading({
-          title: '加载中',
-        })
-        wx.request({
-          url:app.host+'/userEdit',
-          method:'post',
-          data:{
-            userName:value,
-            userId:this.data.userInfo.userId
-          },
-          success:(res1)=>{
-            wx.hideLoading();
-            if(res1.data.code===200){
-              setTimeout(() => {
-                wx.showToast({
-                  title: '更新成功',
-                  icon: 'none'
-                })
-              }, 0);
-            }
-          },
-          fail:()=>{
-            wx.hideLoading();
-          }
-        })
-        }
-      }
-    })
-  },
- async getList(page,paegSize){
-    if(page===1){
-      this.data.playlist=[]
+  /**
+   * 修改昵称
+   */
+  async changeName(e) {
+    const value = e.detail.value.trim();
+    
+    if (!value) {
+      wx.showToast({
+        title: '昵称不能为空',
+        icon: 'none'
+      });
+      return;
     }
-    wx.showLoading({
-      title: '加载中',
-    })
-    try{
-      const res = await request({url:app.host+'/playlist',data:{userid:this.data.userInfo.userId,page,paegSize}})
-      wx.hideLoading()
-      if(res.data.code===200){
-        this.setData({
-          playlist:this.data.playlist.concat(res.data.data.data.map(i=>({...i,img:app.host+'/'+i.img}))),
-          count:res.data.data.count
-        })
-      }
+
+    const confirmed = await errorHandler.showConfirm({
+      title: '昵称修改',
+      content: '确认修改昵称吗？'
+    });
+
+    if (!confirmed) {
+      // 取消，恢复原值
+      this.setData({
+        ['userInfo.userName']: app.globalData?.userInfo?.userName || this.data.userInfo.userName
+      });
+      return;
     }
-    catch(err){
-      wx.hideLoading()
-      setTimeout(() => {
+
+    try {
+      const res = await API.user.updateUserInfo({
+        userName: value,
+        userId: this.data.userInfo.userId
+      });
+
+      if (res.success) {
         wx.showToast({
-          title:err.errMsg,
-          // icon:'error'
-        })
-      }, 200);
+          title: '更新成功',
+          icon: 'success'
+        });
+        // 更新全局用户信息
+        if (app.globalData) {
+          app.globalData.userInfo = { ...app.globalData.userInfo, userName: value };
+        }
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+      // 恢复原值
+      this.setData({
+        ['userInfo.userName']: app.globalData?.userInfo?.userName || this.data.userInfo.userName
+      });
     }
-   
+  },
+  /**
+   * 获取歌单列表
+   */
+  async getList(page, pageSize) {
+    if (page === 1) {
+      this.setData({ playlist: [] });
+    }
+
+    this.setData({ loading: true });
+
+    try {
+      const res = await API.playlist.getPlaylistList(this.data.userInfo.userId);
+      
+      if (res.success) {
+        const playlists = res.data.data.map(item => ({
+          ...item,
+          img: item.img ? `${app.host}/${item.img}` : ''
+        }));
+
+        this.setData({
+          playlist: page === 1 ? playlists : this.data.playlist.concat(playlists),
+          page: page,
+          hasMore: playlists.length >= pageSize
+        });
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    } finally {
+      this.setData({ loading: false });
+    }
   },
   getdatas(){
     wx.getUserProfile({
@@ -239,15 +232,15 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
-    if(app.data.userInfo){
-     
+  async onLoad(options) {
+    // 初始化用户信息
+    const userInfo = app.globalData?.userInfo || app.data?.userInfo;
+    if (userInfo) {
       this.setData({
-        // userInfo:app.data.userInfo,
-        page:1,
-        paegSize:10
-      })
-     
+        userInfo: userInfo,
+        page: 1,
+        pageSize: CONSTANTS.PAGINATION.DEFAULT_PAGE_SIZE
+      });
     }
   },
 
@@ -261,38 +254,41 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {
+  async onShow() {
+    // 检查并更新用户信息
+    const userInfo = app.globalData?.userInfo || app.data?.userInfo;
     
-    if(app.data.openId&&this.data.userInfo?.username==='xxx'){
-      wx.request({
-        url:`${app.host}/userinfo?id=${app.data.openId}`,
-        success:res1=>{
-          if(res1.data?.data?.length){
-            // 有用户 将数据直接赋值到userinfo
-            app.data.userInfo =res1.data?.data[0]
-            if(app.data.userInfo.headimg){
-              app.data.userInfo.avatarUrl = app.host+'/'+app.data.userInfo.headimg
+    if (!userInfo || this.data.userInfo?.username === 'xxx') {
+      // 尝试获取用户信息
+      const openId = app.globalData?.openId || app.data?.openId;
+      if (openId) {
+        try {
+          const res = await API.user.getUserInfo(openId);
+          if (res.success && res.data && res.data.length > 0) {
+            const userInfo = res.data[0];
+            if (userInfo.headimg) {
+              userInfo.avatarUrl = `${app.host}/${userInfo.headimg}`;
             }
-
-            this.setData({
-              userInfo:app.data.userInfo
-            })
-            this.getList(1,10)
-          }else{
-            // 没有用户 新增接口
-            wx.request({
-              url:`${app.host}/addUser`,
-              method:'post',
-              data:{
-                userName:app.data.userInfo.nickName,
-                userId:app.data.openId
-              }
-            })
+            
+            // 更新全局和本地用户信息
+            if (app.globalData) {
+              app.globalData.userInfo = userInfo;
+            }
+            app.data.userInfo = userInfo;
+            
+            this.setData({ userInfo });
+            await this.getList(1, this.data.pageSize);
+            return;
           }
+        } catch (error) {
+          console.error('获取用户信息失败:', error);
         }
-      })
-    }else{
-      this.getList(1,10)
+      }
+    }
+    
+    // 加载歌单列表
+    if (this.data.userInfo?.userId) {
+      await this.getList(1, this.data.pageSize);
     }
   },
 
@@ -313,15 +309,18 @@ Page({
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {
-
+  async onPullDownRefresh() {
+    await this.getList(1, this.data.pageSize);
+    wx.stopPullDownRefresh();
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() {
-
+  async onReachBottom() {
+    if (!this.data.loading && this.data.hasMore) {
+      await this.getList(this.data.page + 1, this.data.pageSize);
+    }
   },
 
   /**

@@ -1,0 +1,7 @@
+<view class="loading-container {{fullscreen ? 'fullscreen' : ''}}" wx:if="{{show}}" style="background-color: {{backgroundColor}}">
+  <view class="loading-content">
+    <view class="loading-spinner"></view>
+    <text class="loading-text" wx:if="{{text}}">{{text}}</text>
+  </view>
+</view>
+

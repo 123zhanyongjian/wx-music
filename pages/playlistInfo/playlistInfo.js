@@ -2,8 +2,10 @@
 const app = getApp();
 const api = require('../../utils/api.js');
 const { getJaySongList } = require('../../utils/api');
-const time = require('../../utils/time')
-const request  = time.Promisify(wx.request)
+const time = require('../../utils/time');
+const API = require('../../services/api');
+const errorHandler = require('../../utils/errorHandler');
+const CONSTANTS = require('../../utils/constants');
 Page({
 
   /**
@@ -11,15 +13,17 @@ Page({
    */
   data: {
     loop: '../../image/sx.png',
-    loopstate: 0, //0代表顺序，1代表循环，2代表随机
-    image:'',
-    paydata:{},
-    songids:[],
-    songs:[],
-    addSongListFlag:false,
+    loopstate: CONSTANTS.PLAY_MODE.SEQUENCE, // 0代表顺序，1代表循环，2代表随机
+    image: '',
+    paydata: {},
+    songids: [],
+    songs: [],
+    addSongListFlag: false,
     itemList: ['编辑歌单', '删除歌单'],
-    itemList1: ['立即播放', '下一首播放','移除列表'],
-
+    itemList1: ['立即播放', '下一首播放', '移除列表'],
+    id: '',
+    name: '',
+    loading: false
   },
 
   /**
@@ -30,42 +34,29 @@ Page({
     this.getdata(id)
     
   },
-   //切换播放模式
-   changloop() {
-    if (this.data.loopstate == 0) {
-      this.setData({
-        loopstate: 1,
-        loop: '../../image/xh.png'
-
-      })
-      wx.showToast({
-        title: '循环播放',
-        icon: 'none',
-        duration: 1000
-      })
-    } else if (this.data.loopstate == 1) {
-      this.setData({
-        loopstate: 2,
-        loop: '../../image/sj.png'
-
-      })
-      wx.showToast({
-        title: '随机播放',
-        icon: 'none',
-        duration: 1000
-      })
-    } else {
-      this.setData({
-        loopstate: 0,
-        loop: '../../image/sx.png'
-
-      })
-      wx.showToast({
-        title: '顺序播放',
-        icon: 'none',
-        duration: 1000
-      })
-    }
+  /**
+   * 切换播放模式
+   */
+  changloop() {
+    const modes = [
+      { state: CONSTANTS.PLAY_MODE.LOOP, loop: '../../image/xh.png', name: CONSTANTS.PLAY_MODE_NAMES[1] },
+      { state: CONSTANTS.PLAY_MODE.RANDOM, loop: '../../image/sj.png', name: CONSTANTS.PLAY_MODE_NAMES[2] },
+      { state: CONSTANTS.PLAY_MODE.SEQUENCE, loop: '../../image/sx.png', name: CONSTANTS.PLAY_MODE_NAMES[0] }
+    ];
+    
+    const currentIndex = modes.findIndex(m => m.state === this.data.loopstate);
+    const nextMode = modes[(currentIndex + 1) % modes.length];
+    
+    this.setData({
+      loopstate: nextMode.state,
+      loop: nextMode.loop
+    });
+    
+    wx.showToast({
+      title: nextMode.name,
+      icon: 'none',
+      duration: 1000
+    });
   },
     //播放音乐
     async pay(e) {
@@ -113,126 +104,95 @@ Page({
   more(e){
     this.showActionSheet(e)
   },
-  sortChange(e){
+  /**
+   * 排序改变
+   */
+  async sortChange(e) {
     const sortArr = e.detail?.sort;
-    const that=this;
-    const ids = this.data.songs.map(i=>i.id)
-    const arrStr = (sortArr.map(i=>ids[i])).join(',')
-    wx.request({
-      url:app.host+'/playlist/edit',
-      method:'post',
-      data:{
-  
-        id:this.data.id,
-        songIds:arrStr,
-        userId:app.data.openId,
-      },
-      success:res1=>{
-        wx.hideLoading()
-        if(res1.data.code===200){
-          setTimeout(() => {
-            wx.showToast({
-              title:res1.data.data,
-              icon:"success"
-            })
-            that.setData({
-              addSongListFlag:false
-             })
-            // setTimeout(() => {
-            //   that.getdata(that.data.id)
-            // }, 1000);
-          }, 200);
-          return
-        }
-        setTimeout(() => {
-          wx.showToast({
-            title:res1.data.data,
-            icon:"error"
-          })
-        }, 200);
-      },
-      fail:(err)=>{
-        wx.hideLoading()
-        setTimeout(() => {
-          wx.showToast({
-            title:err.errMsg,
-            icon:'error'
-          })
-        }, 200);
-      }
-    })
-  },
-  async getdata(id){
-    wx.showLoading({
-      title: '加载中',
-    })
-    try{
-      const res =await request({url:app.host+`/playlist/info?id=${id}`})
-      const res1 = await request({url:app.host+`/songList`, method:'post',data:{
-        ids:res.data.data.songIds,
-       
-      }})
-      wx.hideLoading()
-      if(res.data.code===200){
-        wx.setNavigationBarTitle({
-          title: res.data.data.name
-        })
-        this.setData({
-          id,
-          songs:res1.data.data,
-          paydata:app.data?.paythis?.data,
-          name: res.data.data.name,
-          songids:res.data.data.songIds,
-          image:app.host+'/'+res.data.data.img
-        })
-      }
+    const ids = this.data.songs.map(i => i.id);
+    const arrStr = sortArr.map(i => ids[i]).join(',');
+    
+    try {
+      const res = await API.playlist.updatePlaylist({
+        id: this.data.id,
+        songIds: arrStr
+      });
       
-     
-
-    }catch(err){
-      wx.hideLoading()
-      setTimeout(() => {
+      if (res.success) {
         wx.showToast({
-          title: err.message,
-          icon:'error'
-        })
-      }, 200);
+          title: res.message || '排序成功',
+          icon: 'success'
+        });
+        this.setData({
+          addSongListFlag: false
+        });
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
     }
   },
-  async delsong(id){
-    wx.showLoading({
-      title: '加载中',
-    })
-    try{
-      const res = await request({url:app.host+`/playlist/delsong`, method:'post',data:{
-        ids:[id],
-        id:this.data.id,
-        userId:app.data.openId,
-       
-      }})
-      wx.hideLoading()
-      if(res.data.code===200){
-        setTimeout(() => {
-          wx.showToast({
-            title: res.data.data,
-            icon:'success'
-          })
-          setTimeout(() => {
-            this.getdata(this.data.id)
-          }, 1000);
-        }, 200);
+  /**
+   * 获取歌单数据
+   */
+  async getdata(id) {
+    this.setData({ loading: true });
+    
+    try {
+      // 1. 获取歌单信息
+      const playlistRes = await API.playlist.getPlaylistInfo(id);
+      if (!playlistRes.success) {
+        throw new Error(playlistRes.message || '获取歌单信息失败');
       }
       
-     
-
-    }catch(err){
-      wx.hideLoading()
-      setTimeout(() => {
+      const playlistInfo = playlistRes.data;
+      
+      // 2. 获取歌曲列表
+      let songs = [];
+      if (playlistInfo.songIds && playlistInfo.songIds.length > 0) {
+        const songsRes = await API.song.getSongList(playlistInfo.songIds);
+        if (songsRes.success) {
+          songs = songsRes.data || [];
+        }
+      }
+      
+      // 3. 更新页面数据
+      wx.setNavigationBarTitle({
+        title: playlistInfo.name
+      });
+      
+      this.setData({
+        id,
+        songs,
+        paydata: app.data?.paythis?.data,
+        name: playlistInfo.name,
+        songids: playlistInfo.songIds || [],
+        image: playlistInfo.img ? `${app.host}/${playlistInfo.img}` : '',
+        loading: false
+      });
+    } catch (error) {
+      this.setData({ loading: false });
+      errorHandler.handleApiError(error);
+    }
+  },
+  /**
+   * 删除歌曲
+   */
+  async delsong(id) {
+    try {
+      const res = await API.playlist.removeSongs(this.data.id, [id]);
+      
+      if (res.success) {
         wx.showToast({
-          title: err.message,
-          icon:'error'
-        })
-      }, 200);
+          title: res.message || '删除成功',
+          icon: 'success'
+        });
+        // 刷新列表
+        setTimeout(() => {
+          this.getdata(this.data.id);
+        }, 1000);
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
     }
   },
   close(){
@@ -240,114 +200,59 @@ Page({
       addSongListFlag:false
     })
   },
-  editSongList(e){
+  /**
+   * 编辑歌单
+   */
+  async editSongList(e) {
     const datas = e.detail;
-    const that = this
-   if(datas.image === that.data.image){
-     // 没有修改图片
-     wx.request({
-      url:app.host+'/playlist/edit',
-      method:'post',
-      data:{
-  
-        id:that.data.id,
-        playlist:datas.title,
-        userId:app.data.openId,
-      },
-      success:res1=>{
-        wx.hideLoading()
-        if(res1.data.code===200){
-          setTimeout(() => {
-            wx.showToast({
-              title:res1.data.data,
-              icon:"success"
-            })
-            that.setData({
-              addSongListFlag:false
-             })
-            setTimeout(() => {
-              that.getdata(that.data.id)
-            }, 1000);
-          }, 200);
-          return
-        }
-        setTimeout(() => {
-          wx.showToast({
-            title:res1.data.data,
-            icon:"error"
-          })
-        }, 200);
-      },
-      fail:(err)=>{
-        wx.hideLoading()
-        setTimeout(() => {
-          wx.showToast({
-            title:err.errMsg,
-            icon:'error'
-          })
-        }, 200);
-      }
-    })
-    return
-   }
-    const uploadImg = time.Promisify(wx.uploadFile)
-    uploadImg({
-      url:app.host+'/upload',
-      filePath:datas.image,
-      name:'file'
-    })
-    .then(res=>{
-      const data = JSON.parse(res.data)
-      if(data.code===200){
-        // 更新接口
-        wx.showLoading({
-          title: '加载中',
-        })
-        wx.request({
-          url:app.host+'/playlist/edit',
-          method:'post',
-          data:{
+    if (!datas.title || !datas.title.trim()) {
+      wx.showToast({
+        title: '请输入歌单名称',
+        icon: 'none'
+      });
+      return;
+    }
+
+    try {
+      let imgUrl = null;
       
-            id:that.data.id,
-            userId:app.data.openId,
-            img:data.data,
-            playlist:datas.title
-          },
-          success:res1=>{
-            wx.hideLoading()
-            if(res1.data.code===200){
-              setTimeout(() => {
-                wx.showToast({
-                  title:res1.data.message,
-                  icon:"success"
-                })
-                that.setData({
-                  addSongListFlag:false
-                 })
-                 that.getdata(that.data.id)
-              }, 200);
-              return
-            }
-            setTimeout(() => {
-              wx.showToast({
-                title:res.data.data,
-                icon:'error'
-              })
-            }, 200);
-          },
-          fail:(err)=>{
-            wx.hideLoading()
-            setTimeout(() => {
-              wx.showToast({
-                title:err.errMsg,
-                icon:'error'
-              })
-            }, 200);
-          }
-        })
+      // 如果修改了图片，先上传
+      if (datas.image !== this.data.image) {
+        const uploadRes = await API.upload.uploadFile(datas.image);
+        if (!uploadRes.success) {
+          return;
+        }
+        imgUrl = uploadRes.data;
       }
-    })
-    
+
+      // 更新歌单
+      const updateData = {
+        id: this.data.id,
+        playlist: datas.title.trim()
+      };
+      
+      if (imgUrl) {
+        updateData.img = imgUrl;
+      }
+
+      const res = await API.playlist.updatePlaylist(updateData);
+      
+      if (res.success) {
+        wx.showToast({
+          title: res.message || '更新成功',
+          icon: 'success'
+        });
+        this.setData({
+          addSongListFlag: false
+        });
+        // 刷新数据
+        setTimeout(() => {
+          this.getdata(this.data.id);
+        }, 1000);
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },
   showActionSheet(ev) {
     let item = ev.detail.song;
@@ -461,34 +366,19 @@ Page({
                 }
             
                 if (res.confirm) {
-                  try{
-                    wx.showLoading({
-                      title: '加载中',
-                    })
-                    const res1 = await request({
-                      url:app.host+'/playlist/del',
-                      method:'delete',
-                      data:{
-                        id:that.data.id,
-                        userId:app.data.openId,
-                      }
-                    })
-                    wx.hideLoading()
-                    if(res1.data.code===200){
+                  try {
+                    const res1 = await API.playlist.deletePlaylist(that.data.id);
+                    if (res1.success) {
+                      wx.showToast({
+                        title: res1.message || '删除成功',
+                        icon: 'success'
+                      });
                       setTimeout(() => {
-                        wx.showToast({
-                          title: '删除成功',
-                          icon:'success'
-                        })
-                        wx.navigateBack(-1)
-                      }, 200);
+                        wx.navigateBack();
+                      }, 500);
                     }
-                  }catch(err){
-                    wx.hideLoading()
-                    wx.showToast({
-                      title: err.message,
-                      icon:'error'
-                    })
+                  } catch (err) {
+                    errorHandler.handleApiError(err);
                   }
                 }
               }
@@ -539,8 +429,11 @@ Page({
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {
-
+  async onPullDownRefresh() {
+    if (this.data.id) {
+      await this.getdata(this.data.id);
+    }
+    wx.stopPullDownRefresh();
   },
 
   /**

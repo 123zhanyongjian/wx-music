@@ -1,8 +1,19 @@
 //app.js
-// const tiem=require('./utils/time.js')
 const host = require('./pages/api/index').host
+const authService = require('./utils/auth')
+
 App({
   host,
+  globalData: {
+    userInfo: null,
+    openId: '',
+    song: '',
+    songlist: [],
+    state: false,
+    first: 0,
+    loveList: []
+  },
+  
   eventBus: {
     events: {}, // 存储事件回调：{ "事件名": [回调1, 回调2] }
     // 监听事件
@@ -30,169 +41,87 @@ App({
     }
   },
 
-  onLaunch:async function () {
+  async onLaunch() {
+    // 初始化音频管理器
     this.innerAudioContext = wx.getBackgroundAudioManager();
-    // console.log(this.innerAudioContext,'this.innerAudioContext')
-    // this.innerAudioContext.onPlay(() => {
-    //   console.log('onPlay event', this.data.paythis, this.innerAudioContext);
-    // });
-    // this.innerAudioContext.onPause(() => {
-    //   console.log('onPause event', this.data.paythis, this.innerAudioContext);
-    // });
-    // this.innerAudioContext.onStop(() => {
-    //   console.log('onStop event', this.data.paythis, this.innerAudioContext);
-    // });
-    // this.innerAudioContext.onError((e) => {
-    //   console.log('onError event', e, this.innerAudioContext);
-    // });
-
-
-
-    // 展示本地存储能力
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-
-    // 登录
-    let openId = null
-  try{
-     openId = await wx.getStorage({key:'openId',encrypt:true})
-    this.data.openId = openId.data
-  }
-  catch(err){
-    // console.log(err)
-  }
-   
-    if(!openId?.data){
-      wx.login({
-        success: res => {
-            wx.request({
-              url:this.host+'/userGetopenId',
-              data:{code:res.code},
-            success:re=>{
-             this.data.openId = re.data.data;
-             wx.setStorage({
-              key:'openId',
-              data:re.data.data,
-              encrypt:true,
-             })
-             wx.getUserInfo({
-              success:ret=>{
-              this.data.userInfo = ret.userInfo;
-              wx.showLoading({
-                title: '加载中'
-              })
-              wx.request({
-                url:`${this.host}/userinfo?id=${re.data.data}`,
-                success:res1=>{
-                  if(res1.data?.data?.length){
-                    wx.hideLoading()
-                    // 有用户 将数据直接赋值到userinfo
-                    this.data.userInfo =res1.data?.data[0]
-                    if(this.data.userInfo.headimg){
-                      this.data.userInfo.avatarUrl = this.host+'/'+this.data.userInfo.headimg
-                    }
-  
-                    // console.log(this.data.userInfo,333)
-                  }else{
-  
-                    // 没有用户 新增接口
-                    wx.request({
-                      url:`${this.host}/addUser`,
-                      method:'post',
-                      data:{
-                        userName:ret.userInfo.nickName,
-                        userId:re.data.data
-                      },
-                      success:(val)=>{
-                        
-                        if(val.data.coed===200){
-                          wx.request({
-                            url:`${this.host}/userinfo?id=${re.data.data}`,
-                            success:rets=>{
-                              wx.hideLoading()
-                              if(rets.data?.data?.length){
-                                // 有用户 将数据直接赋值到userinfo
-                                this.data.userInfo =rets.data?.data[0]
-                                if(this.data.userInfo.headimg){
-                                  this.data.userInfo.avatarUrl = this.host+'/'+this.data.userInfo.headimg
-                                }
-                              }},
-                              fail:(err)=>{
-                                wx.hideLoading()
-                                setTimeout(() => {
-                                  wx.showToast({
-                                    title: err.errMsg,
-                                    // icon:'error'
-                                  })
-                                 }, 200);
-                              }
-                            })
-                                // console.log(this.data.userInfo,333)
-                        }
-                        wx.hideLoading()
-                      },
-                      fail:(err)=>{
-                        wx.hideLoading()
-                        setTimeout(() => {
-                          wx.showToast({
-                            title: err.errMsg,
-                            // icon:'error'
-                          })
-                         }, 200);
-                      }
-                    })
-                  }
-                },
-                fail:(err)=>{
-                  wx.hideLoading()
-                 setTimeout(() => {
-                  wx.showToast({
-                    title: err.errMsg,
-                    // icon:'error'
-                  })
-                 }, 200);
-                }
-              })
-              }
-            })
-             // 查询后端信息
-  
-            }
-          })
-         
-  
-          // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        }
-      })
-    }
     
-    // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              // 可以将 res 发送给后台解码出 unionId
-              this.data.userInfo = res.userInfo
+    // 初始化音频事件监听
+    this.innerAudioContext.onStop(() => {
+      // 播放停止事件处理
+    });
+    
+    this.innerAudioContext.onError((e) => {
+      console.error('音频播放错误:', e);
+    });
 
-              // 由于 getUserInfo 是网络请求，可能会在 Page.load 之后才返回
-              // 所以此处加入 callback 以防止这种情况
-              if (this.userInfoReadyCallback) {
-                this.userInfoReadyCallback(res)
-              }
-            }
-          })
+    // 展示本地存储能力（保留原有功能）
+    try {
+      const logs = wx.getStorageSync('logs') || [];
+      logs.unshift(Date.now());
+      wx.setStorageSync('logs', logs);
+    } catch (err) {
+      console.error('保存日志失败:', err);
+    }
+
+    // 检查登录状态
+    await this.checkAndInitUser();
+  },
+
+  /**
+   * 检查并初始化用户信息
+   */
+  async checkAndInitUser() {
+    try {
+      // 检查是否已有登录信息
+      const userInfo = await authService.checkLogin();
+      
+      if (userInfo) {
+        // 已登录，直接使用
+        this.globalData.userInfo = userInfo;
+        this.globalData.openId = userInfo.userId || '';
+        this.data.userInfo = userInfo;
+        this.data.openId = userInfo.userId || '';
+        
+        // 触发用户信息就绪回调
+        if (this.userInfoReadyCallback) {
+          this.userInfoReadyCallback(userInfo);
+        }
+      } else {
+        // 未登录，尝试自动登录
+        try {
+          await this.autoLogin();
+        } catch (error) {
+          console.error('自动登录失败:', error);
+          // 登录失败不影响小程序启动，用户可以在需要时手动登录
         }
       }
-    })
-    this.innerAudioContext.onStop(() => {
-      // console.log('onStop event', this.data.paythis, this.innerAudioContext);
-    })
-    this.innerAudioContext.onError((e) => {
-      // console.log('onError event', e, this.innerAudioContext);
-    });
+    } catch (error) {
+      console.error('初始化用户信息失败:', error);
+    }
+  },
+
+  /**
+   * 自动登录
+   */
+  async autoLogin() {
+    try {
+      const userInfo = await authService.wxLogin();
+      if (userInfo) {
+        this.globalData.userInfo = userInfo;
+        this.globalData.openId = userInfo.userId || '';
+        this.data.userInfo = userInfo;
+        this.data.openId = userInfo.userId || '';
+        
+        // 触发用户信息就绪回调
+        if (this.userInfoReadyCallback) {
+          this.userInfoReadyCallback(userInfo);
+        }
+      }
+    } catch (error) {
+      // 自动登录失败，可能需要用户授权
+      // 这里不抛出错误，让用户在使用时手动登录
+      console.warn('自动登录失败，需要用户手动授权:', error);
+    }
   },
   //创建歌曲实例
   createdpay() {
@@ -245,15 +174,15 @@ App({
     }
     
   },
+  // 兼容旧代码的 data 属性
   data: {
-
-    openId:'', // 用户唯一值
+    openId: '', // 用户唯一值
     userInfo: null,
-    am:'aaa',
-    song:'',
-    songlist:[],
-    state:false,
-    first:0,
-    loveList:[]
+    am: 'aaa',
+    song: '',
+    songlist: [],
+    state: false,
+    first: 0,
+    loveList: []
   }
 })

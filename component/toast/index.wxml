@@ -1,0 +1,15 @@
+<view class="toast-container {{show ? 'show' : ''}} {{mask ? 'mask' : ''}}" wx:if="{{show}}" bindtap="onMaskTap">
+  <view class="toast-content" catchtap="stopPropagation">
+    <view class="toast-icon" wx:if="{{icon === 'success'}}">
+      <text class="icon-success">✓</text>
+    </view>
+    <view class="toast-icon loading" wx:if="{{icon === 'loading'}}">
+      <view class="loading-spinner"></view>
+    </view>
+    <view class="toast-icon error" wx:if="{{icon === 'error'}}">
+      <text class="icon-error">✕</text>
+    </view>
+    <text class="toast-message">{{message}}</text>
+  </view>
+</view>
+

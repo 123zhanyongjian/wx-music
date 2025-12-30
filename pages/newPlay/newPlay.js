@@ -1,5 +1,6 @@
 const tiem = require('../../utils/time.js');
 const app = getApp();
+const playHistory = require('../../utils/playHistory');
 
 Page({
   data: {
@@ -103,6 +104,9 @@ Page({
     
     tiem.Readinfo(this, app.innerAudioContext, app);
     this.measureSlider();
+    
+    // 监听歌曲变化事件，添加播放历史
+    app.eventBus.on('songChanged', this.onSongChanged.bind(this));
   },
   
   onShow() {
@@ -110,12 +114,37 @@ Page({
     app.data.songlist = songList;
     this.setData({ songList });
   },
+
+  /**
+   * 歌曲变化事件处理
+   */
+  async onSongChanged(song) {
+    if (song && song.id) {
+      // 添加播放历史记录
+      await playHistory.add({
+        id: song.id,
+        title: song.title || song.name,
+        singer: song.author || song.singer,
+        pic: song.pic || song.img || song.cover
+      });
+    }
+  },
   
   // 播放/暂停
-  onPlayPause() {
+  async onPlayPause() {
     if (this.data.isPlaying) {
       tiem.suspend(this, app.innerAudioContext);
     } else {
+      // 如果当前有歌曲，添加播放历史
+      if (app.data.song && app.data.song.id) {
+        await playHistory.add({
+          id: app.data.song.id,
+          title: app.data.song.title || app.data.song.name,
+          singer: app.data.song.author || app.data.song.singer,
+          pic: app.data.song.pic || app.data.song.img || app.data.song.cover
+        });
+      }
+      
       tiem.playCore(
         this, 
         app.innerAudioContext, 
@@ -195,8 +224,7 @@ Page({
   },
   
   // 切换歌曲
-  switchSong(e) {
-
+  async switchSong(e) {
     const index = e.currentTarget.dataset.index;
     // if (index === this.data.ins) return;
 
@@ -209,6 +237,14 @@ Page({
       author: song.author,
       img: song.img,
       lastPlayTime: 0,
+    });
+    
+    // 添加播放历史
+    await playHistory.add({
+      id: song.id,
+      title: song.title || song.name,
+      singer: song.author || song.singer,
+      pic: song.pic || song.img || song.cover
     });
     
     tiem.playCore(
