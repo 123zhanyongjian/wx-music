@@ -4,7 +4,8 @@ const app = getApp()
 const utils = require('../../utils/util.js')
 const time = require('../../utils/time.js');
 const { img } = require('../../utils/loveBg.js');
-const request = time.Promisify(wx.request)
+const API = require('../../services/api')
+const errorHandler = require('../../utils/errorHandler')
 function Singer(name, id) {
   this.id = id;
   this.name = name;
@@ -77,38 +78,63 @@ console.log(singerScrollHeight,'333333333')
       url: "/pages/singerdetails/singerdetails?id="+singer.id
     });
   },
- async getsingerList(type=0){
-  const res = await request({
-    url: app.host + '/singer',
-    data: {
-      page:this.data.page,
-      size:this.data.size,
-      type,
-      prefix:this.data.prefix
-    }
-   
-  })
-  // 将获取到的歌手数据进行分组,并且按照首字母进行排序,数据内已有prefix作为a-z的排序A-Z这样的
-  const singerList = res.data.data.singerList
-  const singerMap = {}
-  singerList.forEach(singer => {
-    const letter = singer.prefix
-    if (!singerMap[letter]) {
-      singerMap[letter] = []
-    }
-    singerMap[letter].push(singer)
-  })
-  // const singerList1 = Object.values(singerMap).sort((a, b) => a.name(b.name))
-  const singerList1 = Object.keys(singerMap)
-    .sort((a, b) => a.localeCompare(b))
-    .map(k => ({ title: k, items: singerMap[k].map(i=>({...i}))}));
-  // console.log(singerList1, singerList1.unshift({title:'热门',items:singerList.slice(0,10)}))
-  singerList1.unshift({title:'热门',items:singerList.slice(0,10).map(k=>({...k}))})
-  this.setData({
-    singer:singerList1 ,
-    total: res.data.data.total
-  })
+  /**
+   * 获取歌手列表
+   */
+  async getsingerList(type = 0) {
+    try {
+      // 构建请求参数，只传递有值的参数
+      const params = {
+        page: this.data.page,
+        size: this.data.size
+      };
+      
+      // 只有当 type 有值且不为 0 时才传递
+      if (type && type !== 0) {
+        params.type = type;
+      }
+      
+      // 只有当 prefix 有值时才传递
+      if (this.data.prefix) {
+        params.surName = this.data.prefix;
+      }
+      
+      const res = await API.singer.getSingerList(params);
 
+      if (res.success && res.data) {
+        // 将获取到的歌手数据进行分组,并且按照首字母进行排序
+        const singerList = res.data.singerList || [];
+        const singerMap = {};
+        
+        singerList.forEach(singer => {
+          const letter = singer.prefix || '其他';
+          if (!singerMap[letter]) {
+            singerMap[letter] = [];
+          }
+          singerMap[letter].push(singer);
+        });
+
+        // 按字母排序
+        const singerList1 = Object.keys(singerMap)
+          .sort((a, b) => a.localeCompare(b))
+          .map(k => ({ title: k, items: singerMap[k].map(i => ({ ...i })) }));
+
+        // 添加热门歌手
+        singerList1.unshift({
+          title: '热门',
+          items: singerList.slice(0, 10).map(k => ({ ...k }))
+        });
+
+        this.setData({
+          singer: singerList1,
+          total: res.data.total || 0
+        });
+      } else {
+        errorHandler.handleApiError(res);
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },
   onImageError(e) {
     console.log(e.detail.errMsg      , 555)

@@ -207,6 +207,88 @@
   color: #999;
 }
 
+/* 最近播放区（横向滚动） */
+.recent-section {
+  margin-bottom: 40rpx;
+}
+.recent-scroll {
+  white-space: nowrap;
+  padding-bottom: 10rpx;
+  overflow-y: hidden;
+}
+.recent-list {
+  display: inline-flex;
+  gap: 20rpx;
+}
+.recent-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 160rpx;
+  transition: transform 0.2s;
+}
+.recent-item:active {
+  transform: scale(0.95);
+}
+.recent-vinyl {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 12rpx;
+}
+.recent-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4rpx solid #2d2d2d;
+  z-index: 1;
+}
+.recent-vinyl-ring {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #222, #1a1a1a);
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.4);
+}
+.recent-vinyl-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background-color: #121212;
+  border: 3rpx solid #333;
+  z-index: 2;
+}
+.recent-title {
+  display: block;
+  font-size: 24rpx;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 4rpx;
+}
+.recent-artist {
+  display: block;
+  font-size: 20rpx;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
 /* 推荐歌曲区（仅上下滑动） */
 .song-section {
   margin-top: 20rpx;
@@ -300,13 +382,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 10;
+}
+.song-play::after {
+  border: none;
 }
 .play-icon {
   width: 30rpx;
   height: 30rpx;
   tint-color: #ddd;
+  transition: tint-color 0.2s;
 }
-.song-play:active .play-icon {
+.song-play-hover .play-icon {
   tint-color: #9e2a2b;
 }
 
@@ -314,6 +402,12 @@
   width: 30rpx;
   height: 30rpx;
   tint-color: #888;
+  position: relative;
+  z-index: 10;
+  transition: tint-color 0.2s;
+}
+.song-more:active {
+  tint-color: #9e2a2b;
 }
 
 /* 弹窗样式 */

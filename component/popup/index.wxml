@@ -3,11 +3,10 @@
 <!-- 遮罩层（始终存在，用hidden控制可见性） -->
 <view 
   class="mains {{show ? 'mains-show' : 'mains-hide'}}" 
-  bindtap="cancel" 
-  
+  catchtap="cancel"
 >
-  <!-- 弹窗容器 -->
-  <view class="container {{show ? 'container-show' : 'container-hide'}}">
+  <!-- 弹窗容器（阻止事件冒泡到遮罩层） -->
+  <view class="container {{show ? 'container-show' : 'container-hide'}}" catchtap="stopPropagation">
     <!-- 头部标题区 -->
     <view class="popup-header">
       <text>{{header}}</text>
@@ -16,8 +15,8 @@
 
     <!-- 操作按钮 -->
     <view class="popup-btns">
-      <view bindtap="cancel" class="btn cancel-btn">取消</view>
-      <view bindtap="confirm" class="btn confirm-btn">确认</view>
+      <view catchtap="cancel" class="btn cancel-btn">取消</view>
+      <view catchtap="confirm" class="btn confirm-btn">确认</view>
     </view>
 
     <!-- 内容区 -->
@@ -53,7 +52,7 @@
               <!-- 加载更多提示 -->
               <view class="load-more">
                 {{playlist.length===count?'没有更多了':'加载更多'}}
-                <text bindtap="newListBtn" class="new-btn" wx:if="{{playlist.length===count}}">新建</text>
+                <text catchtap="newListBtn" class="new-btn" wx:if="{{playlist.length===count}}">新建</text>
                 <text wx:if="{{playlist.length===count}}">一个？</text>
               </view>
             </view>
@@ -63,7 +62,7 @@
               <image src="../../image/nodata.svg" class="empty-img" />
               <view class="empty-text">
                 歌单列表为空，去
-                <text bindtap="newListBtn" class="new-btn">新建</text>
+                <text catchtap="newListBtn" class="new-btn">新建</text>
                 一个？
               </view>
             </view>

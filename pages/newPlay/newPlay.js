@@ -1,4 +1,4 @@
-const tiem = require('../../utils/time.js');
+const time = require('../../utils/time.js');
 const app = getApp();
 const playHistory = require('../../utils/playHistory');
 
@@ -102,7 +102,7 @@ Page({
       });
     }
     
-    tiem.Readinfo(this, app.innerAudioContext, app);
+    time.Readinfo(this, app.innerAudioContext, app);
     this.measureSlider();
     
     // 监听歌曲变化事件，添加播放历史
@@ -133,7 +133,7 @@ Page({
   // 播放/暂停
   async onPlayPause() {
     if (this.data.isPlaying) {
-      tiem.suspend(this, app.innerAudioContext);
+      time.suspend(this, app.innerAudioContext);
     } else {
       // 如果当前有歌曲，添加播放历史
       if (app.data.song && app.data.song.id) {
@@ -145,7 +145,7 @@ Page({
         });
       }
       
-      tiem.playCore(
+      time.playCore(
         this, 
         app.innerAudioContext, 
         app.data.song, 
@@ -165,12 +165,12 @@ Page({
       return;
     }
     if (this.data.ins > 0) {
-      tiem.Lastsong(this, app.innerAudioContext, app);
+      time.Lastsong(this, app.innerAudioContext, app);
     } else {
       this.setData({
         ins: app.data.songlist.length
       });
-      tiem.Lastsong(this, app.innerAudioContext, app);
+      time.Lastsong(this, app.innerAudioContext, app);
     }
   },
   
@@ -183,12 +183,12 @@ Page({
       return;
     }
     if (this.data.songList.length - 1 > this.data.ins) {
-      tiem.Nextsong(this, app.innerAudioContext, app);
+      time.Nextsong(this, app.innerAudioContext, app);
     } else {
       this.setData({
         ins: 1
       });
-      tiem.Lastsong(this, app.innerAudioContext, app);
+      time.Lastsong(this, app.innerAudioContext, app);
     }
   },
   
@@ -247,14 +247,20 @@ Page({
       pic: song.pic || song.img || song.cover
     });
     
-    tiem.playCore(
+    // 更新全局状态
+    app.globalData.song = song;
+    
+    time.playCore(
       this, 
       app.innerAudioContext, 
       song, 
-      false, 
+      1, 
       this.data.currentQuality.resource,
       this.data.currentQuality.level
     );
+    
+    // 关闭播放列表
+    this.setData({ showPlayList: false });
     this.hidePlayList();
   },
   
@@ -309,7 +315,7 @@ Page({
   
   // 格式化时间
   formatTime(seconds) {
-    return tiem.MinuteConversion(seconds);
+    return time.MinuteConversion(seconds);
   },
   
   // 返回
@@ -337,7 +343,7 @@ Page({
             if (songList.length > 0) {
               const nextIndex = songIndex >= songList.length ? 0 : songIndex;
               this.setData({ ins: nextIndex });
-              tiem.playCore(
+              time.playCore(
                 this, 
                 app.innerAudioContext, 
                 songList[nextIndex], 
@@ -346,7 +352,7 @@ Page({
                 this.data.currentQuality.level
               );
             } else {
-              tiem.suspend(this, app.innerAudioContext);
+              time.suspend(this, app.innerAudioContext);
               this.setData({ isPlaying: false });
             }
           } else if (songIndex < this.data.ins) {
@@ -382,8 +388,8 @@ Page({
     });
 
     // 暂停当前播放并切换音质（传递resource和level参数）
-    tiem.suspend(this, app.innerAudioContext);
-    tiem.playCore(
+    time.suspend(this, app.innerAudioContext);
+    time.playCore(
       this, 
       app.innerAudioContext, 
       app.data.song, 

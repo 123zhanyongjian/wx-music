@@ -1,0 +1,59 @@
+/* 卡片基础样式 */
+.custom-card {
+  background: #1a1a1a;
+  border-radius: 16rpx;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.shadow {
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.3);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.card-hover {
+  transform: translateY(-4rpx);
+  box-shadow: 0 12rpx 24rpx rgba(0, 0, 0, 0.4);
+}
+
+/* 卡片图片 */
+.card-image {
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #2d2d2d;
+}
+
+.card-image image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 卡片内容 */
+.card-content {
+  padding: 24rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 12rpx;
+  line-height: 1.4;
+}
+
+.card-description {
+  font-size: 24rpx;
+  color: #888;
+  line-height: 1.5;
+}
+

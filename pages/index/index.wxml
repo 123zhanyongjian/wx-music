@@ -53,16 +53,46 @@
       scroll-with-animation="true"
     >
       <block wx:for="{{musicList}}" wx:key="id">
-        <view class="playlist-card" data-data="{{item}}" bindtap="change" hover-class="playlist-card-hover">
+        <view class="playlist-card" data-data="{{item}}" catchtap="change" hover-class="playlist-card-hover">
           <view class="playlist-vinyl">
-            <image src="{{item.img}}" class="playlist-img" />
+            <image src="{{item.img}}" class="playlist-img" mode="aspectFill" lazy-load="{{true}}" />
             <view class="playlist-vinyl-ring"></view>
             <view class="playlist-vinyl-dot"></view>
           </view>
           <text class="playlist-name">{{item.name}}</text>
-          <text class="playlist-hot">{{item.hot}}</text>
+          <text class="playlist-hot" wx:if="{{item.hot}}">{{item.hot}}</text>
         </view>
       </block>
+    </scroll-view>
+  </view>
+
+  <!-- 最近播放区 -->
+  <view class="section recent-section" wx:if="{{recentPlayList.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">最近播放</text>
+      <view class="section-line"></view>
+    </view>
+    
+    <!-- 最近播放横向滚动容器 -->
+    <scroll-view 
+      class="recent-scroll" 
+      scroll-x="true" 
+      show-scrollbar="false"
+      scroll-with-animation="true"
+    >
+      <view class="recent-list">
+        <block wx:for="{{recentPlayList}}" wx:key="id" wx:for-item="item">
+          <view class="recent-item" catchtap="playSong" data-song="{{item}}">
+            <view class="recent-vinyl">
+              <image src="{{item.img || item.pic}}" class="recent-img" mode="aspectFill" lazy-load="{{true}}" />
+              <view class="recent-vinyl-ring"></view>
+              <view class="recent-vinyl-dot"></view>
+            </view>
+            <text class="recent-title">{{item.title}}</text>
+            <text class="recent-artist">{{item.author}}</text>
+          </view>
+        </block>
+      </view>
     </scroll-view>
   </view>
 
@@ -82,27 +112,27 @@
     >
       <view class="song-list">
         <block wx:for="{{songList}}" wx:for-item="item" wx:for-index="idx" wx:key="id">
-          <view class="song-item" data-id="{{item.id}}" hover-class="song-item-hover" bindtap="playSong" data-song="{{item}}">
+          <view class="song-item" data-id="{{item.id}}" hover-class="song-item-hover">
             <text class="song-index">{{idx + 1}}</text>
             
-            <view class="song-vinyl">
+            <view class="song-vinyl" catchtap="playSong" data-song="{{item}}">
               <image src="{{item.img}}" class="song-img" />
               <view class="song-vinyl-ring"></view>
             </view>
             
-            <view class="song-info">
+            <view class="song-info" catchtap="playSong" data-song="{{item}}">
               <text class="song-title">{{item.title}}</text>
               <text class="song-artist">{{item.author}}</text>
             </view>
             
-            <button class="song-play" bindtap="playSong" data-song="{{item}}">
+            <button class="song-play" catchtap="playSong" data-song="{{item}}" hover-class="song-play-hover">
               <image src="../../image/play.svg" class="play-icon" />
             </button>
             
             <image 
               src="../../image/more.svg" 
               class="song-more" 
-              bindtap="onMore" 
+              catchtap="onMore" 
               data-id="{{item.id}}"
             />
           </view>

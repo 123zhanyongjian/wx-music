@@ -1,13 +1,13 @@
 <!-- singerdetails.wxml -->
 <wxs src="./singerdetails.wxs" module="module"></wxs>
-<view class="black-vinyl-page">
+<view class="black-vinyl-page {{popusShow ? 'popus-show-open' : ''}}">
   <!-- 顶部背景图 -->
   <image class='imgs' style="background-image:url({{image}})"></image>
   
   <!-- 歌手/专辑信息区 -->
   <view class='ng'>
     <view class="headLog">
-      <image src="{{image}}" />
+      <image src="{{image}}" lazy-load="{{true}}" />
     </view>
     <view class="singer">
       <view hover-class="none" hover-stop-propagation="false">{{title}}</view>
@@ -35,28 +35,28 @@
     <!-- 播放全部栏 -->
     <view class="li play-all-bar">
       <view class="logo listtop flex just_betw">
-        <view bindtap='whole'>
+        <view catchtap='whole'>
           <image src="../../image/plays.png" class="play-icon" />
           <text class="play-text">播放全部({{songs.length}})</text>
         </view>
         <view class="loop-container">
-          <image class='loop' src="{{loop}}" bindtap="changloop"></image>
+          <image class='loop' src="{{loop}}" catchtap="changloop"></image>
         </view>
       </view>
     </view>
      
     <!-- 歌曲列表组件 -->
     <song-list list="{{songs}}" bind:play="pay" bind:more="more" />
-    
-    <!-- 弹窗组件 -->
-    <popup 
-      song="{{song}}"  
-      bind:close="popusShowChange" 
-      show="{{popusShow}}"  
-      wx:if="{{popusShow}}" 
-      header="添加到歌单" 
-    ></popup>
   </scroll-view>
+
+  <!-- 弹窗组件（移到 scroll-view 外部，确保层级正确） -->
+  <popup 
+    song="{{song}}"  
+    bind:close="popusShowChange" 
+    show="{{popusShow}}"  
+    wx:if="{{popusShow}}" 
+    header="添加到歌单" 
+  ></popup>
 
   <!-- 专辑列表滚动区 -->
   <scroll-view  
@@ -82,7 +82,7 @@
       <view data-item='{{item}}' class='alubmsList' bindtap='goAlubms'>
         <!-- 专辑封面（黑胶唱片样式） -->
         <view class="album-vinyl">
-          <image src="{{item.pic}}" mode="aspectFill" class="album-cover" />
+          <image src="{{item.pic}}" mode="aspectFill" class="album-cover" lazy-load="{{true}}" />
           <view class="vinyl-ring"></view>
           <view class="vinyl-dot"></view>
         </view>

@@ -145,9 +145,9 @@ Page({
     });
 
     try {
-      if (this.data.state === '6') {
-        // 爱听音乐搜索
-        await this.searchAiTing(serach);
+      // 优先使用 /serach 接口（酷我音乐源，支持歌曲和歌手搜索）
+      if (this.data.state === '0' || this.data.state === '6') {
+        await this.searchKuWo(serach);
       } else if (this.data.state === '3') {
         // 酷狗音乐搜索（外部API）
         await this.searchKuGou(serach);
@@ -155,7 +155,7 @@ Page({
         // 使用后端搜索接口
         await this.searchBackend(serach);
       } else {
-        // 聚合搜索
+        // 聚合搜索（备用）
         await this.searchAggregate(serach);
       }
     } catch (error) {
@@ -166,7 +166,44 @@ Page({
   },
 
   /**
-   * 爱听音乐搜索
+   * 酷我音乐搜索（使用 /serach 接口）
+   */
+  async searchKuWo(serach) {
+    const res = await API.song.searchKuWo({
+      name: serach,
+      pageNo: 1,
+      pageSize: 3
+    });
+
+    if (res.success && res.data) {
+      // 格式化歌曲数据
+      const songs = (res.data.data || []).map(item => ({
+        ...item,
+        title: item.title || item.name,
+        author: item.author || item.singer,
+        pic: item.pic || item.image || 'http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
+        mId: item.mId || 5, // 酷我音乐源标识
+        id: item.id
+      }));
+
+      // 格式化歌手数据
+      const singers = (res.data.singer || []).map(item => ({
+        ...item,
+        name: item.name,
+        pic: item.pic || item.image,
+        id: item.id,
+        songNum: item.songNum
+      }));
+
+      this.setData({
+        song: songs,
+        singerList: singers
+      });
+    }
+  },
+
+  /**
+   * 爱听音乐搜索（备用）
    */
   async searchAiTing(serach) {
     const res = await API.song.searchSong({
@@ -364,6 +401,20 @@ Page({
    */
   onUnload() {
 
+  },
+
+  /**
+   * 返回上一页
+   */
+  goBack() {
+    wx.navigateBack();
+  },
+
+  /**
+   * 搜索确认
+   */
+  onSearchConfirm() {
+    this.getData();
   },
 
   /**

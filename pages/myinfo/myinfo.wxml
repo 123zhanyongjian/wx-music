@@ -8,7 +8,7 @@
     <view class="user-info">
       <view class="avatar-container">
         <button class="avatar" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar-img" src="{{userInfo.avatarUrl || '../../image/default-avatar.png'}}" mode="aspectFill"></image>  
+          <image class="avatar-img" src="{{userInfo.avatarUrl || '../../image/default-avatar.png'}}" mode="aspectFill" lazy-load="{{true}}"></image>  
           <view class="avatar-ring"></view>
           <view class="avatar-dot"></view>
         </button>

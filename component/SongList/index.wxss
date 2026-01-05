@@ -124,7 +124,8 @@
   border-radius: 50%;
 }
 
-.netease-song-play:active {
+.netease-song-play:active,
+.netease-song-play-hover {
   background: rgba(158,42,43,0.15);
 }
 
@@ -133,9 +134,11 @@
   height: 40rpx;
   display: block;
   tint-color: #ddd;
+  transition: tint-color 0.2s;
 }
 
-.netease-song-play:active .netease-song-play-icon {
+.netease-song-play:active .netease-song-play-icon,
+.netease-song-play-hover .netease-song-play-icon {
   tint-color: #9e2a2b;
 }
 
@@ -150,4 +153,10 @@
   justify-content: center;
   transform: translateY(-50%);
   tint-color: #777;
+  transition: tint-color 0.2s;
+  z-index: 2;
+}
+
+.more:active {
+  tint-color: #9e2a2b;
 }

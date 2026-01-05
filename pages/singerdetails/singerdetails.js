@@ -3,7 +3,9 @@ const song = require('../../utils/song.js')
 const api = require('../../utils/api.js');
 const time = require('../../utils/time.js')
 const utils = require('../../utils/util.js')
-const request = time.Promisify(wx.request)
+const API = require('../../services/api')
+const errorHandler = require('../../utils/errorHandler')
+const cache = require('../../utils/cache')
 Page({
   data: {
     popusShow:false,
@@ -181,61 +183,57 @@ Page({
    this.getAlbumList()
 
   },
-  getsongList(page=this.data.pageNum){
-    const that = this
-    if(page===1){
-      this.setData({
-        songs:[]
-      })
+  /**
+   * 获取歌手歌曲列表（带缓存）
+   */
+  async getsongList(page = this.data.pageNum) {
+    if (page === 1) {
+      this.setData({ songs: [] });
     }
-    if(this.data.albumPage===1){
-      this.setData({
-        albums:[]
-      })
+    if (this.data.albumPage === 1) {
+      this.setData({ albums: [] });
     }
-      // 爱听音乐
-      wx.showLoading({
-        title: '加载中',
-      })
-      request({
-        method:'post',
-        data:{
-          id:this.data.singerId,
-          page,
-          size:this.data.pageSize
-        },
-        url:app.host+`/singerSongs`
-      })
-      .then(res=>{
-        // console.log()
-        if(res.data.code===200){
-          that.setData({
-            songs:this.data.songs.concat(res.data.data.singerList?.map(i=>({...i}))),
-            total:res.data.data.total*1,
-            // singerId:res.data.data.singerId,
-            singerInfo:res.data.data.singinfo?.info,
-            paydata:app.data?.paythis?.data
-          })
-          wx.hideLoading()
-          return
+
+    try {
+      // 第一页使用缓存（30分钟）
+      const cacheKey = `singer_songs_${this.data.singerId}_${page}`;
+      if (page === 1) {
+        const cached = await cache.get(cacheKey);
+        if (cached) {
+          this.setData({
+            songs: cached.singerList || [],
+            total: cached.total || 0,
+            singerInfo: cached.singinfo?.info || '',
+            paydata: app.data?.paythis?.data
+          });
+          return;
         }
-      
-        setTimeout(() => {
-          wx.showToast({
-            title:res.data.message,
-            icon:'error'
-          })
-        }, 200);
-      },err=>{
-        wx.hideLoading()
-        setTimeout(() => {
-          wx.showToast({
-            title:err.message,
-            icon:'error'
-          })
-        }, 200);
-      }) 
-  
+      }
+
+      const res = await API.singer.getSingerSongs({
+        id: this.data.singerId,
+        page,
+        size: this.data.pageSize
+      });
+
+      if (res.success && res.data) {
+        // 缓存第一页数据（30分钟）
+        if (page === 1) {
+          await cache.set(cacheKey, res.data, 1800000);
+        }
+
+        this.setData({
+          songs: this.data.songs.concat(res.data.singerList || []),
+          total: res.data.total || 0,
+          singerInfo: res.data.singinfo?.info || '',
+          paydata: app.data?.paythis?.data
+        });
+      } else {
+        errorHandler.handleApiError(res);
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },
   _normallizeSongs: function (list) {
     let ret = []
@@ -247,33 +245,28 @@ Page({
     })
     return ret
   },
-  getAlbumList(){
-    wx.showLoading({
-      title: '加载中',
-    })
-    request({
-      url:app.host+'/album',
-      method:'post',
-      data:{
-        id:this.data.singerId,
-        page:this.data.albumPage,
-        size:this.data.albumPageSize
-      }
-    })
-    .then(ret=>{
-      if(ret.data.code===200){
+  /**
+   * 获取歌手专辑列表
+   */
+  async getAlbumList() {
+    try {
+      const res = await API.singer.getSingerAlbums({
+        id: this.data.singerId,
+        page: this.data.albumPage,
+        size: this.data.albumPageSize
+      });
+
+      if (res.success && res.data) {
         this.setData({
-          albums:this.data.albums.concat(ret.data.data.data),
-          albumTotal:(ret.data.data.total*1)?ret.data.data.total*1:this.data.albumTotal,
-        })
-        // console.log(this.data.albumTotal,1117777)
-        wx.hideLoading()
-      } 
-    })  
-    .catch(err=>{
-      // console.log(err,7777)
-      wx.hideLoading()
-    })
+          albums: this.data.albums.concat(res.data.data || []),
+          albumTotal: res.data.total || this.data.albumTotal
+        });
+      } else {
+        errorHandler.handleApiError(res);
+      }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },      
   //请求歌曲信息
   getDATA(song) {

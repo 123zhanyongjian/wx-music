@@ -318,4 +318,14 @@
 .popusShowopen {
   height: calc(100vh - 525rpx - var(--status-bar-height));
   overflow: hidden;
+  z-index: 1 !important; /* 弹窗打开时降低层级，确保在弹窗下方 */
+  position: relative; /* 确保 z-index 生效 */
+}
+
+/* 弹窗打开时，降低所有高 z-index 元素的层级，确保弹窗显示在最上层 */
+.black-vinyl-page.popus-show-open .headLog,
+.black-vinyl-page.popus-show-open .singer,
+.black-vinyl-page.popus-show-open .musicAndAlbums,
+.black-vinyl-page.popus-show-open .ng {
+  z-index: 1 !important;
 }

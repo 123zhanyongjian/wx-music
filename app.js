@@ -1,17 +1,30 @@
-//app.js
-const host = require('./pages/api/index').host
-const authService = require('./utils/auth')
+/**
+ * 应用入口
+ * 统一管理全局状态和应用生命周期
+ */
+const apiConfig = require('./pages/api/index');
+const authService = require('./utils/auth');
+const CONSTANTS = require('./utils/constants');
 
 App({
-  host,
+  // API 配置
+  host: apiConfig.host,
+  
+  // 全局数据（统一使用 globalData，移除冗余的 data）
   globalData: {
+    // 用户信息
     userInfo: null,
     openId: '',
-    song: '',
-    songlist: [],
-    state: false,
-    first: 0,
-    loveList: []
+    
+    // 播放相关
+    song: null,           // 当前播放的歌曲
+    songlist: [],        // 播放列表
+    state: false,        // 播放状态（false=播放中，true=暂停）
+    first: 0,            // 首次播放标记
+    loveList: [],        // 收藏列表
+    
+    // 播放器实例引用
+    paythis: null        // 播放页实例
   },
   
   eventBus: {
@@ -79,8 +92,6 @@ App({
         // 已登录，直接使用
         this.globalData.userInfo = userInfo;
         this.globalData.openId = userInfo.userId || '';
-        this.data.userInfo = userInfo;
-        this.data.openId = userInfo.userId || '';
         
         // 触发用户信息就绪回调
         if (this.userInfoReadyCallback) {
@@ -109,8 +120,6 @@ App({
       if (userInfo) {
         this.globalData.userInfo = userInfo;
         this.globalData.openId = userInfo.userId || '';
-        this.data.userInfo = userInfo;
-        this.data.openId = userInfo.userId || '';
         
         // 触发用户信息就绪回调
         if (this.userInfoReadyCallback) {
@@ -123,66 +132,80 @@ App({
       console.warn('自动登录失败，需要用户手动授权:', error);
     }
   },
-  //创建歌曲实例
-  createdpay() {
-   
-  },
-  //小程序关闭后下次进入还是上一次关闭时所保留的状态
-   Closestate(that){
-    const datas= that.data
-  var obj1 = {
-      max: that.data.max,
-      InitialValue:true,
-      state: that.data.state,
-      value: that.data.value,
-      pay: that.data.pay,
-      ins:that.data.ins,
-      t: that.data.t,
-      lrc: datas.lrc,
-      conduct: that.data.conduct,
-      src: datas.src,
-      title: datas.title,
-      coverImgUrl: datas.pic,
-      id:datas.id,
-      mid:datas.mid,
-      autoplay: false,
-      author: datas.author,
-      pic: datas.pic,
-      url: datas.url,
-      datas
-     
-    };
-     let obj={};
-     Object.assign(obj, obj1, datas.datas)
-    obj.lrc='';
-    wx.setStorage({
-      key: 'lastsong',
-      data: obj,
-      success: function (res) {
-        console.log('缓存成功', res,obj,that)
-      }
-    })
 
-  },
-  onShow(){
-    
-  },
-  onHide(){
-   
-    if(this.data.paythis!=undefined&&this.data.song!=''){
-      this.Closestate(this.data.paythis,this.data.song);
+  /**
+   * 保存播放状态到本地存储
+   * 小程序关闭后下次进入时恢复播放状态
+   */
+  savePlayState(that) {
+    if (!that || !this.globalData.song) {
+      return;
     }
-    
+
+    try {
+      const datas = that.data;
+      const playState = {
+        max: datas.max || 0,
+        InitialValue: true,
+        state: datas.state || false,
+        value: datas.value || 0,
+        pay: datas.pay || false,
+        ins: datas.ins || 0,
+        t: datas.t || 0,
+        lrc: datas.lrc || '',
+        conduct: datas.conduct || '00:00',
+        src: datas.src || '',
+        title: datas.title || '',
+        coverImgUrl: datas.pic || '',
+        id: datas.id || '',
+        mid: datas.mid || '',
+        autoplay: false,
+        author: datas.author || '',
+        pic: datas.pic || '',
+        url: datas.url || '',
+        ...datas.datas
+      };
+      
+      // 清除歌词以节省存储空间
+      playState.lrc = '';
+      
+      wx.setStorage({
+        key: CONSTANTS.STORAGE_KEY.LAST_SONG,
+        data: playState,
+        success: () => {
+          console.log('播放状态保存成功');
+        },
+        fail: (err) => {
+          console.error('保存播放状态失败:', err);
+        }
+      });
+    } catch (error) {
+      console.error('保存播放状态异常:', error);
+    }
   },
-  // 兼容旧代码的 data 属性
-  data: {
-    openId: '', // 用户唯一值
-    userInfo: null,
-    am: 'aaa',
-    song: '',
-    songlist: [],
-    state: false,
-    first: 0,
-    loveList: []
+
+  /**
+   * 应用显示
+   */
+  onShow() {
+    // 可以在这里处理应用从后台恢复的逻辑
+  },
+
+  /**
+   * 应用隐藏
+   */
+  onHide() {
+    // 保存播放状态
+    if (this.globalData.paythis && this.globalData.song) {
+      this.savePlayState(this.globalData.paythis);
+    }
+  },
+
+  /**
+   * 获取全局数据（兼容旧代码）
+   * @deprecated 请使用 globalData
+   */
+  get data() {
+    return this.globalData;
   }
-})
+});

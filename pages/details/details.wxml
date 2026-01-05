@@ -10,7 +10,7 @@
     <!-- 歌手/专辑信息区 -->
     <view class='ng'>
       <view class="headLog">
-        <image src="{{src}}" />
+        <image src="{{src}}" lazy-load="{{true}}" />
       </view>
       <view class="singer">
         <view hover-class="none" hover-stop-propagation="false">{{title}}</view>

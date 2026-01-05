@@ -116,7 +116,7 @@
 
 <!-- 播放列表容器 -->
 <view class="playlist-container {{showPlayList ? 'show' : ''}}">
-  <view class="playlist-mask" bindtap="hidePlayList"></view>
+  <view class="playlist-mask" catchtap="hidePlayList"></view>
   <view class="playlist-content">
     <view class="playlist-header">
       <text class="playlist-title">播放列表 ({{songList.length}})</text>
@@ -151,7 +151,7 @@
 
 <!-- 音质选择弹窗（4个选项） -->
 <view class="quality-popup {{showQualityPopup ? 'show' : ''}}">
-  <view class="quality-popup-mask" bindtap="toggleQualityPopup"></view>
+  <view class="quality-popup-mask" catchtap="toggleQualityPopup"></view>
   <view class="quality-popup-content">
     <view class="quality-title">选择音源质量</view>
     <view 

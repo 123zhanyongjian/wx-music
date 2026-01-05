@@ -147,4 +147,6 @@
 .popusShowopen {
   height: calc(100vh - 525rpx - var(--status-bar-height) - var(--bottom-safe));
   overflow: hidden;
+  z-index: 1 !important; /* 弹窗打开时降低层级，确保在弹窗下方 */
+  position: relative; /* 确保 z-index 生效 */
 }

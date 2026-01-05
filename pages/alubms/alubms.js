@@ -4,7 +4,8 @@ const song = require('../../utils/song.js')
 const api = require('../../utils/api.js');
 const time = require('../../utils/time.js')
 const utils = require('../../utils/util.js')
-const request = time.Promisify(wx.request)
+const API = require('../../services/api')
+const errorHandler = require('../../utils/errorHandler')
 Page({
 
   /**
@@ -156,58 +157,52 @@ Page({
       }
     })
   },
-  onLoad(options) {
-
+  /**
+   * 页面加载
+   */
+  async onLoad(options) {
     this.setData({
-      image:app.data.albumImg,
-      name:options.name
-    })
+      image: app.data.albumImg,
+      name: options.name
+    });
+    
     wx.setNavigationBarTitle({
       title: options.name
-    })
-    const that=this;
-   if(options.id){
-    wx.showLoading({
-      title: '加载中',
-    })
-    request({
-      url:app.host+`/albumInfo`,
-      data:{
-        id:options.id
-      }
-    })
-    .then(res=>{
-      
-      if(res.data.code===200){
-        wx.hideLoading()
-        that.setData({
-          songs:this.data.songs.concat(res.data.data?.arr?.map(i=>({...i,pic:this.data.image}))),
-          total:res.data.data.total*1,
-          alumbsinfo:res.data.data.description,
-          paydata:app.data?.paythis?.data,
-          date:res.data.data.date
-        })
-      
+    });
 
-        return
+    if (options.id) {
+      await this.loadAlbumInfo(options.id);
+    }
+  },
+
+  /**
+   * 加载专辑信息
+   */
+  async loadAlbumInfo(albumId) {
+    try {
+      const res = await API.album.getAlbumInfo({
+        id: albumId,
+        page: 1,
+        size: 100
+      });
+
+      if (res.success && res.data) {
+        this.setData({
+          songs: res.data.arr?.map(i => ({
+            ...i,
+            pic: this.data.image || i.image || i.pic
+          })) || [],
+          total: res.data.total || 0,
+          alumbsinfo: res.data.description || '',
+          paydata: app.data?.paythis?.data,
+          date: res.data.date || ''
+        });
+      } else {
+        errorHandler.handleApiError(res);
       }
-    
-      setTimeout(() => {
-        wx.showToast({
-          title:res.data.message,
-          icon:'error'
-        })
-      }, 200);
-    },err=>{
-      wx.hideLoading()
-      setTimeout(() => {
-        wx.showToast({
-          title:err.message,
-          icon:'error'
-        })
-      }, 200);
-    }) 
-  }
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },
 
   /**

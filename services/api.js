@@ -82,6 +82,22 @@ const API = {
      */
     searchSong(params) {
       return request.post('/getSongList', params);
+    },
+
+    /**
+     * 搜索歌曲和歌手（酷我音乐源）
+     * @param {Object} params - 搜索参数
+     * @param {string} params.name - 搜索关键词（必需）
+     * @param {number} params.pageNo - 页码，默认 1
+     * @param {number} params.pageSize - 每页数量，默认 3（实际返回 20 条歌曲）
+     * @returns {Promise<Object>} 返回 { data: 歌曲列表, singer: 歌手列表 }
+     */
+    searchKuWo(params) {
+      return request.get('/serach', {
+        name: params.name,
+        pageNo: params.pageNo || 1,
+        pageSize: params.pageSize || 3
+      });
     }
   },
 
@@ -103,6 +119,22 @@ const API = {
      */
     getPlaylistInfo(id) {
       return request.get('/playlist/info', { id });
+    },
+
+    /**
+     * 获取推荐歌单详情（酷我音乐源）
+     * @param {Object} params - 请求参数
+     * @param {string} params.id - 歌单 ID（必需）
+     * @param {number} params.page - 页码，默认 1
+     * @param {number} params.size - 每页数量，默认 10
+     * @returns {Promise<Object>} 返回 { img, info, name, id, total, tag, list }
+     */
+    getRecommendInfo(params) {
+      return request.get('/recommenInfo', {
+        id: params.id,
+        page: params.page || 1,
+        size: params.size || 10
+      });
     },
     
     /**
@@ -158,6 +190,119 @@ const API = {
       return request.post('/playlist/delsong', {
         playlistId,
         songIds
+      });
+    }
+  },
+
+  // 歌手相关接口
+  singer: {
+    /**
+     * 获取歌手歌曲列表
+     * @param {Object} params - 请求参数
+     * @param {string} params.id - 歌手 ID
+     * @param {number} params.page - 页码，默认 1
+     * @param {number} params.size - 每页数量，默认 20
+     * @returns {Promise<Object>} 返回 { total, singerList, singinfo }
+     */
+    getSingerSongs(params) {
+      return request.post('/singerSongs', {
+        id: params.id,
+        page: params.page || 1,
+        size: params.size || 20
+      });
+    },
+
+    /**
+     * 获取歌手专辑列表
+     * @param {Object} params - 请求参数
+     * @param {string} params.id - 歌手 ID
+     * @param {number} params.page - 页码，默认 1
+     * @param {number} params.size - 每页数量，默认 20
+     * @returns {Promise<Object>} 返回 { total, data: 专辑列表 }
+     */
+    getSingerAlbums(params) {
+      return request.post('/album', {
+        id: params.id,
+        page: params.page || 1,
+        size: params.size || 20
+      });
+    },
+
+    /**
+     * 获取歌手列表
+     * @param {Object} params - 请求参数
+     * @param {number} params.page - 页码，默认 1
+     * @param {number} params.size - 每页数量，默认 20
+     * @param {string} params.type - 类型（可选）
+     * @param {string} params.surName - 姓氏（可选）
+     * @returns {Promise<Object>} 返回 { total, singerList }
+     */
+    getSingerList(params) {
+      // 构建请求参数，过滤掉 undefined 和 null 值
+      const queryParams = {
+        page: params.page || 1,
+        size: params.size || 20
+      };
+      
+      // 只有当参数有值时才添加到请求中
+      if (params.type !== undefined && params.type !== null && params.type !== '') {
+        queryParams.type = params.type;
+      }
+      
+      if (params.surName !== undefined && params.surName !== null && params.surName !== '') {
+        queryParams.surName = params.surName;
+      }
+      
+      return request.get('/singer', queryParams);
+    }
+  },
+
+  // 专辑相关接口
+  album: {
+    /**
+     * 获取专辑信息
+     * @param {Object} params - 请求参数
+     * @param {string} params.id - 专辑 ID
+     * @param {number} params.page - 页码，默认 1
+     * @param {number} params.size - 每页数量，默认 10
+     * @returns {Promise<Object>} 返回专辑信息和歌曲列表
+     */
+    getAlbumInfo(params) {
+      return request.get('/albumInfo', {
+        id: params.id,
+        page: params.page || 1,
+        size: params.size || 10
+      });
+    }
+  },
+
+  // 排行榜相关接口
+  rank: {
+    /**
+     * 获取排行榜（酷我音乐源）
+     * @param {Object} params - 请求参数
+     * @param {string} params.id - 排行榜 ID（必需）
+     * @param {number} params.page - 页码，默认 1
+     * @param {number} params.size - 每页数量，默认 10
+     * @returns {Promise<Object>} 返回 { arr: 歌曲列表, total: 总数 }
+     */
+    getTop(params) {
+      return request.get('/top', {
+        id: params.id,
+        page: params.page || 1,
+        size: params.size || 10
+      });
+    },
+
+    /**
+     * 获取酷我热歌榜（旧版接口，保留兼容性）
+     * @param {Object} params - 请求参数
+     * @param {number} params.page - 页码，默认 1
+     * @returns {Promise<Object>} 返回 { data: 歌曲列表, time: 更新时间 }
+     */
+    getKwTop(params) {
+      return request.get('/kwtop', {
+        page: params.page || 1
       });
     }
   },

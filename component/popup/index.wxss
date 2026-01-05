@@ -1,7 +1,7 @@
 /* 遮罩层（始终存在，但隐藏时透明且不响应事件） */
 .mains {
   position: fixed;
-  z-index: 29;
+  z-index: 9999; /* 提高层级，确保在所有内容之上 */
   top: 0;
   left: 0;
   right: 0;
@@ -21,7 +21,7 @@
 /* 弹窗容器（底部滑入/滑出动画） */
 .container {
   position: fixed;
-  z-index: 30;
+  z-index: 10000; /* 提高层级，确保在遮罩层之上 */
   bottom: 0;
   left: 0;
   right: 0;

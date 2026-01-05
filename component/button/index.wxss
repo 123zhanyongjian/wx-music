@@ -1,0 +1,141 @@
+/* 按钮基础样式 */
+.custom-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  transition: all 0.3s;
+  padding: 0;
+  margin: 0;
+  background: none;
+  line-height: 1;
+}
+
+.custom-button::after {
+  border: none;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.button-text {
+  line-height: 1;
+}
+
+/* 按钮大小 */
+.small {
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  min-height: 60rpx;
+}
+
+.medium {
+  padding: 16rpx 32rpx;
+  font-size: 28rpx;
+  min-height: 72rpx;
+}
+
+.large {
+  padding: 20rpx 40rpx;
+  font-size: 32rpx;
+  min-height: 88rpx;
+}
+
+/* 按钮类型 */
+.primary {
+  background: linear-gradient(135deg, #9e2a2b, #c73e3f);
+  color: #fff;
+}
+
+.primary.button-hover {
+  background: linear-gradient(135deg, #c73e3f, #9e2a2b);
+  transform: translateY(-2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(158, 42, 43, 0.3);
+}
+
+.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.secondary.button-hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.danger {
+  background: #ff4d4f;
+  color: #fff;
+}
+
+.danger.button-hover {
+  background: #ff7875;
+  transform: translateY(-2rpx);
+}
+
+.text {
+  background: transparent;
+  color: #9e2a2b;
+  padding: 8rpx 16rpx;
+}
+
+.text.button-hover {
+  background: rgba(158, 42, 43, 0.1);
+}
+
+/* 圆形按钮 */
+.round {
+  border-radius: 50rpx;
+}
+
+/* 块级按钮 */
+.block {
+  width: 100%;
+  display: flex;
+}
+
+/* 禁用状态 */
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disabled.button-hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* 加载状态 */
+.loading {
+  pointer-events: none;
+}
+
+.button-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 24rpx;
+  height: 24rpx;
+  border: 3rpx solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

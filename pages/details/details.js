@@ -3,6 +3,9 @@ const app = getApp();
 const time = require('../../utils/time.js')
 const api = require('../../utils/api')
 const utils = require('../../utils/util')
+const API = require('../../services/api')
+const errorHandler = require('../../utils/errorHandler')
+const request = require('../../utils/request')
 
 const { img } = require('../../utils/loveBg')
 Page({
@@ -115,7 +118,7 @@ Page({
     const that = this
     wx.showActionSheet({
       itemList: that.data.itemList1,
-      success:e=>{
+      success: async (e) => {
        const index = e.tapIndex
        if(index===0){
         if(that.data.synchronousLoading){
@@ -127,90 +130,60 @@ Page({
         wx.showLoading({
           title:'加载中'
         })
-        wx.request({
-          url:app.host+'/addsong',
-          method:'post',
-          data:{
-            id:that.data.loveId,
-            userid:app.data.userInfo.userId,
-            songList:that.data.list
-    
-          },
-          success:res=>{
-            wx.hideLoading()
-            that.setData({
-          synchronousLoading:false
-    
-            })
-            if(res.data.code===200){
-              setTimeout(() => {
-                wx.showToast({
-                  title:'同步成功'
-                })
-              }, 200);
-            }
-          },
-          fail:err=>{
-            that.setData({
-              synchronousLoading:false
-        
-                })
-            wx.hideLoading()
-            setTimeout(() => {
-              wx.showToast({
-                title:err.message,
-                icon:'error'
-              })
-            }, 200);
-          },
-        })
+        try {
+          const songIds = that.data.list.map(song => song.id);
+          const res = await API.playlist.addSongs(that.data.loveId, songIds);
+          
+          that.setData({ synchronousLoading: false });
+          
+          if (res.success) {
+            wx.showToast({
+              title: '同步成功',
+              icon: 'success'
+            });
+          } else {
+            errorHandler.handleApiError(res);
+          }
+        } catch (err) {
+          that.setData({ synchronousLoading: false });
+          errorHandler.handleApiError(err);
+        }
        }
        if(index === 1){
         // 同步云端（替换成云端的）
         wx.showModal({
           title: '提示',
           content: '将替换成云端内容，覆盖当前。\n如果想保留当前列表,建议使用拉取云端资源选项，是否继续覆盖当前?',
-          success(res) {
+          success: async (res) => {
             if (res.confirm) {
               wx.showLoading({
                 title:'加载中'
               })
-              wx.request({
-                url:app.host+'/songList',
-                method:'post',
-                data:{
-                  ids:app.data.userInfo?.playList?.filter(i=>i.islove)[0]?.songIds
-                },
-                success:res=>{
-                  wx.hideLoading()
-                  if(res.data.code===200){
+              try {
+                const songIds = app.data.userInfo?.playList?.filter(i => i.islove)[0]?.songIds || [];
+                const result = await API.song.getSongList(songIds);
+                
+                if (result.success && result.data) {
+                  that.setData({ list: result.data });
                   
-                    setTimeout(() => {
-                      that.setData({
-                        list:res.data.data
-                      })
-                      wx.showToast({
-                        title:'同步成功',
-                        icon:'success'
-                      })
-                      wx.setStorage({
-                        key: 'loveList',
-                        data:res.data.data,
-                        success: function (res) {
-                          console.log('异步保存成功')
-                        }
-                      })
-                    }, 200);
-                  }else{
-                    setTimeout(() => {
-                      wx.showToast({
-                        title:res.data.message,
-                        icon:'error'
-                      })
-                    }, 200);
-                  }
+                  wx.setStorage({
+                    key: 'loveList',
+                    data: result.data,
+                    success: () => {
+                      console.log('异步保存成功');
+                    }
+                  });
+                  
+                  wx.showToast({
+                    title: '同步成功',
+                    icon: 'success'
+                  });
+                } else {
+                  errorHandler.handleApiError(result);
                 }
-              })
+              } catch (err) {
+                errorHandler.handleApiError(err);
+              }
             
     
             } else if (res.cancel) {
@@ -227,42 +200,32 @@ Page({
         wx.showLoading({
           title:'加载中'
         })
-        wx.request({
-          url:app.host+'/songList',
-          method:'post',
-          data:{
-            ids:iconIds.filter(i=>!localhostIds.includes(i))
-          },
-          success:res=>{
-            wx.hideLoading()
-            if(res.data.code===200){
-             
-              setTimeout(() => {
-                that.setData({
-                  list:that.data.list?.concat(res.data.data)
-                })
-                wx.showToast({
-                  title:'同步成功',
-                  icon:'success'
-                })
-                wx.setStorage({
-                  key: 'loveList',
-                  data:that.data.list,
-                  success: function (res) {
-                    console.log('异步保存成功')
-                  }
-                })
-              }, 200);
-            }else{
-              setTimeout(() => {
-                wx.showToast({
-                  title:res.data.message,
-                  icon:'error'
-                })
-              }, 200);
-            }
+        try {
+          const newIds = iconIds.filter(i => !localhostIds.includes(i));
+          const res = await API.song.getSongList(newIds);
+          
+          if (res.success && res.data) {
+            const newList = that.data.list?.concat(res.data) || res.data;
+            that.setData({ list: newList });
+            
+            wx.setStorage({
+              key: 'loveList',
+              data: newList,
+              success: () => {
+                console.log('异步保存成功');
+              }
+            });
+            
+            wx.showToast({
+              title: '同步成功',
+              icon: 'success'
+            });
+          } else {
+            errorHandler.handleApiError(res);
           }
-        })
+        } catch (err) {
+          errorHandler.handleApiError(err);
+        }
        }
       }
     })
@@ -311,45 +274,40 @@ return
       return {author:'',title:str}
     }
   },
-  getkwTop(page){
-    wx.showLoading({
-      title: '加载中...',
-    })
-  if(page===1){
-    this.setData({
-      list:[]
-    })
-  }
-    wx.request({
-      url: app.host+'/kwtop',
-      data:{
-        page,
-      },
-      method:'get',
-      success:(res)=>{
-        wx.hideLoading();
+  /**
+   * 获取酷我热歌榜
+   */
+  async getkwTop(page) {
+    if (page === 1) {
+      this.setData({ list: [] });
+    }
+
+    try {
+      // 使用 /kwtop 接口获取酷我热歌榜
+      const res = await API.rank.getKwTop({ page });
+
+      if (res.success && res.data) {
+        const list = (res.data.data || []).map(k => ({
+          ...k,
+          ...this.splitSongInfo(k?.author || k?.title)
+        }));
+
         this.setData({
-          list:this.data.list.concat(res.data.data?.data)
-          .map(k=>({...k})),
-          time:res.data.data?.time
-        })
-        wx.setNavigationBarTitle({
-          title: `酷我热歌榜:${res.data.data.time}`,
-        })
-        this.setData({
-          list:this.data.list.map(k=>({...k,...this.splitSongInfo(k?.author)}))
-        })
-      },
-      fail:(err)=>{
-        wx.hideLoading()
-        setTimeout(() => {
-          wx.showToast({
-            title:err.message,
-            icon:'none'
-          })
-        }, 200);
+          list: this.data.list.concat(list),
+          time: res.data.time || ''
+        });
+
+        if (res.data.time) {
+          wx.setNavigationBarTitle({
+            title: `酷我热歌榜:${res.data.time}`
+          });
+        }
+      } else {
+        errorHandler.handleApiError(res);
       }
-    })
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },
   whole() {
     const that=this
@@ -451,13 +409,7 @@ return
                     wx.showLoading({
                       title: '加载中',
                     })
-                    const res1 = await request({
-                      url:app.host+'/playlist/del',
-                      method:'delete',
-                      data:{
-                        id:that.data.id
-                      }
-                    })
+                    const res1 = await API.playlist.deletePlaylist(that.data.id)
                     wx.hideLoading()
                     if(res1.data.code===200){
                       setTimeout(() => {
@@ -560,47 +512,49 @@ return
     
   
   },
-  getSongList(page=this.data.pageNum){
-    wx.showLoading({
-      title: '加载中...',
-    })
-  if(page===1){
-    this.setData({
-      list:[]
-    })
-  }
-    wx.request({
-      url: app.host+'/recommenInfo',
-      data:{
+  /**
+   * 获取推荐歌单歌曲列表
+   */
+  async getSongList(page = this.data.pageNum) {
+    if (page === 1) {
+      this.setData({ list: [] });
+    }
+
+    try {
+      const res = await API.playlist.getRecommendInfo({
+        id: this.data.id,
         page,
-        id:this.data.id
-      },
-      method:'get',
-      success:(res)=>{
-        wx.hideLoading();
+        size: this.data.pageSize
+      });
+
+      if (res.success && res.data) {
+        // 处理图片URL
+        const list = (res.data.list || []).map(k => ({
+          ...k,
+          pic: app.host + '/resource?url=' + k.pic
+        }));
+
         this.setData({
-          list:this.data.list.concat(res.data.data?.list.map(k=>({...k,pic:app.host+'/resource?url='+k.pic}))),
-          time:res.data.data?.time,
-          src:res.data.data?.img,
-          singerInfo:res.data.data?.info,
-          total:res.data.data?.total,
-          tag:res.data.data?.tag,
-          paydata:app.data?.paythis?.data,
-        })
-        wx.setNavigationBarTitle({
-          title: `${res.data.data.name}`,
-        })
-      },
-      fail:(err)=>{
-        wx.hideLoading()
-        setTimeout(() => {
-          wx.showToast({
-            title:err.message,
-            icon:'none'
-          })
-        }, 200);
+          list: this.data.list.concat(list),
+          time: res.data.time || '',
+          src: res.data.img || '',
+          singerInfo: res.data.info || '',
+          total: res.data.total || 0,
+          tag: res.data.tag || '',
+          paydata: app.data?.paythis?.data
+        });
+
+        if (res.data.name) {
+          wx.setNavigationBarTitle({
+            title: res.data.name
+          });
+        }
+      } else {
+        errorHandler.handleApiError(res);
       }
-    })
+    } catch (error) {
+      errorHandler.handleApiError(error);
+    }
   },
   onReachBottom() {
   if(this.data.id==='kw'){

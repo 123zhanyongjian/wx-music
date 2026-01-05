@@ -1,0 +1,18 @@
+<view 
+  class="custom-card {{shadow ? 'shadow' : ''}} {{clickable ? 'clickable' : ''}} {{customClass}}"
+  catchtap="onTap"
+  hover-class="{{clickable ? 'card-hover' : ''}}"
+>
+  <view class="card-image" wx:if="{{image}}">
+    <image src="{{image}}" mode="aspectFill" lazy-load="{{true}}" />
+  </view>
+  
+  <view class="card-content">
+    <view class="card-title" wx:if="{{title}}">{{title}}</view>
+    <view class="card-description" wx:if="{{description}}">{{description}}</view>
+    <slot name="content"></slot>
+  </view>
+  
+  <slot name="footer"></slot>
+</view>
+

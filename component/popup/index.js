@@ -29,16 +29,26 @@ Component({
     playlist:[],
     addSongListFlag:false,
   },
-  methods: { 
-    newListBtn(){
-      console.log(123,this)
-      this.setData({
-       addSongListFlag:true
-      })
+  methods: {
+    /**
+     * 阻止事件冒泡（空方法，仅用于阻止冒泡）
+     */
+    stopPropagation() {
+      // 空方法，仅用于阻止事件冒泡到遮罩层
+    },
     
-      },
-    stops(event){
-       
+    /**
+     * 新建歌单按钮
+     */
+    newListBtn(e) {
+      // 阻止事件冒泡
+      if (e && e.stopPropagation) {
+        e.stopPropagation();
+      }
+      
+      this.setData({
+        addSongListFlag: true
+      });
     }, 
     clickList(e){
       this.setData({

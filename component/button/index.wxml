@@ -1,0 +1,15 @@
+<button 
+  class="custom-button {{type}} {{size}} {{round ? 'round' : ''}} {{block ? 'block' : ''}} {{disabled ? 'disabled' : ''}} {{loading ? 'loading' : ''}} {{customClass}}"
+  disabled="{{disabled || loading}}"
+  catchtap="onTap"
+  hover-class="button-hover"
+  hover-stay-time="100"
+>
+  <view class="button-content">
+    <view class="button-loading" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+    </view>
+    <text class="button-text">{{text}}</text>
+  </view>
+</button>
+
